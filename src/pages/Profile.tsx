@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { userData } from "@/data/userData";
 import UserStats from "@/components/UserStats";
-import { Settings } from "lucide-react";
+import { Settings, Award, Code, Brain, Zap, Trophy } from "lucide-react";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import ProfileEditDialog from "@/components/ProfileEditDialog";
 import { toast } from "sonner";
@@ -70,6 +70,46 @@ const Profile = () => {
                   <Badge variant="outline" className="border-gray-200">Data Structures</Badge>
                 </CardContent>
               </Card>
+              
+              <Card className="mt-4">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm">Badges</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-3 gap-3">
+                    <div className="flex flex-col items-center">
+                      <div className="h-12 w-12 rounded-full bg-amber-100 flex items-center justify-center text-amber-600 mb-1">
+                        <Award size={20} />
+                      </div>
+                      <span className="text-xs text-center">Top Coder</span>
+                    </div>
+                    <div className="flex flex-col items-center">
+                      <div className="h-12 w-12 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600 mb-1">
+                        <Code size={20} />
+                      </div>
+                      <span className="text-xs text-center">JavaScript Pro</span>
+                    </div>
+                    <div className="flex flex-col items-center">
+                      <div className="h-12 w-12 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 mb-1">
+                        <Brain size={20} />
+                      </div>
+                      <span className="text-xs text-center">Algorithm Ace</span>
+                    </div>
+                    <div className="flex flex-col items-center">
+                      <div className="h-12 w-12 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 mb-1">
+                        <Zap size={20} />
+                      </div>
+                      <span className="text-xs text-center">Fast Solver</span>
+                    </div>
+                    <div className="flex flex-col items-center">
+                      <div className="h-12 w-12 rounded-full bg-orange-100 flex items-center justify-center text-orange-600 mb-1">
+                        <Trophy size={20} />
+                      </div>
+                      <span className="text-xs text-center">Contest Winner</span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
             </div>
             
             {/* Main Content */}
@@ -77,34 +117,15 @@ const Profile = () => {
               <UserStats 
                 solved={user.stats.solved}
                 totalProblems={user.stats.totalProblems}
+                easyProblems={user.stats.easyProblems}
+                mediumProblems={user.stats.mediumProblems}
+                hardProblems={user.stats.hardProblems}
                 streak={user.stats.streak}
-                rank={0}
-                contributionPoints={0}
               />
             </div>
           </div>
         </div>
       </main>
-      
-      {/* Footer */}
-      <footer className="bg-yodha-dark text-white py-6 mt-8">
-        <div className="container mx-auto px-4">
-          <div className="flex flex-col md:flex-row justify-between items-center">
-            <div className="mb-4 md:mb-0">
-              <p className="font-bold text-xl">Yodha</p>
-              <p className="text-sm opacity-70">Improve your coding skills with thousands of challenges</p>
-            </div>
-            <div className="flex gap-8">
-              <a href="#" className="text-sm hover:text-yodha-primary transition-colors">Problems</a>
-              <a href="#" className="text-sm hover:text-yodha-primary transition-colors">Profile</a>
-              <a href="#" className="text-sm hover:text-yodha-primary transition-colors">About</a>
-            </div>
-          </div>
-          <div className="mt-6 text-center text-sm opacity-70">
-            <p>© 2025 Yodha Coding Arena. All rights reserved.</p>
-          </div>
-        </div>
-      </footer>
     </div>
   );
 };

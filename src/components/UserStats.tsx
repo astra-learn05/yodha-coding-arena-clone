@@ -1,21 +1,29 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { ArrowUp, Award, Check, Star } from "lucide-react";
+import { Check, Star } from "lucide-react";
 
 interface UserStatsProps {
   solved: number;
   totalProblems: number;
+  easyProblems: number;
+  mediumProblems: number;
+  hardProblems: number;
   streak: number;
-  rank: number;
-  contributionPoints: number;
 }
 
-const UserStats = ({ solved, totalProblems, streak, rank, contributionPoints }: UserStatsProps) => {
+const UserStats = ({ 
+  solved, 
+  totalProblems, 
+  easyProblems, 
+  mediumProblems, 
+  hardProblems, 
+  streak 
+}: UserStatsProps) => {
   const solvedPercentage = Math.round((solved / totalProblems) * 100);
   
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
       <Card>
         <CardHeader className="pb-2">
           <CardTitle className="text-sm text-gray-500 font-normal flex items-center gap-2">
@@ -28,22 +36,40 @@ const UserStats = ({ solved, totalProblems, streak, rank, contributionPoints }: 
             <span className="text-2xl font-bold">{solved}</span>
             <span className="text-xs text-gray-500">of {totalProblems}</span>
           </div>
-          <Progress value={solvedPercentage} className="h-2" />
-          <div className="mt-2 flex gap-3 text-xs">
+          <Progress value={solvedPercentage} className="h-2 mb-4" />
+          
+          <div className="space-y-3">
             <div>
-              <span className="inline-block w-2 h-2 rounded-full bg-difficulty-easy mr-1"></span>
-              <span>Easy</span>
-              <span className="ml-1 text-gray-500">15</span>
+              <div className="flex justify-between items-center mb-1">
+                <div>
+                  <span className="inline-block w-2 h-2 rounded-full bg-difficulty-easy mr-1"></span>
+                  <span className="text-xs">Easy</span>
+                </div>
+                <span className="text-xs text-gray-500">{easyProblems}</span>
+              </div>
+              <Progress value={(easyProblems / 15) * 100} className="h-1.5 bg-gray-100" indicatorClassName="bg-difficulty-easy" />
             </div>
+            
             <div>
-              <span className="inline-block w-2 h-2 rounded-full bg-difficulty-medium mr-1"></span>
-              <span>Medium</span>
-              <span className="ml-1 text-gray-500">12</span>
+              <div className="flex justify-between items-center mb-1">
+                <div>
+                  <span className="inline-block w-2 h-2 rounded-full bg-difficulty-medium mr-1"></span>
+                  <span className="text-xs">Medium</span>
+                </div>
+                <span className="text-xs text-gray-500">{mediumProblems}</span>
+              </div>
+              <Progress value={(mediumProblems / 12) * 100} className="h-1.5 bg-gray-100" indicatorClassName="bg-difficulty-medium" />
             </div>
+            
             <div>
-              <span className="inline-block w-2 h-2 rounded-full bg-difficulty-hard mr-1"></span>
-              <span>Hard</span>
-              <span className="ml-1 text-gray-500">8</span>
+              <div className="flex justify-between items-center mb-1">
+                <div>
+                  <span className="inline-block w-2 h-2 rounded-full bg-difficulty-hard mr-1"></span>
+                  <span className="text-xs">Hard</span>
+                </div>
+                <span className="text-xs text-gray-500">{hardProblems}</span>
+              </div>
+              <Progress value={(hardProblems / 8) * 100} className="h-1.5 bg-gray-100" indicatorClassName="bg-difficulty-hard" />
             </div>
           </div>
         </CardContent>
@@ -60,29 +86,11 @@ const UserStats = ({ solved, totalProblems, streak, rank, contributionPoints }: 
           <div className="flex items-center gap-2">
             <span className="text-2xl font-bold">{streak}</span>
             <span className="text-xs px-2 py-1 bg-green-100 text-green-700 rounded flex items-center">
-              <ArrowUp size={12} className="mr-1" />
-              2
+              +2
             </span>
           </div>
           <p className="text-xs text-gray-500 mt-2">
             Keep it going! Solve a problem today to maintain your streak.
-          </p>
-        </CardContent>
-      </Card>
-      
-      <Card>
-        <CardHeader className="pb-2">
-          <CardTitle className="text-sm text-gray-500 font-normal flex items-center gap-2">
-            <Award size={16} className="text-difficulty-hard" />
-            Ranking
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex items-center gap-2">
-            <span className="text-2xl font-bold">#{rank}</span>
-          </div>
-          <p className="text-xs text-gray-500 mt-2">
-            {contributionPoints} contribution points (Top 5%)
           </p>
         </CardContent>
       </Card>
