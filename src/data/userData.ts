@@ -1,3 +1,4 @@
+
 export interface UserData {
   username: string;
   realName: string;
@@ -9,8 +10,10 @@ export interface UserData {
     mediumProblems: number;
     hardProblems: number;
     streak: number;
+    rank?: number; // Added to fix error in Index.tsx
   };
   submissions: Submission[];
+  recentActivity?: RecentActivity[]; // Added to fix error in Index.tsx
 }
 
 export interface Submission {
@@ -24,6 +27,16 @@ export interface Submission {
   timestamp: string;
 }
 
+// Added to support recentActivity
+export interface RecentActivity {
+  id: number;
+  type: "solve" | "comment" | "submission";
+  problemId: number;
+  problemTitle: string;
+  description: string;
+  timestamp: string;
+}
+
 export const userData: UserData = {
   username: "codemaster",
   realName: "Jane Doe",
@@ -34,7 +47,8 @@ export const userData: UserData = {
     easyProblems: 15,
     mediumProblems: 12,
     hardProblems: 8,
-    streak: 7
+    streak: 7,
+    rank: 42 // Added to fix error in Index.tsx
   },
   submissions: [
     {
@@ -86,6 +100,33 @@ export const userData: UserData = {
       runtime: "65ms",
       memory: "45.2MB",
       timestamp: "4 days ago"
+    }
+  ],
+  // Added sample recentActivity to fix error in Index.tsx
+  recentActivity: [
+    {
+      id: 1,
+      type: "solve",
+      problemId: 1,
+      problemTitle: "Two Sum",
+      description: "Solved the problem in JavaScript",
+      timestamp: "2 hours ago"
+    },
+    {
+      id: 2,
+      type: "comment",
+      problemId: 4,
+      problemTitle: "Maximum Subarray",
+      description: "Commented on solution approach",
+      timestamp: "2 days ago"
+    },
+    {
+      id: 3,
+      type: "submission",
+      problemId: 5,
+      problemTitle: "3Sum",
+      description: "Submitted a Java solution",
+      timestamp: "3 days ago"
     }
   ]
 };
