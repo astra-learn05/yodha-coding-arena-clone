@@ -1,10 +1,7 @@
-
 export interface UserData {
   username: string;
   realName: string;
-  bio: string;
-  location: string;
-  joinDate: string;
+  cgpa: number;
   stats: {
     solved: number;
     totalProblems: number;
@@ -12,20 +9,8 @@ export interface UserData {
     mediumProblems: number;
     hardProblems: number;
     streak: number;
-    rank: number;
-    contributionPoints: number;
   };
-  recentActivity: Activity[];
   submissions: Submission[];
-}
-
-export interface Activity {
-  id: number;
-  type: "solve" | "comment" | "submit";
-  problemId: number;
-  problemTitle: string;
-  timestamp: string;
-  description: string;
 }
 
 export interface Submission {
@@ -42,53 +27,15 @@ export interface Submission {
 export const userData: UserData = {
   username: "codemaster",
   realName: "Jane Doe",
-  bio: "Software engineer and algorithm enthusiast. I love solving complex problems and optimizing solutions.",
-  location: "San Francisco, CA",
-  joinDate: "Jan 2024",
+  cgpa: 9.2,
   stats: {
     solved: 35,
     totalProblems: 2437,
     easyProblems: 15,
     mediumProblems: 12,
     hardProblems: 8,
-    streak: 7,
-    rank: 12453,
-    contributionPoints: 346
+    streak: 7
   },
-  recentActivity: [
-    {
-      id: 1,
-      type: "solve",
-      problemId: 1,
-      problemTitle: "Two Sum",
-      timestamp: "2 hours ago",
-      description: "Solved problem using HashMap approach"
-    },
-    {
-      id: 2,
-      type: "comment",
-      problemId: 5,
-      problemTitle: "3Sum",
-      timestamp: "1 day ago",
-      description: "Commented on '3Sum' solution discussion"
-    },
-    {
-      id: 3,
-      type: "submit",
-      problemId: 4,
-      problemTitle: "Maximum Subarray",
-      timestamp: "2 days ago",
-      description: "Submitted a solution in Python"
-    },
-    {
-      id: 4,
-      type: "solve",
-      problemId: 8,
-      problemTitle: "Longest Substring Without Repeating Characters",
-      timestamp: "4 days ago",
-      description: "Solved using sliding window technique"
-    }
-  ],
   submissions: [
     {
       id: 1,
