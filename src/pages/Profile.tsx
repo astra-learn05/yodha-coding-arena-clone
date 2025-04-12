@@ -1,18 +1,13 @@
-
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { CalendarIcon, Clock, LinkIcon, MapPin } from "lucide-react";
-import Navbar from "@/components/Navbar";
-import UserStats from "@/components/UserStats";
 import { userData } from "@/data/userData";
 
 const Profile = () => {
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
-      <Navbar />
-      
       <main className="flex-1 py-8">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
