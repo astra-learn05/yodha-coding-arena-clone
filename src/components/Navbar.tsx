@@ -2,11 +2,7 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { 
-  BookOpen, 
-  Code, 
-  Home, 
   User, 
-  Trophy,
   LogIn
 } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -25,24 +21,6 @@ const Navbar = () => {
         
         <div className="flex items-center space-x-4">
           <Link to="/" className="flex items-center space-x-2 text-gray-600 hover:text-yodha-primary transition-colors">
-            {isMobile ? <Home size={20} /> : (
-              <>
-                <Home size={18} />
-                <span>Home</span>
-              </>
-            )}
-          </Link>
-          
-          <Link to="/problems" className="flex items-center space-x-2 text-gray-600 hover:text-yodha-primary transition-colors">
-            {isMobile ? <BookOpen size={20} /> : (
-              <>
-                <BookOpen size={18} />
-                <span>Problems</span>
-              </>
-            )}
-          </Link>
-          
-          <Link to="/profile" className="flex items-center space-x-2 text-gray-600 hover:text-yodha-primary transition-colors">
             {isMobile ? <User size={20} /> : (
               <>
                 <User size={18} />
