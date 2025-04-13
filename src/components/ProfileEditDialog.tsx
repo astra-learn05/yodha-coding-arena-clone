@@ -33,14 +33,14 @@ type ProfileEditDialogProps = {
 };
 
 const ProfileEditDialog = ({ userData, onSave, onClose }: ProfileEditDialogProps) => {
-  const [skills, setSkills] = useState<string[]>(userData.skills);
+  const [skills, setSkills] = useState<string[]>(userData.skills || []);
   const [newSkill, setNewSkill] = useState("");
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      realName: userData.realName,
-      cgpa: userData.cgpa,
+      realName: userData.realName || "",
+      cgpa: Number(userData.cgpa) || 0,
     },
   });
 
@@ -56,6 +56,7 @@ const ProfileEditDialog = ({ userData, onSave, onClose }: ProfileEditDialogProps
   };
 
   const onSubmit = (data: z.infer<typeof formSchema>) => {
+    console.log("Form submitted with data:", data, "and skills:", skills);
     onSave({
       realName: data.realName,
       cgpa: Number(data.cgpa),
@@ -94,7 +95,6 @@ const ProfileEditDialog = ({ userData, onSave, onClose }: ProfileEditDialogProps
                 <FormLabel>CGPA</FormLabel>
                 <FormControl>
                   <Input
-                    {...field}
                     type="number"
                     step="0.1"
                     min="0"

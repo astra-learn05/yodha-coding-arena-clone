@@ -92,18 +92,28 @@ export const getProfileById = async (id: string): Promise<Profile | null> => {
 
 // Update profile
 export const updateProfile = async (id: string, profile: Partial<Profile>): Promise<Profile | null> => {
+  console.log("Updating profile with ID:", id);
+  console.log("Update data:", profile);
+  
+  // Ensure CGPA is a valid number
+  const updates = {
+    ...profile,
+    cgpa: typeof profile.cgpa === 'number' ? profile.cgpa : parseFloat(String(profile.cgpa))
+  };
+  
   const { data, error } = await supabase
     .from('profiles')
-    .update(profile)
+    .update(updates)
     .eq('id', id)
     .select()
-    .maybeSingle();
+    .single();
 
   if (error) {
     console.error('Error updating profile:', error);
     return null;
   }
 
+  console.log("Profile updated successfully:", data);
   return data;
 };
 
@@ -128,7 +138,7 @@ export const addUserSkill = async (userId: string, skillName: string): Promise<U
     .from('user_skills')
     .insert({ user_id: userId, skill_name: skillName })
     .select()
-    .maybeSingle();
+    .single();
 
   if (error) {
     console.error('Error adding skill:', error);

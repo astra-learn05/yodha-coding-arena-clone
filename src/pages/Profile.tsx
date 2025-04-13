@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+
+import { useState } from "react";
 import { useSearchParams, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -19,10 +20,7 @@ import {
   addUserSkill, 
   removeUserSkill, 
   getUserBadges, 
-  getUserStreak,
-  type Profile, 
-  type UserSkill, 
-  type UserBadge 
+  getUserStreak
 } from "@/services/profileService";
 
 import {
@@ -107,13 +105,18 @@ const ProfilePage = () => {
     }
     
     try {
-      // Update profile data
+      console.log("Updating profile with data:", data);
+      
+      // Update profile data with proper type conversion
       const updatedProfile = await updateProfile(profile.id, {
         real_name: data.realName,
-        cgpa: data.cgpa,
+        cgpa: parseFloat(data.cgpa.toString()) // Ensure it's a number
       });
 
+      console.log("Profile update response:", updatedProfile);
+
       if (!updatedProfile) {
+        console.error("Profile update returned null or undefined");
         toast.error("Failed to update profile");
         return;
       }
@@ -123,17 +126,22 @@ const ProfilePage = () => {
       const skillsToAdd = data.skills.filter(s => !currentSkillNames.includes(s));
       const skillsToRemove = skills.filter(s => !data.skills.includes(s.skill_name));
 
+      console.log("Skills to add:", skillsToAdd);
+      console.log("Skills to remove:", skillsToRemove);
+
       // Add new skills
       const addPromises = skillsToAdd.map(skillName => 
         addUserSkill(profile.id, skillName)
       );
-      await Promise.all(addPromises);
+      const addResults = await Promise.all(addPromises);
+      console.log("Add skills results:", addResults);
 
       // Remove deleted skills
       const removePromises = skillsToRemove.map(skill => 
         removeUserSkill(skill.id)
       );
-      await Promise.all(removePromises);
+      const removeResults = await Promise.all(removePromises);
+      console.log("Remove skills results:", removeResults);
 
       setOpen(false);
       await refetchProfile();
