@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useSearchParams, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -39,7 +38,7 @@ const ProfilePage = () => {
   const prn = searchParams.get("prn") || params.prn;
   
   const [open, setOpen] = useState(false);
-  const isEditable = Boolean(profileId && !prn);
+  const isEditable = profileId && !prn;
 
   // Fetch profile data
   const { data: profile, isLoading: profileLoading, refetch: refetchProfile } = useQuery({
@@ -102,38 +101,48 @@ const ProfilePage = () => {
     cgpa: number; 
     skills: string[] 
   }) => {
-    if (!profile?.id) return;
-    
-    // Update profile data
-    const updatedProfile = await updateProfile(profile.id, {
-      real_name: data.realName,
-      cgpa: data.cgpa,
-    });
-
-    if (!updatedProfile) {
-      toast.error("Failed to update profile");
+    if (!profile?.id) {
+      toast.error("Profile not found");
       return;
     }
+    
+    try {
+      // Update profile data
+      const updatedProfile = await updateProfile(profile.id, {
+        real_name: data.realName,
+        cgpa: data.cgpa,
+      });
 
-    // Handle skills update
-    const currentSkillNames = skills.map(s => s.skill_name);
-    const skillsToAdd = data.skills.filter(s => !currentSkillNames.includes(s));
-    const skillsToRemove = skills.filter(s => !data.skills.includes(s.skill_name));
+      if (!updatedProfile) {
+        toast.error("Failed to update profile");
+        return;
+      }
 
-    // Add new skills
-    for (const skillName of skillsToAdd) {
-      await addUserSkill(profile.id, skillName);
+      // Handle skills update
+      const currentSkillNames = skills.map(s => s.skill_name);
+      const skillsToAdd = data.skills.filter(s => !currentSkillNames.includes(s));
+      const skillsToRemove = skills.filter(s => !data.skills.includes(s.skill_name));
+
+      // Add new skills
+      const addPromises = skillsToAdd.map(skillName => 
+        addUserSkill(profile.id, skillName)
+      );
+      await Promise.all(addPromises);
+
+      // Remove deleted skills
+      const removePromises = skillsToRemove.map(skill => 
+        removeUserSkill(skill.id)
+      );
+      await Promise.all(removePromises);
+
+      setOpen(false);
+      await refetchProfile();
+      await refetchSkills();
+      toast.success("Profile updated successfully");
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      toast.error("An error occurred while updating profile");
     }
-
-    // Remove deleted skills
-    for (const skill of skillsToRemove) {
-      await removeUserSkill(skill.id);
-    }
-
-    setOpen(false);
-    await refetchProfile();
-    await refetchSkills();
-    toast.success("Profile updated successfully");
   };
 
   // If both profileId and prn are missing, show error
