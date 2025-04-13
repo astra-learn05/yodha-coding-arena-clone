@@ -189,6 +189,8 @@ const ProfilePage = () => {
     completedTopics
   };
 
+  console.log("Profile ID:", profileId, "PRN:", prn, "Is Editable:", isEditable);
+
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
       <main className="flex-1 py-8">
