@@ -26,13 +26,14 @@ type ProfileEditDialogProps = {
   userData: {
     realName: string;
     cgpa: number;
+    skills: string[];
   };
   onSave: (data: { realName: string; cgpa: number; skills: string[] }) => void;
   onClose: () => void;
 };
 
 const ProfileEditDialog = ({ userData, onSave, onClose }: ProfileEditDialogProps) => {
-  const [skills, setSkills] = useState<string[]>(["JavaScript", "Python", "Java", "Algorithms", "Data Structures"]);
+  const [skills, setSkills] = useState<string[]>(userData.skills);
   const [newSkill, setNewSkill] = useState("");
 
   const form = useForm<z.infer<typeof formSchema>>({

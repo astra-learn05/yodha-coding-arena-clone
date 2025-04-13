@@ -1,8 +1,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { Check, Star, BookOpen } from "lucide-react";
-import { problems } from "@/data/problems";
+import { Check, Star, BookOpen, ExternalLink } from "lucide-react";
 
 interface UserStatsProps {
   solved: number;
@@ -11,6 +10,16 @@ interface UserStatsProps {
   mediumProblems: number;
   hardProblems: number;
   streak: number;
+  learningPathProgress?: Array<{
+    learningPath: {
+      id: string;
+      title: string;
+      description: string;
+      difficulty: string;
+    };
+    progress: number;
+  }>;
+  completedTopics?: string[];
 }
 
 const UserStats = ({ 
@@ -19,19 +28,18 @@ const UserStats = ({
   easyProblems, 
   mediumProblems, 
   hardProblems, 
-  streak 
+  streak,
+  learningPathProgress = [],
+  completedTopics = []
 }: UserStatsProps) => {
-  const solvedPercentage = Math.round((solved / totalProblems) * 100);
-  
-  // Get unique topics from the problems data
-  const topics = [...new Set(problems.map(problem => problem.category))];
+  const solvedPercentage = Math.round((solved / totalProblems) * 100) || 0;
   
   return (
     <div className="grid grid-cols-1 gap-4">
       <Card>
         <CardHeader className="pb-2">
           <CardTitle className="text-sm text-gray-500 font-normal flex items-center gap-2">
-            <Check size={16} className="text-difficulty-easy" />
+            <Check size={16} className="text-green-500" />
             Solved Problems
           </CardTitle>
         </CardHeader>
@@ -46,45 +54,45 @@ const UserStats = ({
             <div>
               <div className="flex justify-between items-center mb-1">
                 <div>
-                  <span className="inline-block w-2 h-2 rounded-full bg-difficulty-easy mr-1"></span>
+                  <span className="inline-block w-2 h-2 rounded-full bg-green-400 mr-1"></span>
                   <span className="text-xs">Easy</span>
                 </div>
                 <span className="text-xs text-gray-500">{easyProblems}</span>
               </div>
               <Progress 
-                value={(easyProblems / (totalProblems * 0.4)) * 100} 
+                value={(easyProblems / (Math.max(1, totalProblems * 0.4))) * 100} 
                 className="h-1.5 bg-gray-100" 
-                indicatorClassName="bg-difficulty-easy" 
+                indicatorClassName="bg-green-400" 
               />
             </div>
             
             <div>
               <div className="flex justify-between items-center mb-1">
                 <div>
-                  <span className="inline-block w-2 h-2 rounded-full bg-difficulty-medium mr-1"></span>
+                  <span className="inline-block w-2 h-2 rounded-full bg-yellow-400 mr-1"></span>
                   <span className="text-xs">Medium</span>
                 </div>
                 <span className="text-xs text-gray-500">{mediumProblems}</span>
               </div>
               <Progress 
-                value={(mediumProblems / (totalProblems * 0.4)) * 100} 
+                value={(mediumProblems / (Math.max(1, totalProblems * 0.4))) * 100} 
                 className="h-1.5 bg-gray-100" 
-                indicatorClassName="bg-difficulty-medium" 
+                indicatorClassName="bg-yellow-400" 
               />
             </div>
             
             <div>
               <div className="flex justify-between items-center mb-1">
                 <div>
-                  <span className="inline-block w-2 h-2 rounded-full bg-difficulty-hard mr-1"></span>
+                  <span className="inline-block w-2 h-2 rounded-full bg-red-400 mr-1"></span>
                   <span className="text-xs">Hard</span>
                 </div>
                 <span className="text-xs text-gray-500">{hardProblems}</span>
               </div>
               <Progress 
-                value={(hardProblems / (totalProblems * 0.2)) * 100} 
+                value={(hardProblems / (Math.max(1, totalProblems * 0.2))) * 100} 
                 className="h-1.5 bg-gray-100" 
-                indicatorClassName="bg-difficulty-hard" 
+                indicatorClassName="bg-red-400" 
               />
             </div>
           </div>
@@ -101,23 +109,60 @@ const UserStats = ({
         <CardContent>
           <div className="flex items-center gap-2">
             <span className="text-3xl font-bold text-amber-500">{streak}</span>
-            <span className="text-xs px-2 py-1 bg-green-100 text-green-700 rounded-md flex items-center font-medium">
-              +2
-            </span>
+            {streak > 0 && (
+              <span className="text-xs px-2 py-1 bg-green-100 text-green-700 rounded-md flex items-center font-medium">
+                +{Math.min(streak, 7)}
+              </span>
+            )}
           </div>
           <div className="mt-3 flex gap-1.5">
             {[...Array(7)].map((_, index) => (
               <div 
                 key={index} 
-                className={`h-2 w-full rounded-full ${index < streak % 7 ? 'bg-amber-400' : 'bg-gray-200'}`}
+                className={`h-2 w-full rounded-full ${index < Math.min(streak, 7) ? 'bg-amber-400' : 'bg-gray-200'}`}
               />
             ))}
           </div>
           <p className="text-xs text-gray-500 mt-3">
-            Keep it going! Solve a problem today to maintain your streak.
+            {streak > 0
+              ? "Keep it going! Solve a problem today to maintain your streak."
+              : "Start solving problems to build your streak!"}
           </p>
         </CardContent>
       </Card>
+      
+      {/* Learning Path Progress */}
+      {learningPathProgress.length > 0 && (
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm text-gray-500 font-normal flex items-center gap-2">
+              <ExternalLink size={16} className="text-purple-500" />
+              Learning Paths
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              {learningPathProgress.map((path) => (
+                <div key={path.learningPath.id}>
+                  <div className="flex justify-between items-center mb-1">
+                    <span className="text-sm font-medium">{path.learningPath.title}</span>
+                    <span className="text-xs text-gray-500">{path.progress}%</span>
+                  </div>
+                  <Progress 
+                    value={path.progress} 
+                    className="h-2 bg-gray-100" 
+                    indicatorClassName={`
+                      ${path.learningPath.difficulty.toLowerCase() === 'easy' ? 'bg-green-400' : 
+                        path.learningPath.difficulty.toLowerCase() === 'medium' ? 'bg-yellow-400' : 
+                        'bg-red-400'}
+                    `} 
+                  />
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
       
       <Card>
         <CardHeader className="pb-2">
@@ -127,16 +172,22 @@ const UserStats = ({
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="flex flex-wrap gap-2">
-            {topics.map((topic, index) => (
-              <span 
-                key={index} 
-                className="text-xs px-2.5 py-1 bg-blue-50 text-blue-600 rounded-full"
-              >
-                {topic}
-              </span>
-            ))}
-          </div>
+          {completedTopics.length > 0 ? (
+            <div className="flex flex-wrap gap-2">
+              {completedTopics.map((topic, index) => (
+                <span 
+                  key={index} 
+                  className="text-xs px-2.5 py-1 bg-blue-50 text-blue-600 rounded-full"
+                >
+                  {topic}
+                </span>
+              ))}
+            </div>
+          ) : (
+            <p className="text-sm text-gray-500">
+              No topics completed yet. Complete all questions in a topic to see it here.
+            </p>
+          )}
         </CardContent>
       </Card>
     </div>
