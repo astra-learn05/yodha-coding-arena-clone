@@ -139,6 +139,19 @@ export const getUserSkills = async (userId: string): Promise<UserSkill[]> => {
 
 // Add a skill
 export const addUserSkill = async (userId: string, skillName: string): Promise<UserSkill | null> => {
+  // First check if skill already exists to avoid duplicates
+  const { data: existingSkills } = await supabase
+    .from('user_skills')
+    .select('*')
+    .eq('user_id', userId)
+    .eq('skill_name', skillName);
+    
+  // If skill already exists, return it
+  if (existingSkills && existingSkills.length > 0) {
+    return existingSkills[0];
+  }
+
+  // Otherwise add the new skill
   const { data, error } = await supabase
     .from('user_skills')
     .insert({ user_id: userId, skill_name: skillName })
@@ -166,6 +179,59 @@ export const removeUserSkill = async (skillId: string): Promise<boolean> => {
   }
 
   return true;
+};
+
+// Find and remove a skill by name
+export const removeUserSkillByName = async (userId: string, skillName: string): Promise<boolean> => {
+  // First find the skill by name
+  const { data: skills } = await supabase
+    .from('user_skills')
+    .select('id')
+    .eq('user_id', userId)
+    .eq('skill_name', skillName);
+  
+  if (!skills || skills.length === 0) {
+    console.log(`Skill "${skillName}" not found for user ${userId}`);
+    return false;
+  }
+  
+  // Then delete it using the id
+  return removeUserSkill(skills[0].id);
+};
+
+// Sync user skills - add new ones, remove old ones
+export const syncUserSkills = async (userId: string, skills: string[]): Promise<boolean> => {
+  try {
+    console.log("Syncing skills for user:", userId);
+    console.log("New skills list:", skills);
+    
+    // Get current skills
+    const currentSkills = await getUserSkills(userId);
+    const currentSkillNames = currentSkills.map(s => s.skill_name);
+    
+    console.log("Current skills:", currentSkillNames);
+    
+    // Skills to add (in new list but not in current)
+    const skillsToAdd = skills.filter(skill => !currentSkillNames.includes(skill));
+    console.log("Skills to add:", skillsToAdd);
+    
+    // Skills to remove (in current but not in new list)
+    const skillsToRemove = currentSkills.filter(skill => !skills.includes(skill.skill_name));
+    console.log("Skills to remove:", skillsToRemove.map(s => s.skill_name));
+    
+    // Add new skills
+    const addPromises = skillsToAdd.map(skill => addUserSkill(userId, skill));
+    await Promise.all(addPromises);
+    
+    // Remove old skills
+    const removePromises = skillsToRemove.map(skill => removeUserSkill(skill.id));
+    await Promise.all(removePromises);
+    
+    return true;
+  } catch (error) {
+    console.error("Error syncing user skills:", error);
+    return false;
+  }
 };
 
 // Get badges for a user

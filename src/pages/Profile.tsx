@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useSearchParams, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -17,8 +16,7 @@ import {
   getProfileByPRN, 
   updateProfile, 
   getUserSkills, 
-  addUserSkill, 
-  removeUserSkill, 
+  syncUserSkills, 
   getUserBadges, 
   getUserStreak
 } from "@/services/profileService";
@@ -133,27 +131,13 @@ const ProfilePage = () => {
         return;
       }
 
-      // Handle skills update
-      const currentSkillNames = skills.map(s => s.skill_name);
-      const skillsToAdd = data.skills.filter(s => !currentSkillNames.includes(s));
-      const skillsToRemove = skills.filter(s => !data.skills.includes(s.skill_name));
-
-      console.log("Skills to add:", skillsToAdd);
-      console.log("Skills to remove:", skillsToRemove);
-
-      // Add new skills
-      const addPromises = skillsToAdd.map(skillName => 
-        addUserSkill(profile.id, skillName)
-      );
-      const addResults = await Promise.all(addPromises);
-      console.log("Add skills results:", addResults);
-
-      // Remove deleted skills
-      const removePromises = skillsToRemove.map(skill => 
-        removeUserSkill(skill.id)
-      );
-      const removeResults = await Promise.all(removePromises);
-      console.log("Remove skills results:", removeResults);
+      // Use the new syncUserSkills function to update skills
+      const skillsUpdateSuccess = await syncUserSkills(profile.id, data.skills);
+      
+      if (!skillsUpdateSuccess) {
+        toast.error("Failed to update skills");
+        return;
+      }
 
       setOpen(false);
       await refetchProfile();

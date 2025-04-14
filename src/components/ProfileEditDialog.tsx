@@ -89,7 +89,7 @@ const ProfileEditDialog = ({ userData, onSave, onClose }: ProfileEditDialogProps
     onSave({
       realName: data.realName,
       cgpa: Number(data.cgpa),
-      skills,
+      skills, // Pass the skills array for proper syncing with database
       bio: data.bio || null,
       collegeName: data.collegeName || null,
       location: data.location || null,
