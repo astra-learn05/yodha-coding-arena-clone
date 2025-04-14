@@ -1,7 +1,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { Check, Star, BookOpen, ExternalLink } from "lucide-react";
+import { Check, Star, BookOpen, ExternalLink, BookText } from "lucide-react";
 
 interface UserStatsProps {
   solved: number;
@@ -9,7 +9,7 @@ interface UserStatsProps {
   easyProblems: number;
   mediumProblems: number;
   hardProblems: number;
-  streak: number;
+  theoryProblems: number;
   learningPathProgress?: Array<{
     learningPath: {
       id: string;
@@ -27,8 +27,8 @@ const UserStats = ({
   totalProblems, 
   easyProblems, 
   mediumProblems, 
-  hardProblems, 
-  streak,
+  hardProblems,
+  theoryProblems,
   learningPathProgress = [],
   completedTopics = []
 }: UserStatsProps) => {
@@ -95,39 +95,22 @@ const UserStats = ({
                 indicatorClassName="bg-red-400" 
               />
             </div>
-          </div>
-        </CardContent>
-      </Card>
-      
-      <Card>
-        <CardHeader className="pb-2">
-          <CardTitle className="text-sm text-gray-500 font-normal flex items-center gap-2">
-            <Star size={16} className="text-amber-400" />
-            Current Streak
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex items-center gap-2">
-            <span className="text-3xl font-bold text-amber-500">{streak}</span>
-            {streak > 0 && (
-              <span className="text-xs px-2 py-1 bg-green-100 text-green-700 rounded-md flex items-center font-medium">
-                +{Math.min(streak, 7)}
-              </span>
-            )}
-          </div>
-          <div className="mt-3 flex gap-1.5">
-            {[...Array(7)].map((_, index) => (
-              <div 
-                key={index} 
-                className={`h-2 w-full rounded-full ${index < Math.min(streak, 7) ? 'bg-amber-400' : 'bg-gray-200'}`}
+            
+            <div>
+              <div className="flex justify-between items-center mb-1">
+                <div>
+                  <span className="inline-block w-2 h-2 rounded-full bg-purple-400 mr-1"></span>
+                  <span className="text-xs">Theory</span>
+                </div>
+                <span className="text-xs text-gray-500">{theoryProblems}</span>
+              </div>
+              <Progress 
+                value={(theoryProblems / (Math.max(1, totalProblems * 0.2))) * 100} 
+                className="h-1.5 bg-gray-100" 
+                indicatorClassName="bg-purple-400" 
               />
-            ))}
+            </div>
           </div>
-          <p className="text-xs text-gray-500 mt-3">
-            {streak > 0
-              ? "Keep it going! Solve a problem today to maintain your streak."
-              : "Start solving problems to build your streak!"}
-          </p>
         </CardContent>
       </Card>
       

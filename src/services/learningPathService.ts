@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 
 export type LearningPath = {
@@ -204,7 +203,8 @@ export const calculateLearningPathProgress = async (userId: string): Promise<Arr
 export const calculateProgressByDifficulty = async (userId: string): Promise<{
   easy: { total: number, completed: number },
   medium: { total: number, completed: number },
-  hard: { total: number, completed: number }
+  hard: { total: number, completed: number },
+  theory: { total: number, completed: number }
 }> => {
   const allQuestions = await supabase
     .from('questions')
@@ -221,7 +221,8 @@ export const calculateProgressByDifficulty = async (userId: string): Promise<{
   const result = {
     easy: { total: 0, completed: 0 },
     medium: { total: 0, completed: 0 },
-    hard: { total: 0, completed: 0 }
+    hard: { total: 0, completed: 0 },
+    theory: { total: 0, completed: 0 }
   };
   
   if (allQuestions.error || !allQuestions.data) {
@@ -247,6 +248,11 @@ export const calculateProgressByDifficulty = async (userId: string): Promise<{
       result.hard.total += 1;
       if (completedQuestionIds.has(question.id)) {
         result.hard.completed += 1;
+      }
+    } else if (difficulty === 'theory') {
+      result.theory.total += 1;
+      if (completedQuestionIds.has(question.id)) {
+        result.theory.completed += 1;
       }
     }
   }

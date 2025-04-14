@@ -74,24 +74,24 @@ const Index = () => {
               <Card>
                 <CardHeader className="pb-2">
                   <CardTitle className="text-sm text-gray-500 font-normal flex items-center">
-                    <Trophy size={16} className="mr-2 text-yodha-primary" />
-                    Current Streak
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-2xl font-bold">{userData.stats.streak} days</p>
-                </CardContent>
-              </Card>
-              
-              <Card>
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm text-gray-500 font-normal flex items-center">
                     <BarChart size={16} className="mr-2 text-yodha-primary" />
                     Your Rank
                   </CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="text-2xl font-bold">#{userData.stats.rank}</p>
+                </CardContent>
+              </Card>
+              
+              <Card>
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm text-gray-500 font-normal flex items-center">
+                    <Trophy size={16} className="mr-2 text-yodha-primary" />
+                    Achievements
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-2xl font-bold">{userData.stats.achievements || 0}</p>
                 </CardContent>
               </Card>
             </div>
