@@ -1,21 +1,21 @@
+
 import { useState, useEffect } from "react";
 import { useSearchParams, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import UserStats from "@/components/UserStats";
-import { Settings, Award, Code, Brain, Zap, Trophy, Linkedin, Github, MapPin } from "lucide-react";
+import { Settings, Award, Code, Brain, Zap, Trophy, Linkedin, Github, MapPin, Calendar, Link as LinkIcon, Briefcase, FileText } from "lucide-react";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import ProfileEditDialog from "@/components/ProfileEditDialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { toast } from "sonner";
+import { format, parseISO } from "date-fns";
 
 import {
   getProfileById, 
   getProfileByPRN, 
-  updateProfile, 
-  getUserSkills, 
-  syncUserSkills
+  updateProfile
 } from "@/services/profileService";
 
 import {
@@ -50,12 +50,6 @@ const ProfilePage = () => {
     }
   });
 
-  const { data: skills = [], refetch: refetchSkills } = useQuery({
-    queryKey: ['skills', profile?.id],
-    queryFn: () => getUserSkills(profile?.id || ''),
-    enabled: !!profile?.id
-  });
-
   const { data: badges = [], refetch: refetchBadges } = useQuery({
     queryKey: ['badges', profile?.id],
     queryFn: () => getUserBadges(profile?.id || ''),
@@ -80,6 +74,69 @@ const ProfilePage = () => {
     enabled: !!profile?.id
   });
 
+  // Mock data for the new sections (in a real app, these would come from the database)
+  const [certificates, setCertificates] = useState([
+    {
+      id: "1",
+      title: "AWS Solutions Architect Associate",
+      issuer: "Amazon Web Services",
+      issueDate: "2023-05-15",
+      expiryDate: "2026-05-15",
+      credentialUrl: "https://aws.amazon.com/certification/verify"
+    },
+    {
+      id: "2",
+      title: "Full Stack Web Development",
+      issuer: "Udemy",
+      issueDate: "2022-12-10",
+      credentialUrl: "https://udemy.com/certificate/123456"
+    }
+  ]);
+  
+  const [projects, setProjects] = useState([
+    {
+      id: "1",
+      title: "E-commerce Platform",
+      description: "A full-stack e-commerce platform with product catalog, shopping cart, and payment processing",
+      technologies: ["React", "Node.js", "MongoDB", "Stripe"],
+      startDate: "2023-01-01",
+      endDate: "2023-04-15",
+      projectUrl: "https://github.com/janedoe/ecommerce"
+    },
+    {
+      id: "2",
+      title: "Weather App",
+      description: "A weather forecast application that shows current and weekly forecasts for any location",
+      technologies: ["JavaScript", "HTML", "CSS", "OpenWeather API"],
+      startDate: "2022-09-01",
+      endDate: "2022-10-30",
+      projectUrl: "https://weather-app-demo.vercel.app"
+    }
+  ]);
+  
+  const [workExperience, setWorkExperience] = useState([
+    {
+      id: "1",
+      company: "TechCorp Inc",
+      position: "Software Engineer",
+      location: "San Francisco, CA",
+      startDate: "2022-01-15",
+      endDate: "2023-06-30",
+      description: "Developed and maintained web applications, collaborated with cross-functional teams, and implemented CI/CD pipelines",
+      technologies: ["React", "TypeScript", "Node.js", "AWS"]
+    },
+    {
+      id: "2",
+      company: "StartupX",
+      position: "Frontend Developer Intern",
+      location: "Remote",
+      startDate: "2021-05-01",
+      endDate: "2021-12-31",
+      description: "Designed and implemented user interfaces for web applications, fixed bugs, and optimized performance",
+      technologies: ["JavaScript", "React", "CSS", "Git"]
+    }
+  ]);
+
   useEffect(() => {
     if (profile?.id && learningPathProgressData?.length > 0) {
       const awardBadges = async () => {
@@ -94,13 +151,15 @@ const ProfilePage = () => {
   const handleSaveProfile = async (data: { 
     realName: string; 
     cgpa: number; 
-    skills: string[];
     bio: string | null;
     collegeName: string | null;
     location: string | null;
     profilePictureUrl: string | null;
     linkedinUrl: string | null;
     githubUrl: string | null;
+    certificates: any[];
+    projects: any[];
+    workExperience: any[];
   }) => {
     if (!profile?.id) {
       toast.error("Profile not found");
@@ -129,16 +188,13 @@ const ProfilePage = () => {
         return;
       }
 
-      const skillsUpdateSuccess = await syncUserSkills(profile.id, data.skills);
-      
-      if (!skillsUpdateSuccess) {
-        toast.error("Failed to update skills");
-        return;
-      }
+      // Update local state for the new sections
+      setCertificates(data.certificates);
+      setProjects(data.projects);
+      setWorkExperience(data.workExperience);
 
       setOpen(false);
       await refetchProfile();
-      await refetchSkills();
       toast.success("Profile updated successfully");
     } catch (error) {
       console.error("Error updating profile:", error);
@@ -197,6 +253,20 @@ const ProfilePage = () => {
 
   console.log("Profile ID:", profileId, "PRN:", prn, "Is Editable:", isEditable);
 
+  const formatDate = (dateString: string) => {
+    try {
+      // Check if the date has a valid format
+      if (dateString.includes('T')) {
+        return format(parseISO(dateString), 'MMM dd, yyyy');
+      }
+      // Handle simple date format
+      return format(new Date(dateString), 'MMM dd, yyyy');
+    } catch (error) {
+      console.error("Error formatting date:", error);
+      return dateString;
+    }
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
       <main className="flex-1 py-8">
@@ -237,13 +307,15 @@ const ProfilePage = () => {
                           userData={{ 
                             realName: profile.real_name, 
                             cgpa: profile.cgpa,
-                            skills: skills.map(s => s.skill_name),
                             bio: profile.bio,
                             collegeName: profile.college_name,
                             location: profile.location,
                             profilePictureUrl: profile.profile_picture_url,
                             linkedinUrl: profile.linkedin_url,
-                            githubUrl: profile.github_url
+                            githubUrl: profile.github_url,
+                            certificates,
+                            projects,
+                            workExperience
                           }} 
                           onSave={handleSaveProfile} 
                           onClose={() => setOpen(false)} 
@@ -302,23 +374,6 @@ const ProfilePage = () => {
               
               <Card className="mt-4">
                 <CardHeader className="pb-2">
-                  <CardTitle className="text-sm">Skills</CardTitle>
-                </CardHeader>
-                <CardContent className="flex flex-wrap gap-2">
-                  {skills.length > 0 ? (
-                    skills.map((skill) => (
-                      <Badge key={skill.id} variant="outline" className="border-gray-200">
-                        {skill.skill_name}
-                      </Badge>
-                    ))
-                  ) : (
-                    <p className="text-sm text-gray-500">No skills added yet</p>
-                  )}
-                </CardContent>
-              </Card>
-              
-              <Card className="mt-4">
-                <CardHeader className="pb-2">
                   <CardTitle className="text-sm">Badges</CardTitle>
                 </CardHeader>
                 <CardContent>
@@ -352,6 +407,158 @@ const ProfilePage = () => {
             
             <div className="lg:col-span-3">
               <UserStats {...statsData} />
+              
+              {/* Certificates Section */}
+              <Card className="mt-6">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-lg flex items-center gap-2">
+                    <Award className="h-5 w-5 text-amber-500" />
+                    Certificates
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {certificates.length > 0 ? (
+                    <div className="space-y-4">
+                      {certificates.map((cert) => (
+                        <div key={cert.id} className="bg-white border rounded-lg p-4 shadow-sm">
+                          <div className="flex justify-between">
+                            <div>
+                              <h3 className="font-medium text-base">{cert.title}</h3>
+                              <p className="text-gray-600 text-sm">{cert.issuer}</p>
+                              <div className="flex items-center mt-2 text-sm text-gray-500">
+                                <Calendar size={14} className="mr-1" />
+                                <span>
+                                  {formatDate(cert.issueDate)}
+                                  {cert.expiryDate && ` - ${formatDate(cert.expiryDate)}`}
+                                </span>
+                              </div>
+                            </div>
+                            {cert.credentialUrl && (
+                              <a 
+                                href={cert.credentialUrl} 
+                                target="_blank" 
+                                rel="noopener noreferrer" 
+                                className="text-blue-600 hover:text-blue-800 flex items-center"
+                              >
+                                <LinkIcon size={16} className="mr-1" />
+                                View
+                              </a>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-gray-500">No certificates added yet.</p>
+                  )}
+                </CardContent>
+              </Card>
+              
+              {/* Projects Section */}
+              <Card className="mt-6">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-lg flex items-center gap-2">
+                    <FileText className="h-5 w-5 text-green-500" />
+                    Projects
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {projects.length > 0 ? (
+                    <div className="space-y-4">
+                      {projects.map((project) => (
+                        <div key={project.id} className="bg-white border rounded-lg p-4 shadow-sm">
+                          <div className="flex justify-between items-start">
+                            <div>
+                              <h3 className="font-medium text-base">{project.title}</h3>
+                              <p className="text-gray-600 text-sm mt-1">{project.description}</p>
+                              
+                              <div className="flex items-center mt-2 text-sm text-gray-500">
+                                <Calendar size={14} className="mr-1" />
+                                <span>
+                                  {formatDate(project.startDate)}
+                                  {project.endDate ? ` - ${formatDate(project.endDate)}` : ' - Present'}
+                                </span>
+                              </div>
+                              
+                              {project.technologies && project.technologies.length > 0 && (
+                                <div className="flex flex-wrap gap-1 mt-2">
+                                  {project.technologies.map((tech, i) => (
+                                    <Badge key={i} variant="outline" className="bg-gray-100">
+                                      {tech}
+                                    </Badge>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
+                            {project.projectUrl && (
+                              <a 
+                                href={project.projectUrl} 
+                                target="_blank" 
+                                rel="noopener noreferrer" 
+                                className="text-blue-600 hover:text-blue-800 flex items-center"
+                              >
+                                <LinkIcon size={16} className="mr-1" />
+                                View Project
+                              </a>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-gray-500">No projects added yet.</p>
+                  )}
+                </CardContent>
+              </Card>
+              
+              {/* Work Experience Section */}
+              <Card className="mt-6 mb-8">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-lg flex items-center gap-2">
+                    <Briefcase className="h-5 w-5 text-purple-500" />
+                    Work Experience
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {workExperience.length > 0 ? (
+                    <div className="space-y-4">
+                      {workExperience.map((exp) => (
+                        <div key={exp.id} className="bg-white border rounded-lg p-4 shadow-sm">
+                          <div>
+                            <div className="flex justify-between">
+                              <h3 className="font-medium text-base">{exp.position}</h3>
+                              <div className="flex items-center text-sm text-gray-500">
+                                <Calendar size={14} className="mr-1" />
+                                <span>
+                                  {formatDate(exp.startDate)}
+                                  {exp.endDate ? ` - ${formatDate(exp.endDate)}` : ' - Present'}
+                                </span>
+                              </div>
+                            </div>
+                            <p className="text-gray-600 font-medium text-sm">{exp.company}</p>
+                            {exp.location && (
+                              <p className="text-gray-500 text-sm">{exp.location}</p>
+                            )}
+                            <p className="text-gray-600 text-sm mt-2">{exp.description}</p>
+                            
+                            {exp.technologies && exp.technologies.length > 0 && (
+                              <div className="flex flex-wrap gap-1 mt-3">
+                                {exp.technologies.map((tech, i) => (
+                                  <Badge key={i} variant="outline" className="bg-gray-100">
+                                    {tech}
+                                  </Badge>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-gray-500">No work experience added yet.</p>
+                  )}
+                </CardContent>
+              </Card>
             </div>
           </div>
         </div>

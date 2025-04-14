@@ -1,3 +1,4 @@
+
 export interface UserData {
   username: string;
   realName: string;
@@ -14,7 +15,10 @@ export interface UserData {
   };
   submissions: Submission[];
   recentActivity?: RecentActivity[];
-  badges?: UserBadge[]; 
+  badges?: UserBadge[];
+  certificates?: Certificate[];
+  projects?: Project[];
+  workExperience?: WorkExperience[];
 }
 
 export interface Submission {
@@ -52,6 +56,37 @@ export interface Badge {
   icon_name: string;
   background_color: string;
   text_color: string;
+}
+
+export interface Certificate {
+  id: string;
+  title: string;
+  issuer: string;
+  issueDate: string;
+  expiryDate?: string;
+  credentialUrl?: string;
+}
+
+export interface Project {
+  id: string;
+  title: string;
+  description: string;
+  technologies: string[];
+  startDate: string;
+  endDate?: string;
+  projectUrl?: string;
+  imageUrl?: string;
+}
+
+export interface WorkExperience {
+  id: string;
+  company: string;
+  position: string;
+  location?: string;
+  startDate: string;
+  endDate?: string;
+  description: string;
+  technologies?: string[];
 }
 
 export const userData: UserData = {
@@ -174,6 +209,65 @@ export const userData: UserData = {
         background_color: "bg-gray-200",
         text_color: "text-gray-800"
       }
+    }
+  ],
+  certificates: [
+    {
+      id: "1",
+      title: "AWS Solutions Architect Associate",
+      issuer: "Amazon Web Services",
+      issueDate: "2023-05-15",
+      expiryDate: "2026-05-15",
+      credentialUrl: "https://aws.amazon.com/certification/verify"
+    },
+    {
+      id: "2",
+      title: "Full Stack Web Development",
+      issuer: "Udemy",
+      issueDate: "2022-12-10",
+      credentialUrl: "https://udemy.com/certificate/123456"
+    }
+  ],
+  projects: [
+    {
+      id: "1",
+      title: "E-commerce Platform",
+      description: "A full-stack e-commerce platform with product catalog, shopping cart, and payment processing",
+      technologies: ["React", "Node.js", "MongoDB", "Stripe"],
+      startDate: "2023-01-01",
+      endDate: "2023-04-15",
+      projectUrl: "https://github.com/janedoe/ecommerce"
+    },
+    {
+      id: "2",
+      title: "Weather App",
+      description: "A weather forecast application that shows current and weekly forecasts for any location",
+      technologies: ["JavaScript", "HTML", "CSS", "OpenWeather API"],
+      startDate: "2022-09-01",
+      endDate: "2022-10-30",
+      projectUrl: "https://weather-app-demo.vercel.app"
+    }
+  ],
+  workExperience: [
+    {
+      id: "1",
+      company: "TechCorp Inc",
+      position: "Software Engineer",
+      location: "San Francisco, CA",
+      startDate: "2022-01-15",
+      endDate: "2023-06-30",
+      description: "Developed and maintained web applications, collaborated with cross-functional teams, and implemented CI/CD pipelines",
+      technologies: ["React", "TypeScript", "Node.js", "AWS"]
+    },
+    {
+      id: "2",
+      company: "StartupX",
+      position: "Frontend Developer Intern",
+      location: "Remote",
+      startDate: "2021-05-01",
+      endDate: "2021-12-31",
+      description: "Designed and implemented user interfaces for web applications, fixed bugs, and optimized performance",
+      technologies: ["JavaScript", "React", "CSS", "Git"]
     }
   ]
 };
