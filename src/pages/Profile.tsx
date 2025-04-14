@@ -10,8 +10,7 @@ import ProfileEditDialog from "@/components/ProfileEditDialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { toast } from "sonner";
 
-// Import services
-import { 
+import {
   getProfileById, 
   getProfileByPRN, 
   updateProfile, 
@@ -36,7 +35,6 @@ const ProfilePage = () => {
   const [open, setOpen] = useState(false);
   const isEditable = !!profileId && !prn;
 
-  // Fetch profile data
   const { data: profile, isLoading: profileLoading, refetch: refetchProfile } = useQuery({
     queryKey: ['profile', profileId, prn],
     queryFn: async () => {
@@ -49,49 +47,36 @@ const ProfilePage = () => {
     }
   });
 
-  // Fetch skills
   const { data: skills = [], refetch: refetchSkills } = useQuery({
     queryKey: ['skills', profile?.id],
     queryFn: () => getUserSkills(profile?.id || ''),
     enabled: !!profile?.id
   });
 
-  // Fetch badges
   const { data: badges = [] } = useQuery({
     queryKey: ['badges', profile?.id],
     queryFn: () => getUserBadges(profile?.id || ''),
     enabled: !!profile?.id
   });
 
-  // Fetch streak
   const { data: streak } = useQuery({
     queryKey: ['streak', profile?.id],
     queryFn: () => getUserStreak(profile?.id || ''),
     enabled: !!profile?.id
   });
 
-  // Fetch completed topics
   const { data: completedTopics = [] } = useQuery({
     queryKey: ['completedTopics', profile?.id],
     queryFn: () => getCompletedTopics(profile?.id || ''),
     enabled: !!profile?.id
   });
 
-  // Fetch learning path progress
-  const { data: learningPathProgress = [] } = useQuery({
-    queryKey: ['learningPathProgress', profile?.id],
-    queryFn: () => calculateLearningPathProgress(profile?.id || ''),
-    enabled: !!profile?.id
-  });
-
-  // Fetch progress by difficulty
   const { data: difficultyProgress } = useQuery({
     queryKey: ['difficultyProgress', profile?.id],
     queryFn: () => calculateProgressByDifficulty(profile?.id || ''),
     enabled: !!profile?.id
   });
 
-  // Handle profile update
   const handleSaveProfile = async (data: { 
     realName: string; 
     cgpa: number; 
@@ -111,10 +96,9 @@ const ProfilePage = () => {
     try {
       console.log("Updating profile with data:", data);
       
-      // Update profile data with proper type conversion
       const updatedProfile = await updateProfile(profile.id, {
         real_name: data.realName,
-        cgpa: parseFloat(data.cgpa.toString()), // Ensure it's a number
+        cgpa: parseFloat(data.cgpa.toString()),
         bio: data.bio,
         college_name: data.collegeName,
         location: data.location,
@@ -131,7 +115,6 @@ const ProfilePage = () => {
         return;
       }
 
-      // Use the new syncUserSkills function to update skills
       const skillsUpdateSuccess = await syncUserSkills(profile.id, data.skills);
       
       if (!skillsUpdateSuccess) {
@@ -149,7 +132,6 @@ const ProfilePage = () => {
     }
   };
 
-  // If both profileId and prn are missing, show error
   if (!profileId && !prn) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
@@ -161,7 +143,6 @@ const ProfilePage = () => {
     );
   }
 
-  // Show loading state
   if (profileLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
@@ -172,7 +153,6 @@ const ProfilePage = () => {
     );
   }
 
-  // Show error if profile not found
   if (!profile) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
@@ -184,7 +164,6 @@ const ProfilePage = () => {
     );
   }
 
-  // Calculate stats data for the UserStats component
   const statsData = {
     solved: difficultyProgress ? 
       difficultyProgress.easy.completed + 
@@ -197,7 +176,7 @@ const ProfilePage = () => {
     easyProblems: difficultyProgress?.easy.completed || 0,
     mediumProblems: difficultyProgress?.medium.completed || 0,
     hardProblems: difficultyProgress?.hard.completed || 0,
-    streak: streak?.current_streak || 0,
+    theoryProblems: difficultyProgress?.theory.completed || 0,
     learningPathProgress,
     completedTopics
   };
@@ -209,7 +188,6 @@ const ProfilePage = () => {
       <main className="flex-1 py-8">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-            {/* Sidebar */}
             <div className="lg:col-span-1">
               <Card>
                 <CardHeader className="pb-2">
@@ -333,7 +311,6 @@ const ProfilePage = () => {
                   <div className="grid grid-cols-3 gap-3">
                     {badges.length > 0 ? (
                       badges.map((badge) => {
-                        // Dynamically import the icon
                         const IconComponent = {
                           'Award': Award,
                           'Code': Code,
@@ -359,7 +336,6 @@ const ProfilePage = () => {
               </Card>
             </div>
             
-            {/* Main Content */}
             <div className="lg:col-span-3">
               <UserStats {...statsData} />
             </div>

@@ -1,4 +1,3 @@
-
 export interface UserData {
   username: string;
   realName: string;
@@ -10,10 +9,11 @@ export interface UserData {
     mediumProblems: number;
     hardProblems: number;
     streak: number;
-    rank?: number; // Added to fix error in Index.tsx
+    rank?: number; 
+    achievements?: number; // Added to fix error in Index.tsx
   };
   submissions: Submission[];
-  recentActivity?: RecentActivity[]; // Added to fix error in Index.tsx
+  recentActivity?: RecentActivity[]; 
 }
 
 export interface Submission {
@@ -27,7 +27,6 @@ export interface Submission {
   timestamp: string;
 }
 
-// Added to support recentActivity
 export interface RecentActivity {
   id: number;
   type: "solve" | "comment" | "submission";
@@ -48,7 +47,8 @@ export const userData: UserData = {
     mediumProblems: 12,
     hardProblems: 8,
     streak: 7,
-    rank: 42 // Added to fix error in Index.tsx
+    rank: 42,
+    achievements: 10 // Added to fix error in Index.tsx
   },
   submissions: [
     {
@@ -102,7 +102,6 @@ export const userData: UserData = {
       timestamp: "4 days ago"
     }
   ],
-  // Added sample recentActivity to fix error in Index.tsx
   recentActivity: [
     {
       id: 1,
