@@ -146,6 +146,76 @@ export const getCompletedTopics = async (userId: string): Promise<string[]> => {
   return completedTopicNames;
 };
 
+// Check if a learning path is completed by a user
+export const isLearningPathCompleted = async (userId: string, pathDifficulty: string): Promise<boolean> => {
+  // Get all learning paths with the specified difficulty
+  const { data: paths, error } = await supabase
+    .from('learning_paths')
+    .select('*')
+    .eq('difficulty', pathDifficulty);
+  
+  if (error || !paths || paths.length === 0) {
+    console.error('Error fetching learning paths:', error);
+    return false;
+  }
+  
+  const userProgress = await getUserProgress(userId);
+  const completedQuestionIds = new Set(
+    userProgress
+      .filter(progress => progress.is_completed)
+      .map(progress => progress.question_id)
+  );
+  
+  // For each learning path with the matching difficulty
+  for (const path of paths) {
+    // Get all topics for this learning path
+    const topics = await getTopicsByLearningPath(path.id);
+    
+    let allQuestionsCompleted = true;
+    
+    // For each topic, check if all questions are completed
+    for (const topic of topics) {
+      const questions = await getQuestionsByTopic(topic.id);
+      
+      // If no questions for a topic, move to the next topic
+      if (questions.length === 0) continue;
+      
+      // Check if all questions in this topic are completed
+      const topicCompleted = questions.every(question => 
+        completedQuestionIds.has(question.id)
+      );
+      
+      if (!topicCompleted) {
+        allQuestionsCompleted = false;
+        break;
+      }
+    }
+    
+    // If at least one path with this difficulty is fully completed
+    if (allQuestionsCompleted) {
+      return true;
+    }
+  }
+  
+  return false;
+};
+
+// Check if all learning paths are completed by a user
+export const areAllLearningPathsCompleted = async (userId: string): Promise<boolean> => {
+  const learningPaths = await getLearningPaths();
+  
+  if (learningPaths.length === 0) return false;
+  
+  for (const path of learningPaths) {
+    const isCompleted = await isLearningPathCompleted(userId, path.difficulty);
+    if (!isCompleted) {
+      return false;
+    }
+  }
+  
+  return true;
+};
+
 // Calculate learning path progress for a user
 export const calculateLearningPathProgress = async (userId: string): Promise<Array<{
   learningPath: LearningPath, 

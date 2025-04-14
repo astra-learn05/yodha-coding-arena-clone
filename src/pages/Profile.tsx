@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSearchParams, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -15,9 +15,7 @@ import {
   getProfileByPRN, 
   updateProfile, 
   getUserSkills, 
-  syncUserSkills, 
-  getUserBadges, 
-  getUserStreak
+  syncUserSkills
 } from "@/services/profileService";
 
 import {
@@ -25,6 +23,11 @@ import {
   calculateLearningPathProgress,
   calculateProgressByDifficulty
 } from "@/services/learningPathService";
+
+import {
+  getUserBadges,
+  checkAndAwardPathBadges
+} from "@/services/badgeService";
 
 const ProfilePage = () => {
   const [searchParams] = useSearchParams();
@@ -53,15 +56,9 @@ const ProfilePage = () => {
     enabled: !!profile?.id
   });
 
-  const { data: badges = [] } = useQuery({
+  const { data: badges = [], refetch: refetchBadges } = useQuery({
     queryKey: ['badges', profile?.id],
     queryFn: () => getUserBadges(profile?.id || ''),
-    enabled: !!profile?.id
-  });
-
-  const { data: streak } = useQuery({
-    queryKey: ['streak', profile?.id],
-    queryFn: () => getUserStreak(profile?.id || ''),
     enabled: !!profile?.id
   });
 
@@ -82,6 +79,17 @@ const ProfilePage = () => {
     queryFn: () => calculateProgressByDifficulty(profile?.id || ''),
     enabled: !!profile?.id
   });
+
+  useEffect(() => {
+    if (profile?.id && learningPathProgressData?.length > 0) {
+      const awardBadges = async () => {
+        await checkAndAwardPathBadges(profile.id);
+        refetchBadges();
+      };
+      
+      awardBadges();
+    }
+  }, [profile?.id, learningPathProgressData, refetchBadges]);
 
   const handleSaveProfile = async (data: { 
     realName: string; 

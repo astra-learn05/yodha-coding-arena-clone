@@ -1,4 +1,3 @@
-
 export interface UserData {
   username: string;
   realName: string;
@@ -14,7 +13,8 @@ export interface UserData {
     achievements?: number;
   };
   submissions: Submission[];
-  recentActivity?: RecentActivity[]; 
+  recentActivity?: RecentActivity[];
+  badges?: UserBadge[]; 
 }
 
 export interface Submission {
@@ -35,6 +35,23 @@ export interface RecentActivity {
   problemTitle: string;
   description: string;
   timestamp: string;
+}
+
+export interface UserBadge {
+  id: string;
+  user_id: string;
+  badge_id: string;
+  earned_at: string;
+  badge?: Badge;
+}
+
+export interface Badge {
+  id: string;
+  name: string;
+  description: string;
+  icon_name: string;
+  background_color: string;
+  text_color: string;
 }
 
 export const userData: UserData = {
@@ -127,6 +144,36 @@ export const userData: UserData = {
       problemTitle: "3Sum",
       description: "Submitted a Java solution",
       timestamp: "3 days ago"
+    }
+  ],
+  badges: [
+    {
+      id: "1",
+      user_id: "user123",
+      badge_id: "badge1",
+      earned_at: "2023-01-01T00:00:00Z",
+      badge: {
+        id: "badge1",
+        name: "Bronze Coder",
+        description: "Completed all beginner learning path questions",
+        icon_name: "Award",
+        background_color: "bg-amber-100",
+        text_color: "text-amber-800"
+      }
+    },
+    {
+      id: "2",
+      user_id: "user123",
+      badge_id: "badge2",
+      earned_at: "2023-02-01T00:00:00Z",
+      badge: {
+        id: "badge2",
+        name: "Silver Coder",
+        description: "Completed all intermediate learning path questions",
+        icon_name: "Trophy",
+        background_color: "bg-gray-200",
+        text_color: "text-gray-800"
+      }
     }
   ]
 };
