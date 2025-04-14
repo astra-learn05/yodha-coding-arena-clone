@@ -71,6 +71,12 @@ const ProfilePage = () => {
     enabled: !!profile?.id
   });
 
+  const { data: learningPathProgressData = [] } = useQuery({
+    queryKey: ['learningPathProgress', profile?.id],
+    queryFn: () => calculateLearningPathProgress(profile?.id || ''),
+    enabled: !!profile?.id
+  });
+
   const { data: difficultyProgress } = useQuery({
     queryKey: ['difficultyProgress', profile?.id],
     queryFn: () => calculateProgressByDifficulty(profile?.id || ''),
@@ -177,7 +183,7 @@ const ProfilePage = () => {
     mediumProblems: difficultyProgress?.medium.completed || 0,
     hardProblems: difficultyProgress?.hard.completed || 0,
     theoryProblems: difficultyProgress?.theory.completed || 0,
-    learningPathProgress,
+    learningPathProgress: learningPathProgressData,
     completedTopics
   };
 

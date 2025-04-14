@@ -1,3 +1,4 @@
+
 export interface UserData {
   username: string;
   realName: string;
@@ -10,7 +11,7 @@ export interface UserData {
     hardProblems: number;
     streak: number;
     rank?: number; 
-    achievements?: number; // Added to fix error in Index.tsx
+    achievements?: number;
   };
   submissions: Submission[];
   recentActivity?: RecentActivity[]; 
@@ -48,7 +49,7 @@ export const userData: UserData = {
     hardProblems: 8,
     streak: 7,
     rank: 42,
-    achievements: 10 // Added to fix error in Index.tsx
+    achievements: 10
   },
   submissions: [
     {
