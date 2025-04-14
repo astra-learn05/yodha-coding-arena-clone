@@ -10,6 +10,7 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Textarea } from "@/components/ui/textarea";
 
 const formSchema = z.object({
   realName: z.string().min(2, {
@@ -20,6 +21,12 @@ const formSchema = z.object({
     .min(0, { message: "CGPA must be greater than 0" })
     .max(10, { message: "CGPA must be less than or equal to 10" })
     .or(z.string().regex(/^\d*\.?\d*$/).transform(Number)),
+  bio: z.string().optional(),
+  collegeName: z.string().optional(),
+  location: z.string().optional(),
+  profilePictureUrl: z.string().url({ message: "Please enter a valid URL" }).optional().or(z.literal('')),
+  linkedinUrl: z.string().url({ message: "Please enter a valid URL" }).optional().or(z.literal('')),
+  githubUrl: z.string().url({ message: "Please enter a valid URL" }).optional().or(z.literal(''))
 });
 
 type ProfileEditDialogProps = {
@@ -27,8 +34,24 @@ type ProfileEditDialogProps = {
     realName: string;
     cgpa: number;
     skills: string[];
+    bio: string | null;
+    collegeName: string | null;
+    location: string | null;
+    profilePictureUrl: string | null;
+    linkedinUrl: string | null;
+    githubUrl: string | null;
   };
-  onSave: (data: { realName: string; cgpa: number; skills: string[] }) => void;
+  onSave: (data: {
+    realName: string;
+    cgpa: number;
+    skills: string[];
+    bio: string | null;
+    collegeName: string | null;
+    location: string | null;
+    profilePictureUrl: string | null;
+    linkedinUrl: string | null;
+    githubUrl: string | null;
+  }) => void;
   onClose: () => void;
 };
 
@@ -41,6 +64,12 @@ const ProfileEditDialog = ({ userData, onSave, onClose }: ProfileEditDialogProps
     defaultValues: {
       realName: userData.realName || "",
       cgpa: Number(userData.cgpa) || 0,
+      bio: userData.bio || "",
+      collegeName: userData.collegeName || "",
+      location: userData.location || "",
+      profilePictureUrl: userData.profilePictureUrl || "",
+      linkedinUrl: userData.linkedinUrl || "",
+      githubUrl: userData.githubUrl || ""
     },
   });
 
@@ -61,11 +90,17 @@ const ProfileEditDialog = ({ userData, onSave, onClose }: ProfileEditDialogProps
       realName: data.realName,
       cgpa: Number(data.cgpa),
       skills,
+      bio: data.bio || null,
+      collegeName: data.collegeName || null,
+      location: data.location || null,
+      profilePictureUrl: data.profilePictureUrl || null,
+      linkedinUrl: data.linkedinUrl || null,
+      githubUrl: data.githubUrl || null
     });
   };
 
   return (
-    <DialogContent className="sm:max-w-[425px]">
+    <DialogContent className="sm:max-w-[550px] max-h-[90vh] overflow-y-auto">
       <DialogHeader>
         <DialogTitle>Edit Profile</DialogTitle>
         <DialogDescription>
@@ -107,6 +142,98 @@ const ProfileEditDialog = ({ userData, onSave, onClose }: ProfileEditDialogProps
               </FormItem>
             )}
           />
+
+          <FormField
+            control={form.control}
+            name="profilePictureUrl"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Profile Picture URL</FormLabel>
+                <FormControl>
+                  <Input {...field} placeholder="https://example.com/profile.jpg" />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="bio"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Bio</FormLabel>
+                <FormControl>
+                  <Textarea 
+                    {...field} 
+                    placeholder="Tell us about yourself"
+                    className="min-h-[100px]"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <FormField
+              control={form.control}
+              name="collegeName"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>College Name</FormLabel>
+                  <FormControl>
+                    <Input {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="location"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Location</FormLabel>
+                  <FormControl>
+                    <Input {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <FormField
+              control={form.control}
+              name="linkedinUrl"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>LinkedIn URL</FormLabel>
+                  <FormControl>
+                    <Input {...field} placeholder="https://linkedin.com/in/username" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="githubUrl"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>GitHub URL</FormLabel>
+                  <FormControl>
+                    <Input {...field} placeholder="https://github.com/username" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
 
           <div className="space-y-2">
             <Label>Skills</Label>

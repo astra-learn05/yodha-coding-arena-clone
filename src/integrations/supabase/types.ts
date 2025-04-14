@@ -239,6 +239,7 @@ export type Database = {
           description: string
           difficulty: string
           id: string
+          sr: number | null
           title: string
           updated_at: string
         }
@@ -247,6 +248,7 @@ export type Database = {
           description: string
           difficulty: string
           id: string
+          sr?: number | null
           title: string
           updated_at?: string
         }
@@ -255,6 +257,7 @@ export type Database = {
           description?: string
           difficulty?: string
           id?: string
+          sr?: number | null
           title?: string
           updated_at?: string
         }
@@ -335,23 +338,41 @@ export type Database = {
       }
       profiles: {
         Row: {
+          bio: string | null
           cgpa: number | null
+          college_name: string | null
           created_at: string
+          github_url: string | null
           id: string
+          linkedin_url: string | null
+          location: string | null
+          profile_picture_url: string | null
           real_name: string
           updated_at: string
         }
         Insert: {
+          bio?: string | null
           cgpa?: number | null
+          college_name?: string | null
           created_at?: string
+          github_url?: string | null
           id: string
+          linkedin_url?: string | null
+          location?: string | null
+          profile_picture_url?: string | null
           real_name: string
           updated_at?: string
         }
         Update: {
+          bio?: string | null
           cgpa?: number | null
+          college_name?: string | null
           created_at?: string
+          github_url?: string | null
           id?: string
+          linkedin_url?: string | null
+          location?: string | null
+          profile_picture_url?: string | null
           real_name?: string
           updated_at?: string
         }
@@ -370,6 +391,7 @@ export type Database = {
           created_at: string
           difficulty: string
           id: string
+          practice_link: string | null
           solution_link: string
           title: string
           topic_id: string
@@ -379,6 +401,7 @@ export type Database = {
           created_at?: string
           difficulty: string
           id: string
+          practice_link?: string | null
           solution_link: string
           title: string
           topic_id: string
@@ -388,6 +411,7 @@ export type Database = {
           created_at?: string
           difficulty?: string
           id?: string
+          practice_link?: string | null
           solution_link?: string
           title?: string
           topic_id?: string

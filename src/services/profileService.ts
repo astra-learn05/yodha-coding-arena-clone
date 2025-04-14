@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 
 // Types for profile data
@@ -8,6 +7,12 @@ export type Profile = {
   cgpa: number;
   created_at: string;
   updated_at: string;
+  bio: string | null;
+  college_name: string | null;
+  location: string | null;
+  profile_picture_url: string | null;
+  linkedin_url: string | null;
+  github_url: string | null;
 };
 
 export type UserSkill = {

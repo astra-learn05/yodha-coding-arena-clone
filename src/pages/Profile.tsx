@@ -5,10 +5,10 @@ import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import UserStats from "@/components/UserStats";
-import { Settings, Award, Code, Brain, Zap, Trophy } from "lucide-react";
+import { Settings, Award, Code, Brain, Zap, Trophy, Linkedin, Github, MapPin } from "lucide-react";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import ProfileEditDialog from "@/components/ProfileEditDialog";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { toast } from "sonner";
 
 // Import services
@@ -36,7 +36,7 @@ const ProfilePage = () => {
   const prn = searchParams.get("prn") || params.prn;
   
   const [open, setOpen] = useState(false);
-  const isEditable = profileId && !prn;
+  const isEditable = !!profileId && !prn;
 
   // Fetch profile data
   const { data: profile, isLoading: profileLoading, refetch: refetchProfile } = useQuery({
@@ -97,7 +97,13 @@ const ProfilePage = () => {
   const handleSaveProfile = async (data: { 
     realName: string; 
     cgpa: number; 
-    skills: string[] 
+    skills: string[];
+    bio: string | null;
+    collegeName: string | null;
+    location: string | null;
+    profilePictureUrl: string | null;
+    linkedinUrl: string | null;
+    githubUrl: string | null;
   }) => {
     if (!profile?.id) {
       toast.error("Profile not found");
@@ -110,7 +116,13 @@ const ProfilePage = () => {
       // Update profile data with proper type conversion
       const updatedProfile = await updateProfile(profile.id, {
         real_name: data.realName,
-        cgpa: parseFloat(data.cgpa.toString()) // Ensure it's a number
+        cgpa: parseFloat(data.cgpa.toString()), // Ensure it's a number
+        bio: data.bio,
+        college_name: data.collegeName,
+        location: data.location,
+        profile_picture_url: data.profilePictureUrl,
+        linkedin_url: data.linkedinUrl,
+        github_url: data.githubUrl
       });
 
       console.log("Profile update response:", updatedProfile);
@@ -219,12 +231,24 @@ const ProfilePage = () => {
                 <CardHeader className="pb-2">
                   <div className="flex justify-between items-center">
                     <div className="flex items-center gap-3">
-                      <Avatar className="h-10 w-10">
-                        <AvatarFallback className="bg-primary/10 text-primary">
-                          {profile.real_name.charAt(0).toUpperCase()}
-                        </AvatarFallback>
+                      <Avatar className="h-16 w-16">
+                        {profile.profile_picture_url ? (
+                          <AvatarImage src={profile.profile_picture_url} alt={profile.real_name} />
+                        ) : (
+                          <AvatarFallback className="bg-primary/10 text-primary text-xl">
+                            {profile.real_name.charAt(0).toUpperCase()}
+                          </AvatarFallback>
+                        )}
                       </Avatar>
-                      <CardTitle>{profile.real_name}</CardTitle>
+                      <div>
+                        <CardTitle>{profile.real_name}</CardTitle>
+                        {profile.location && (
+                          <div className="flex items-center text-sm text-gray-500 mt-1">
+                            <MapPin size={14} className="mr-1" />
+                            {profile.location}
+                          </div>
+                        )}
+                      </div>
                     </div>
                     {isEditable && (
                       <Dialog open={open} onOpenChange={setOpen}>
@@ -237,7 +261,13 @@ const ProfilePage = () => {
                           userData={{ 
                             realName: profile.real_name, 
                             cgpa: profile.cgpa,
-                            skills: skills.map(s => s.skill_name)
+                            skills: skills.map(s => s.skill_name),
+                            bio: profile.bio,
+                            collegeName: profile.college_name,
+                            location: profile.location,
+                            profilePictureUrl: profile.profile_picture_url,
+                            linkedinUrl: profile.linkedin_url,
+                            githubUrl: profile.github_url
                           }} 
                           onSave={handleSaveProfile} 
                           onClose={() => setOpen(false)} 
@@ -248,10 +278,48 @@ const ProfilePage = () => {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
+                    {profile.bio && (
+                      <div className="text-sm text-gray-600 mt-2">
+                        {profile.bio}
+                      </div>
+                    )}
+                    
+                    {profile.college_name && (
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-gray-600">College</span>
+                        <span className="font-medium">{profile.college_name}</span>
+                      </div>
+                    )}
+                    
                     <div className="flex items-center justify-between">
                       <span className="text-sm text-gray-600">CGPA</span>
                       <span className="font-semibold">{profile.cgpa.toFixed(1)}</span>
                     </div>
+
+                    {(profile.linkedin_url || profile.github_url) && (
+                      <div className="flex gap-3 mt-4">
+                        {profile.linkedin_url && (
+                          <a 
+                            href={profile.linkedin_url} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="text-blue-600 hover:text-blue-800"
+                          >
+                            <Linkedin size={20} />
+                          </a>
+                        )}
+                        {profile.github_url && (
+                          <a 
+                            href={profile.github_url} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="text-gray-800 hover:text-gray-600"
+                          >
+                            <Github size={20} />
+                          </a>
+                        )}
+                      </div>
+                    )}
                   </div>
                 </CardContent>
               </Card>
