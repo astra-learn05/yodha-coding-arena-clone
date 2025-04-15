@@ -4,9 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import UserStats from "@/components/UserStats";
-import { Award, Code, Brain, Zap, Trophy, Linkedin, Github, MapPin, Calendar, Settings } from "lucide-react";
-import { Dialog, DialogTrigger } from "@/components/ui/dialog";
-import ProfileEditDialog from "@/components/ProfileEditDialog";
+import { Award, Code, Brain, Zap, Trophy, Linkedin, Github, MapPin, Calendar } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { toast } from "sonner";
 import { format, parseISO } from "date-fns";
@@ -127,116 +125,8 @@ const ProfilePage = () => {
     linkedinUrl: string | null;
     githubUrl: string | null;
     leetcodeUrl: string | null;
-    certificates: Certificate[];
-    projects: Project[];
-    workExperience: WorkExperience[];
   }) => {
-    if (!profile?.id) {
-      toast.error("Profile not found");
-      return;
-    }
-    
-    try {
-      console.log("Updating profile with data:", data);
-      
-      // Update basic profile information
-      const updatedProfile = await updateProfile(profile.id, {
-        real_name: data.realName,
-        cgpa: parseFloat(data.cgpa.toString()),
-        bio: data.bio,
-        college_name: data.collegeName,
-        location: data.location,
-        profile_picture_url: data.profilePictureUrl,
-        linkedin_url: data.linkedinUrl,
-        github_url: data.githubUrl,
-        leetcode_url: data.leetcodeUrl
-      });
-
-      console.log("Profile update response:", updatedProfile);
-
-      if (!updatedProfile) {
-        console.error("Profile update returned null or undefined");
-        toast.error("Failed to update profile");
-        return;
-      }
-
-      // Handle certificates
-      const existingCertificates = await getUserCertificates(profile.id);
-      
-      // Delete removed certificates
-      for (const existingCert of existingCertificates) {
-        if (!data.certificates.some(cert => cert.id === existingCert.id)) {
-          await deleteCertificate(existingCert.id);
-        }
-      }
-      
-      // Add or update certificates
-      for (const cert of data.certificates) {
-        if (cert.id.includes("new-")) {
-          // New certificate to add
-          const { id, ...certData } = cert;
-          await addCertificate(profile.id, certData);
-        } else if (existingCertificates.some(existing => existing.id === cert.id)) {
-          // Update existing certificate
-          await updateCertificate(cert.id, cert);
-        }
-      }
-      
-      // Handle projects
-      const existingProjects = await getUserProjects(profile.id);
-      
-      // Delete removed projects
-      for (const existingProj of existingProjects) {
-        if (!data.projects.some(proj => proj.id === existingProj.id)) {
-          await deleteProject(existingProj.id);
-        }
-      }
-      
-      // Add or update projects
-      for (const proj of data.projects) {
-        if (proj.id.includes("new-")) {
-          // New project to add
-          const { id, ...projData } = proj;
-          await addProject(profile.id, projData);
-        } else if (existingProjects.some(existing => existing.id === proj.id)) {
-          // Update existing project
-          await updateProject(proj.id, proj);
-        }
-      }
-      
-      // Handle work experience
-      const existingExperiences = await getUserWorkExperiences(profile.id);
-      
-      // Delete removed experiences
-      for (const existingExp of existingExperiences) {
-        if (!data.workExperience.some(exp => exp.id === existingExp.id)) {
-          await deleteWorkExperience(existingExp.id);
-        }
-      }
-      
-      // Add or update work experiences
-      for (const exp of data.workExperience) {
-        if (exp.id.includes("new-")) {
-          // New experience to add
-          const { id, ...expData } = exp;
-          await addWorkExperience(profile.id, expData);
-        } else if (existingExperiences.some(existing => existing.id === exp.id)) {
-          // Update existing experience
-          await updateWorkExperience(exp.id, exp);
-        }
-      }
-      
-      setOpen(false);
-      await refetchProfile();
-      await refetchCertificates();
-      await refetchProjects();
-      await refetchWorkExperience();
-      
-      toast.success("Profile updated successfully");
-    } catch (error) {
-      console.error("Error updating profile:", error);
-      toast.error("An error occurred while updating profile");
-    }
+    toast.error("Profile editing is currently disabled");
   };
 
   if (!profileId && !prn) {
@@ -319,33 +209,6 @@ const ProfilePage = () => {
                         )}
                       </div>
                     </div>
-                    {isEditable && (
-                      <Dialog open={open} onOpenChange={setOpen}>
-                        <DialogTrigger asChild>
-                          <button className="text-gray-500 hover:text-gray-700">
-                            <Settings size={18} />
-                          </button>
-                        </DialogTrigger>
-                        <ProfileEditDialog 
-                          userData={{ 
-                            realName: profile.real_name, 
-                            cgpa: profile.cgpa,
-                            bio: profile.bio,
-                            collegeName: profile.college_name,
-                            location: profile.location,
-                            profilePictureUrl: profile.profile_picture_url,
-                            linkedinUrl: profile.linkedin_url,
-                            githubUrl: profile.github_url,
-                            leetcodeUrl: profile.leetcode_url,
-                            certificates,
-                            projects,
-                            workExperience
-                          }} 
-                          onSave={handleSaveProfile} 
-                          onClose={() => setOpen(false)} 
-                        />
-                      </Dialog>
-                    )}
                   </div>
                 </CardHeader>
                 <CardContent>
