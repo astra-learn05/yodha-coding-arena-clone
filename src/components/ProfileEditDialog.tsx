@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -100,10 +99,8 @@ const ProfileEditDialog = ({ userData, onSave, onClose }: ProfileEditDialogProps
     }
     
     try {
-      // Since we're just adding to UI state here, we'll use a temporary ID
-      // The actual database operation happens when the form is submitted
       const certificate: Certificate = {
-        id: crypto.randomUUID(),
+        id: `new-${crypto.randomUUID()}`,
         user_id: '', // Will be filled in by the backend
         title: newCertificate.title,
         issuer: newCertificate.issuer,
@@ -130,9 +127,8 @@ const ProfileEditDialog = ({ userData, onSave, onClose }: ProfileEditDialogProps
     }
     
     try {
-      // Since we're just adding to UI state here, we'll use a temporary ID
       const project: Project = {
-        id: crypto.randomUUID(),
+        id: `new-${crypto.randomUUID()}`,
         user_id: '', // Will be filled in by the backend
         title: newProject.title,
         description: newProject.description,
@@ -161,9 +157,8 @@ const ProfileEditDialog = ({ userData, onSave, onClose }: ProfileEditDialogProps
     }
     
     try {
-      // Since we're just adding to UI state here, we'll use a temporary ID
       const experience: WorkExperience = {
-        id: crypto.randomUUID(),
+        id: `new-${crypto.randomUUID()}`,
         user_id: '', // Will be filled in by the backend
         company: newWorkExperience.company,
         position: newWorkExperience.position,

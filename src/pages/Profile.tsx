@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useSearchParams, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -21,7 +22,16 @@ import {
   getUserWorkExperiences,
   Certificate,
   Project,
-  WorkExperience
+  WorkExperience,
+  addCertificate,
+  updateCertificate,
+  deleteCertificate,
+  addProject,
+  updateProject,
+  deleteProject,
+  addWorkExperience,
+  updateWorkExperience,
+  deleteWorkExperience
 } from "@/services/profileService";
 
 import {
@@ -129,6 +139,7 @@ const ProfilePage = () => {
     try {
       console.log("Updating profile with data:", data);
       
+      // Update basic profile information
       const updatedProfile = await updateProfile(profile.id, {
         real_name: data.realName,
         cgpa: parseFloat(data.cgpa.toString()),
@@ -148,6 +159,72 @@ const ProfilePage = () => {
         return;
       }
 
+      // Handle certificates
+      const existingCertificates = await getUserCertificates(profile.id);
+      
+      // Delete removed certificates
+      for (const existingCert of existingCertificates) {
+        if (!data.certificates.some(cert => cert.id === existingCert.id)) {
+          await deleteCertificate(existingCert.id);
+        }
+      }
+      
+      // Add or update certificates
+      for (const cert of data.certificates) {
+        if (cert.id.includes("new-")) {
+          // New certificate to add
+          const { id, ...certData } = cert;
+          await addCertificate(profile.id, certData);
+        } else if (existingCertificates.some(existing => existing.id === cert.id)) {
+          // Update existing certificate
+          await updateCertificate(cert.id, cert);
+        }
+      }
+      
+      // Handle projects
+      const existingProjects = await getUserProjects(profile.id);
+      
+      // Delete removed projects
+      for (const existingProj of existingProjects) {
+        if (!data.projects.some(proj => proj.id === existingProj.id)) {
+          await deleteProject(existingProj.id);
+        }
+      }
+      
+      // Add or update projects
+      for (const proj of data.projects) {
+        if (proj.id.includes("new-")) {
+          // New project to add
+          const { id, ...projData } = proj;
+          await addProject(profile.id, projData);
+        } else if (existingProjects.some(existing => existing.id === proj.id)) {
+          // Update existing project
+          await updateProject(proj.id, proj);
+        }
+      }
+      
+      // Handle work experience
+      const existingExperiences = await getUserWorkExperiences(profile.id);
+      
+      // Delete removed experiences
+      for (const existingExp of existingExperiences) {
+        if (!data.workExperience.some(exp => exp.id === existingExp.id)) {
+          await deleteWorkExperience(existingExp.id);
+        }
+      }
+      
+      // Add or update work experiences
+      for (const exp of data.workExperience) {
+        if (exp.id.includes("new-")) {
+          // New experience to add
+          const { id, ...expData } = exp;
+          await addWorkExperience(profile.id, expData);
+        } else if (existingExperiences.some(existing => existing.id === exp.id)) {
+          // Update existing experience
+          await updateWorkExperience(exp.id, exp);
+        }
+      }
+      
       setOpen(false);
       await refetchProfile();
       await refetchCertificates();
