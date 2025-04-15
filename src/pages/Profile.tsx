@@ -1,10 +1,11 @@
+
 import { useState, useEffect } from "react";
 import { useSearchParams, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import UserStats from "@/components/UserStats";
-import { Settings, Award, Code, Brain, Zap, Trophy, Linkedin, Github, MapPin, Calendar, Link as LinkIcon, Briefcase, FileText } from "lucide-react";
+import { Award, Code, Brain, Zap, Trophy, Linkedin, Github, MapPin, Calendar } from "lucide-react";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import ProfileEditDialog from "@/components/ProfileEditDialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -290,18 +291,6 @@ const ProfilePage = () => {
 
   console.log("Profile ID:", profileId, "PRN:", prn, "Is Editable:", isEditable);
 
-  const formatDate = (dateString: string) => {
-    try {
-      if (dateString.includes('T')) {
-        return format(parseISO(dateString), 'MMM dd, yyyy');
-      }
-      return format(new Date(dateString), 'MMM dd, yyyy');
-    } catch (error) {
-      console.error("Error formatting date:", error);
-      return dateString;
-    }
-  };
-
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
       <main className="flex-1 py-8">
@@ -384,7 +373,7 @@ const ProfilePage = () => {
                       <div className="flex gap-3 mt-4">
                         {profile.linkedin_url && (
                           <a 
-                            href={profile.linkedin_url} 
+                            href={profile.linkedin_url.startsWith('http') ? profile.linkedin_url : `https://${profile.linkedin_url}`}
                             target="_blank" 
                             rel="noopener noreferrer"
                             className="text-blue-600 hover:text-blue-800"
@@ -394,7 +383,7 @@ const ProfilePage = () => {
                         )}
                         {profile.github_url && (
                           <a 
-                            href={profile.github_url} 
+                            href={profile.github_url.startsWith('http') ? profile.github_url : `https://${profile.github_url}`}
                             target="_blank" 
                             rel="noopener noreferrer"
                             className="text-gray-800 hover:text-gray-600"
@@ -404,7 +393,7 @@ const ProfilePage = () => {
                         )}
                         {profile.leetcode_url && (
                           <a 
-                            href={profile.leetcode_url} 
+                            href={profile.leetcode_url.startsWith('http') ? profile.leetcode_url : `https://${profile.leetcode_url}`}
                             target="_blank" 
                             rel="noopener noreferrer"
                             className="text-orange-500 hover:text-orange-600"
@@ -454,155 +443,6 @@ const ProfilePage = () => {
             
             <div className="lg:col-span-3">
               <UserStats {...statsData} />
-              
-              <Card className="mt-6">
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-lg flex items-center gap-2">
-                    <Award className="h-5 w-5 text-amber-500" />
-                    Certificates
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  {certificates.length > 0 ? (
-                    <div className="space-y-4">
-                      {certificates.map((cert) => (
-                        <div key={cert.id} className="bg-white border rounded-lg p-4 shadow-sm">
-                          <div className="flex justify-between">
-                            <div>
-                              <h3 className="font-medium text-base">{cert.title}</h3>
-                              <p className="text-gray-600 text-sm">{cert.issuer}</p>
-                              <div className="flex items-center mt-2 text-sm text-gray-500">
-                                <Calendar size={14} className="mr-1" />
-                                <span>
-                                  {formatDate(cert.issue_date)}
-                                  {cert.expiry_date && ` - ${formatDate(cert.expiry_date)}`}
-                                </span>
-                              </div>
-                            </div>
-                            {cert.credential_url && (
-                              <a 
-                                href={cert.credential_url} 
-                                target="_blank" 
-                                rel="noopener noreferrer" 
-                                className="text-blue-600 hover:text-blue-800 flex items-center"
-                              >
-                                <LinkIcon size={16} className="mr-1" />
-                                View
-                              </a>
-                            )}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <p className="text-gray-500">No certificates added yet.</p>
-                  )}
-                </CardContent>
-              </Card>
-              
-              <Card className="mt-6">
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-lg flex items-center gap-2">
-                    <FileText className="h-5 w-5 text-green-500" />
-                    Projects
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  {projects.length > 0 ? (
-                    <div className="space-y-4">
-                      {projects.map((project) => (
-                        <div key={project.id} className="bg-white border rounded-lg p-4 shadow-sm">
-                          <div className="flex justify-between items-start">
-                            <div>
-                              <h3 className="font-medium text-base">{project.title}</h3>
-                              <p className="text-gray-600 text-sm mt-1">{project.description}</p>
-                              
-                              <div className="flex items-center mt-2 text-sm text-gray-500">
-                                <Calendar size={14} className="mr-1" />
-                                <span>
-                                  {formatDate(project.start_date)}
-                                  {project.end_date ? ` - ${formatDate(project.end_date)}` : ' - Present'}
-                                </span>
-                              </div>
-                              
-                              {project.technologies && project.technologies.length > 0 && (
-                                <div className="flex flex-wrap gap-1 mt-2">
-                                  {project.technologies.map((tech, i) => (
-                                    <Badge key={i} variant="outline" className="bg-gray-100">
-                                      {tech}
-                                    </Badge>
-                                  ))}
-                                </div>
-                              )}
-                            </div>
-                            {project.project_url && (
-                              <a 
-                                href={project.project_url} 
-                                target="_blank" 
-                                rel="noopener noreferrer" 
-                                className="text-blue-600 hover:text-blue-800 flex items-center"
-                              >
-                                <LinkIcon size={16} className="mr-1" />
-                                View Project
-                              </a>
-                            )}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <p className="text-gray-500">No projects added yet.</p>
-                  )}
-                </CardContent>
-              </Card>
-              
-              <Card className="mt-6 mb-8">
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-lg flex items-center gap-2">
-                    <Briefcase className="h-5 w-5 text-purple-500" />
-                    Work Experience
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  {workExperience.length > 0 ? (
-                    <div className="space-y-4">
-                      {workExperience.map((exp) => (
-                        <div key={exp.id} className="bg-white border rounded-lg p-4 shadow-sm">
-                          <div>
-                            <div className="flex justify-between">
-                              <h3 className="font-medium text-base">{exp.position}</h3>
-                              <div className="flex items-center text-sm text-gray-500">
-                                <Calendar size={14} className="mr-1" />
-                                <span>
-                                  {formatDate(exp.start_date)}
-                                  {exp.end_date ? ` - ${formatDate(exp.end_date)}` : ' - Present'}
-                                </span>
-                              </div>
-                            </div>
-                            <p className="text-gray-600 font-medium text-sm">{exp.company}</p>
-                            {exp.location && (
-                              <p className="text-gray-500 text-sm">{exp.location}</p>
-                            )}
-                            <p className="text-gray-600 text-sm mt-2">{exp.description}</p>
-                            
-                            {exp.technologies && exp.technologies.length > 0 && (
-                              <div className="flex flex-wrap gap-1 mt-3">
-                                {exp.technologies.map((tech, i) => (
-                                  <Badge key={i} variant="outline" className="bg-gray-100">
-                                    {tech}
-                                  </Badge>
-                                ))}
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <p className="text-gray-500">No work experience added yet.</p>
-                  )}
-                </CardContent>
-              </Card>
             </div>
           </div>
         </div>
