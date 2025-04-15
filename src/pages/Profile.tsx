@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useSearchParams, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -15,7 +14,14 @@ import { format, parseISO } from "date-fns";
 import {
   getProfileById, 
   getProfileByPRN, 
-  updateProfile
+  updateProfile,
+  getUserBadges,
+  getUserCertificates,
+  getUserProjects,
+  getUserWorkExperiences,
+  Certificate,
+  Project,
+  WorkExperience
 } from "@/services/profileService";
 
 import {
@@ -25,7 +31,6 @@ import {
 } from "@/services/learningPathService";
 
 import {
-  getUserBadges,
   checkAndAwardPathBadges
 } from "@/services/badgeService";
 
@@ -74,68 +79,23 @@ const ProfilePage = () => {
     enabled: !!profile?.id
   });
 
-  // Mock data for the new sections (in a real app, these would come from the database)
-  const [certificates, setCertificates] = useState([
-    {
-      id: "1",
-      title: "AWS Solutions Architect Associate",
-      issuer: "Amazon Web Services",
-      issueDate: "2023-05-15",
-      expiryDate: "2026-05-15",
-      credentialUrl: "https://aws.amazon.com/certification/verify"
-    },
-    {
-      id: "2",
-      title: "Full Stack Web Development",
-      issuer: "Udemy",
-      issueDate: "2022-12-10",
-      credentialUrl: "https://udemy.com/certificate/123456"
-    }
-  ]);
-  
-  const [projects, setProjects] = useState([
-    {
-      id: "1",
-      title: "E-commerce Platform",
-      description: "A full-stack e-commerce platform with product catalog, shopping cart, and payment processing",
-      technologies: ["React", "Node.js", "MongoDB", "Stripe"],
-      startDate: "2023-01-01",
-      endDate: "2023-04-15",
-      projectUrl: "https://github.com/janedoe/ecommerce"
-    },
-    {
-      id: "2",
-      title: "Weather App",
-      description: "A weather forecast application that shows current and weekly forecasts for any location",
-      technologies: ["JavaScript", "HTML", "CSS", "OpenWeather API"],
-      startDate: "2022-09-01",
-      endDate: "2022-10-30",
-      projectUrl: "https://weather-app-demo.vercel.app"
-    }
-  ]);
-  
-  const [workExperience, setWorkExperience] = useState([
-    {
-      id: "1",
-      company: "TechCorp Inc",
-      position: "Software Engineer",
-      location: "San Francisco, CA",
-      startDate: "2022-01-15",
-      endDate: "2023-06-30",
-      description: "Developed and maintained web applications, collaborated with cross-functional teams, and implemented CI/CD pipelines",
-      technologies: ["React", "TypeScript", "Node.js", "AWS"]
-    },
-    {
-      id: "2",
-      company: "StartupX",
-      position: "Frontend Developer Intern",
-      location: "Remote",
-      startDate: "2021-05-01",
-      endDate: "2021-12-31",
-      description: "Designed and implemented user interfaces for web applications, fixed bugs, and optimized performance",
-      technologies: ["JavaScript", "React", "CSS", "Git"]
-    }
-  ]);
+  const { data: certificates = [], refetch: refetchCertificates } = useQuery({
+    queryKey: ['certificates', profile?.id],
+    queryFn: () => getUserCertificates(profile?.id || ''),
+    enabled: !!profile?.id
+  });
+
+  const { data: projects = [], refetch: refetchProjects } = useQuery({
+    queryKey: ['projects', profile?.id],
+    queryFn: () => getUserProjects(profile?.id || ''),
+    enabled: !!profile?.id
+  });
+
+  const { data: workExperience = [], refetch: refetchWorkExperience } = useQuery({
+    queryKey: ['workExperience', profile?.id],
+    queryFn: () => getUserWorkExperiences(profile?.id || ''),
+    enabled: !!profile?.id
+  });
 
   useEffect(() => {
     if (profile?.id && learningPathProgressData?.length > 0) {
@@ -157,9 +117,9 @@ const ProfilePage = () => {
     profilePictureUrl: string | null;
     linkedinUrl: string | null;
     githubUrl: string | null;
-    certificates: any[];
-    projects: any[];
-    workExperience: any[];
+    certificates: Certificate[];
+    projects: Project[];
+    workExperience: WorkExperience[];
   }) => {
     if (!profile?.id) {
       toast.error("Profile not found");
@@ -188,13 +148,12 @@ const ProfilePage = () => {
         return;
       }
 
-      // Update local state for the new sections
-      setCertificates(data.certificates);
-      setProjects(data.projects);
-      setWorkExperience(data.workExperience);
-
       setOpen(false);
       await refetchProfile();
+      await refetchCertificates();
+      await refetchProjects();
+      await refetchWorkExperience();
+      
       toast.success("Profile updated successfully");
     } catch (error) {
       console.error("Error updating profile:", error);
@@ -255,11 +214,9 @@ const ProfilePage = () => {
 
   const formatDate = (dateString: string) => {
     try {
-      // Check if the date has a valid format
       if (dateString.includes('T')) {
         return format(parseISO(dateString), 'MMM dd, yyyy');
       }
-      // Handle simple date format
       return format(new Date(dateString), 'MMM dd, yyyy');
     } catch (error) {
       console.error("Error formatting date:", error);
@@ -408,7 +365,6 @@ const ProfilePage = () => {
             <div className="lg:col-span-3">
               <UserStats {...statsData} />
               
-              {/* Certificates Section */}
               <Card className="mt-6">
                 <CardHeader className="pb-2">
                   <CardTitle className="text-lg flex items-center gap-2">
@@ -428,14 +384,14 @@ const ProfilePage = () => {
                               <div className="flex items-center mt-2 text-sm text-gray-500">
                                 <Calendar size={14} className="mr-1" />
                                 <span>
-                                  {formatDate(cert.issueDate)}
-                                  {cert.expiryDate && ` - ${formatDate(cert.expiryDate)}`}
+                                  {formatDate(cert.issue_date)}
+                                  {cert.expiry_date && ` - ${formatDate(cert.expiry_date)}`}
                                 </span>
                               </div>
                             </div>
-                            {cert.credentialUrl && (
+                            {cert.credential_url && (
                               <a 
-                                href={cert.credentialUrl} 
+                                href={cert.credential_url} 
                                 target="_blank" 
                                 rel="noopener noreferrer" 
                                 className="text-blue-600 hover:text-blue-800 flex items-center"
@@ -454,7 +410,6 @@ const ProfilePage = () => {
                 </CardContent>
               </Card>
               
-              {/* Projects Section */}
               <Card className="mt-6">
                 <CardHeader className="pb-2">
                   <CardTitle className="text-lg flex items-center gap-2">
@@ -475,8 +430,8 @@ const ProfilePage = () => {
                               <div className="flex items-center mt-2 text-sm text-gray-500">
                                 <Calendar size={14} className="mr-1" />
                                 <span>
-                                  {formatDate(project.startDate)}
-                                  {project.endDate ? ` - ${formatDate(project.endDate)}` : ' - Present'}
+                                  {formatDate(project.start_date)}
+                                  {project.end_date ? ` - ${formatDate(project.end_date)}` : ' - Present'}
                                 </span>
                               </div>
                               
@@ -490,9 +445,9 @@ const ProfilePage = () => {
                                 </div>
                               )}
                             </div>
-                            {project.projectUrl && (
+                            {project.project_url && (
                               <a 
-                                href={project.projectUrl} 
+                                href={project.project_url} 
                                 target="_blank" 
                                 rel="noopener noreferrer" 
                                 className="text-blue-600 hover:text-blue-800 flex items-center"
@@ -511,7 +466,6 @@ const ProfilePage = () => {
                 </CardContent>
               </Card>
               
-              {/* Work Experience Section */}
               <Card className="mt-6 mb-8">
                 <CardHeader className="pb-2">
                   <CardTitle className="text-lg flex items-center gap-2">
@@ -530,8 +484,8 @@ const ProfilePage = () => {
                               <div className="flex items-center text-sm text-gray-500">
                                 <Calendar size={14} className="mr-1" />
                                 <span>
-                                  {formatDate(exp.startDate)}
-                                  {exp.endDate ? ` - ${formatDate(exp.endDate)}` : ' - Present'}
+                                  {formatDate(exp.start_date)}
+                                  {exp.end_date ? ` - ${formatDate(exp.end_date)}` : ' - Present'}
                                 </span>
                               </div>
                             </div>

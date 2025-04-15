@@ -50,6 +50,46 @@ export type UserStreak = {
   updated_at: string;
 };
 
+export type Certificate = {
+  id: string;
+  user_id: string;
+  title: string;
+  issuer: string;
+  issue_date: string;
+  expiry_date?: string;
+  credential_url?: string;
+  created_at: string;
+  updated_at: string;
+};
+
+export type Project = {
+  id: string;
+  user_id: string;
+  title: string;
+  description: string;
+  technologies?: string[];
+  start_date: string;
+  end_date?: string;
+  project_url?: string;
+  image_url?: string;
+  created_at: string;
+  updated_at: string;
+};
+
+export type WorkExperience = {
+  id: string;
+  user_id: string;
+  company: string;
+  position: string;
+  location?: string;
+  start_date: string;
+  end_date?: string;
+  description: string;
+  technologies?: string[];
+  created_at: string;
+  updated_at: string;
+};
+
 // Fetch profile by PRN (using the users table to lookup)
 export const getProfileByPRN = async (prn: string): Promise<Profile | null> => {
   // First get the user ID from the users table using PRN
@@ -266,4 +306,205 @@ export const getUserStreak = async (userId: string): Promise<UserStreak | null> 
   }
 
   return data;
+};
+
+// Get certificates for a user
+export const getUserCertificates = async (userId: string): Promise<Certificate[]> => {
+  const { data, error } = await supabase
+    .from('certificates')
+    .select('*')
+    .eq('user_id', userId)
+    .order('issue_date', { ascending: false });
+
+  if (error) {
+    console.error('Error fetching user certificates:', error);
+    return [];
+  }
+
+  return data || [];
+};
+
+// Add a certificate
+export const addCertificate = async (userId: string, certificate: Omit<Certificate, 'id' | 'user_id' | 'created_at' | 'updated_at'>): Promise<Certificate | null> => {
+  const { data, error } = await supabase
+    .from('certificates')
+    .insert({ 
+      user_id: userId,
+      ...certificate
+    })
+    .select()
+    .single();
+
+  if (error) {
+    console.error('Error adding certificate:', error);
+    return null;
+  }
+
+  return data;
+};
+
+// Update a certificate
+export const updateCertificate = async (certificateId: string, certificate: Partial<Certificate>): Promise<Certificate | null> => {
+  const { data, error } = await supabase
+    .from('certificates')
+    .update(certificate)
+    .eq('id', certificateId)
+    .select()
+    .single();
+
+  if (error) {
+    console.error('Error updating certificate:', error);
+    return null;
+  }
+
+  return data;
+};
+
+// Delete a certificate
+export const deleteCertificate = async (certificateId: string): Promise<boolean> => {
+  const { error } = await supabase
+    .from('certificates')
+    .delete()
+    .eq('id', certificateId);
+
+  if (error) {
+    console.error('Error deleting certificate:', error);
+    return false;
+  }
+
+  return true;
+};
+
+// Get projects for a user
+export const getUserProjects = async (userId: string): Promise<Project[]> => {
+  const { data, error } = await supabase
+    .from('projects')
+    .select('*')
+    .eq('user_id', userId)
+    .order('start_date', { ascending: false });
+
+  if (error) {
+    console.error('Error fetching user projects:', error);
+    return [];
+  }
+
+  return data || [];
+};
+
+// Add a project
+export const addProject = async (userId: string, project: Omit<Project, 'id' | 'user_id' | 'created_at' | 'updated_at'>): Promise<Project | null> => {
+  const { data, error } = await supabase
+    .from('projects')
+    .insert({ 
+      user_id: userId,
+      ...project
+    })
+    .select()
+    .single();
+
+  if (error) {
+    console.error('Error adding project:', error);
+    return null;
+  }
+
+  return data;
+};
+
+// Update a project
+export const updateProject = async (projectId: string, project: Partial<Project>): Promise<Project | null> => {
+  const { data, error } = await supabase
+    .from('projects')
+    .update(project)
+    .eq('id', projectId)
+    .select()
+    .single();
+
+  if (error) {
+    console.error('Error updating project:', error);
+    return null;
+  }
+
+  return data;
+};
+
+// Delete a project
+export const deleteProject = async (projectId: string): Promise<boolean> => {
+  const { error } = await supabase
+    .from('projects')
+    .delete()
+    .eq('id', projectId);
+
+  if (error) {
+    console.error('Error deleting project:', error);
+    return false;
+  }
+
+  return true;
+};
+
+// Get work experiences for a user
+export const getUserWorkExperiences = async (userId: string): Promise<WorkExperience[]> => {
+  const { data, error } = await supabase
+    .from('work_experience')
+    .select('*')
+    .eq('user_id', userId)
+    .order('start_date', { ascending: false });
+
+  if (error) {
+    console.error('Error fetching user work experiences:', error);
+    return [];
+  }
+
+  return data || [];
+};
+
+// Add a work experience
+export const addWorkExperience = async (userId: string, workExperience: Omit<WorkExperience, 'id' | 'user_id' | 'created_at' | 'updated_at'>): Promise<WorkExperience | null> => {
+  const { data, error } = await supabase
+    .from('work_experience')
+    .insert({ 
+      user_id: userId,
+      ...workExperience
+    })
+    .select()
+    .single();
+
+  if (error) {
+    console.error('Error adding work experience:', error);
+    return null;
+  }
+
+  return data;
+};
+
+// Update a work experience
+export const updateWorkExperience = async (workExperienceId: string, workExperience: Partial<WorkExperience>): Promise<WorkExperience | null> => {
+  const { data, error } = await supabase
+    .from('work_experience')
+    .update(workExperience)
+    .eq('id', workExperienceId)
+    .select()
+    .single();
+
+  if (error) {
+    console.error('Error updating work experience:', error);
+    return null;
+  }
+
+  return data;
+};
+
+// Delete a work experience
+export const deleteWorkExperience = async (workExperienceId: string): Promise<boolean> => {
+  const { error } = await supabase
+    .from('work_experience')
+    .delete()
+    .eq('id', workExperienceId);
+
+  if (error) {
+    console.error('Error deleting work experience:', error);
+    return false;
+  }
+
+  return true;
 };

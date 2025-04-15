@@ -11,7 +11,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
 import { format } from "date-fns";
-import { Certificate, Project, WorkExperience } from "@/data/userData";
+import { Certificate, Project, WorkExperience } from "@/services/profileService";
+import { addCertificate, updateCertificate, deleteCertificate } from "@/services/profileService";
+import { addProject, updateProject, deleteProject } from "@/services/profileService";
+import { addWorkExperience, updateWorkExperience, deleteWorkExperience } from "@/services/profileService";
+import { toast } from "sonner";
 
 const formSchema = z.object({
   realName: z.string().min(2, {
@@ -40,9 +44,9 @@ type ProfileEditDialogProps = {
     profilePictureUrl: string | null;
     linkedinUrl: string | null;
     githubUrl: string | null;
-    certificates?: Certificate[];
-    projects?: Project[];
-    workExperience?: WorkExperience[];
+    certificates: Certificate[];
+    projects: Project[];
+    workExperience: WorkExperience[];
   };
   onSave: (data: {
     realName: string;
@@ -72,6 +76,8 @@ const ProfileEditDialog = ({ userData, onSave, onClose }: ProfileEditDialogProps
   const [addingCertificate, setAddingCertificate] = useState(false);
   const [addingProject, setAddingProject] = useState(false);
   const [addingWorkExperience, setAddingWorkExperience] = useState(false);
+  
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -87,84 +93,133 @@ const ProfileEditDialog = ({ userData, onSave, onClose }: ProfileEditDialogProps
     },
   });
 
-  const handleAddCertificate = () => {
-    if (newCertificate.title && newCertificate.issuer && newCertificate.issueDate) {
+  const handleAddCertificate = async () => {
+    if (!newCertificate.title || !newCertificate.issuer || !newCertificate.issue_date) {
+      toast.error("Please fill in all required certificate fields");
+      return;
+    }
+    
+    try {
+      // Since we're just adding to UI state here, we'll use a temporary ID
+      // The actual database operation happens when the form is submitted
       const certificate: Certificate = {
         id: crypto.randomUUID(),
+        user_id: '', // Will be filled in by the backend
         title: newCertificate.title,
         issuer: newCertificate.issuer,
-        issueDate: newCertificate.issueDate,
-        expiryDate: newCertificate.expiryDate,
-        credentialUrl: newCertificate.credentialUrl
+        issue_date: newCertificate.issue_date,
+        expiry_date: newCertificate.expiry_date,
+        credential_url: newCertificate.credential_url,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
       };
+      
       setCertificates([...certificates, certificate]);
       setNewCertificate({});
       setAddingCertificate(false);
+    } catch (error) {
+      console.error("Error adding certificate:", error);
+      toast.error("Failed to add certificate");
     }
   };
 
-  const handleAddProject = () => {
-    if (newProject.title && newProject.description && newProject.startDate) {
+  const handleAddProject = async () => {
+    if (!newProject.title || !newProject.description || !newProject.start_date) {
+      toast.error("Please fill in all required project fields");
+      return;
+    }
+    
+    try {
+      // Since we're just adding to UI state here, we'll use a temporary ID
       const project: Project = {
         id: crypto.randomUUID(),
+        user_id: '', // Will be filled in by the backend
         title: newProject.title,
         description: newProject.description,
         technologies: newProject.technologies || [],
-        startDate: newProject.startDate,
-        endDate: newProject.endDate,
-        projectUrl: newProject.projectUrl,
-        imageUrl: newProject.imageUrl
+        start_date: newProject.start_date,
+        end_date: newProject.end_date,
+        project_url: newProject.project_url,
+        image_url: newProject.image_url,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
       };
+      
       setProjects([...projects, project]);
       setNewProject({});
       setAddingProject(false);
+    } catch (error) {
+      console.error("Error adding project:", error);
+      toast.error("Failed to add project");
     }
   };
 
-  const handleAddWorkExperience = () => {
-    if (newWorkExperience.company && newWorkExperience.position && newWorkExperience.startDate) {
+  const handleAddWorkExperience = async () => {
+    if (!newWorkExperience.company || !newWorkExperience.position || !newWorkExperience.start_date || !newWorkExperience.description) {
+      toast.error("Please fill in all required work experience fields");
+      return;
+    }
+    
+    try {
+      // Since we're just adding to UI state here, we'll use a temporary ID
       const experience: WorkExperience = {
         id: crypto.randomUUID(),
+        user_id: '', // Will be filled in by the backend
         company: newWorkExperience.company,
         position: newWorkExperience.position,
         location: newWorkExperience.location,
-        startDate: newWorkExperience.startDate,
-        endDate: newWorkExperience.endDate,
+        start_date: newWorkExperience.start_date,
+        end_date: newWorkExperience.end_date,
         description: newWorkExperience.description || "",
-        technologies: newWorkExperience.technologies || []
+        technologies: newWorkExperience.technologies || [],
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
       };
+      
       setWorkExperience([...workExperience, experience]);
       setNewWorkExperience({});
       setAddingWorkExperience(false);
+    } catch (error) {
+      console.error("Error adding work experience:", error);
+      toast.error("Failed to add work experience");
     }
   };
 
-  const handleRemoveCertificate = (id: string) => {
+  const handleRemoveCertificate = async (id: string) => {
     setCertificates(certificates.filter(cert => cert.id !== id));
   };
 
-  const handleRemoveProject = (id: string) => {
+  const handleRemoveProject = async (id: string) => {
     setProjects(projects.filter(proj => proj.id !== id));
   };
 
-  const handleRemoveWorkExperience = (id: string) => {
+  const handleRemoveWorkExperience = async (id: string) => {
     setWorkExperience(workExperience.filter(exp => exp.id !== id));
   };
 
-  const onSubmit = (data: z.infer<typeof formSchema>) => {
-    onSave({
-      realName: data.realName,
-      cgpa: Number(data.cgpa),
-      bio: data.bio || null,
-      collegeName: data.collegeName || null,
-      location: data.location || null,
-      profilePictureUrl: data.profilePictureUrl || null,
-      linkedinUrl: data.linkedinUrl || null,
-      githubUrl: data.githubUrl || null,
-      certificates,
-      projects,
-      workExperience
-    });
+  const onSubmit = async (data: z.infer<typeof formSchema>) => {
+    setIsSubmitting(true);
+    
+    try {
+      await onSave({
+        realName: data.realName,
+        cgpa: Number(data.cgpa),
+        bio: data.bio || null,
+        collegeName: data.collegeName || null,
+        location: data.location || null,
+        profilePictureUrl: data.profilePictureUrl || null,
+        linkedinUrl: data.linkedinUrl || null,
+        githubUrl: data.githubUrl || null,
+        certificates,
+        projects,
+        workExperience
+      });
+    } catch (error) {
+      console.error("Error saving profile:", error);
+      toast.error("Failed to save profile");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -338,11 +393,14 @@ const ProfileEditDialog = ({ userData, onSave, onClose }: ProfileEditDialogProps
                         <p className="text-sm text-gray-600">{cert.issuer}</p>
                         <div className="flex items-center text-sm text-gray-500 mt-1">
                           <Calendar size={14} className="mr-1" />
-                          <span>{cert.issueDate}{cert.expiryDate ? ` - ${cert.expiryDate}` : ''}</span>
+                          <span>
+                            {cert.issue_date}
+                            {cert.expiry_date ? ` - ${cert.expiry_date}` : ''}
+                          </span>
                         </div>
-                        {cert.credentialUrl && (
+                        {cert.credential_url && (
                           <a 
-                            href={cert.credentialUrl} 
+                            href={cert.credential_url} 
                             target="_blank" 
                             rel="noopener noreferrer"
                             className="text-sm text-blue-600 flex items-center mt-1 hover:underline"
@@ -380,24 +438,24 @@ const ProfileEditDialog = ({ userData, onSave, onClose }: ProfileEditDialogProps
                     <Label>Issue Date</Label>
                     <Input 
                       type="date" 
-                      value={newCertificate.issueDate || ''} 
-                      onChange={(e) => setNewCertificate({...newCertificate, issueDate: e.target.value})}
+                      value={newCertificate.issue_date || ''} 
+                      onChange={(e) => setNewCertificate({...newCertificate, issue_date: e.target.value})}
                     />
                   </div>
                   <div>
                     <Label>Expiry Date (Optional)</Label>
                     <Input 
                       type="date" 
-                      value={newCertificate.expiryDate || ''} 
-                      onChange={(e) => setNewCertificate({...newCertificate, expiryDate: e.target.value})}
+                      value={newCertificate.expiry_date || ''} 
+                      onChange={(e) => setNewCertificate({...newCertificate, expiry_date: e.target.value})}
                     />
                   </div>
                 </div>
                 
                 <Label>Credential URL (Optional)</Label>
                 <Input 
-                  value={newCertificate.credentialUrl || ''} 
-                  onChange={(e) => setNewCertificate({...newCertificate, credentialUrl: e.target.value})}
+                  value={newCertificate.credential_url || ''} 
+                  onChange={(e) => setNewCertificate({...newCertificate, credential_url: e.target.value})}
                   placeholder="https://example.com/certificate/123"
                 />
                 
@@ -414,7 +472,7 @@ const ProfileEditDialog = ({ userData, onSave, onClose }: ProfileEditDialogProps
                     type="button" 
                     size="sm" 
                     onClick={handleAddCertificate}
-                    disabled={!newCertificate.title || !newCertificate.issuer || !newCertificate.issueDate}
+                    disabled={!newCertificate.title || !newCertificate.issuer || !newCertificate.issue_date}
                   >
                     Add Certificate
                   </Button>
@@ -458,7 +516,10 @@ const ProfileEditDialog = ({ userData, onSave, onClose }: ProfileEditDialogProps
                         <p className="text-sm text-gray-600 line-clamp-2">{project.description}</p>
                         <div className="flex items-center text-sm text-gray-500 mt-1">
                           <Calendar size={14} className="mr-1" />
-                          <span>{project.startDate}{project.endDate ? ` - ${project.endDate}` : ' - Present'}</span>
+                          <span>
+                            {project.start_date}
+                            {project.end_date ? ` - ${project.end_date}` : ' - Present'}
+                          </span>
                         </div>
                         {project.technologies && project.technologies.length > 0 && (
                           <div className="flex flex-wrap gap-1 mt-2">
@@ -469,9 +530,9 @@ const ProfileEditDialog = ({ userData, onSave, onClose }: ProfileEditDialogProps
                             ))}
                           </div>
                         )}
-                        {project.projectUrl && (
+                        {project.project_url && (
                           <a 
-                            href={project.projectUrl} 
+                            href={project.project_url} 
                             target="_blank" 
                             rel="noopener noreferrer"
                             className="text-sm text-blue-600 flex items-center mt-1 hover:underline"
@@ -520,31 +581,31 @@ const ProfileEditDialog = ({ userData, onSave, onClose }: ProfileEditDialogProps
                     <Label>Start Date</Label>
                     <Input 
                       type="date" 
-                      value={newProject.startDate || ''} 
-                      onChange={(e) => setNewProject({...newProject, startDate: e.target.value})}
+                      value={newProject.start_date || ''} 
+                      onChange={(e) => setNewProject({...newProject, start_date: e.target.value})}
                     />
                   </div>
                   <div>
                     <Label>End Date (Optional)</Label>
                     <Input 
                       type="date" 
-                      value={newProject.endDate || ''} 
-                      onChange={(e) => setNewProject({...newProject, endDate: e.target.value})}
+                      value={newProject.end_date || ''} 
+                      onChange={(e) => setNewProject({...newProject, end_date: e.target.value})}
                     />
                   </div>
                 </div>
                 
                 <Label>Project URL (Optional)</Label>
                 <Input 
-                  value={newProject.projectUrl || ''} 
-                  onChange={(e) => setNewProject({...newProject, projectUrl: e.target.value})}
+                  value={newProject.project_url || ''} 
+                  onChange={(e) => setNewProject({...newProject, project_url: e.target.value})}
                   placeholder="https://github.com/username/project"
                 />
                 
                 <Label>Project Image URL (Optional)</Label>
                 <Input 
-                  value={newProject.imageUrl || ''} 
-                  onChange={(e) => setNewProject({...newProject, imageUrl: e.target.value})}
+                  value={newProject.image_url || ''} 
+                  onChange={(e) => setNewProject({...newProject, image_url: e.target.value})}
                   placeholder="https://example.com/project-image.jpg"
                 />
                 
@@ -561,7 +622,7 @@ const ProfileEditDialog = ({ userData, onSave, onClose }: ProfileEditDialogProps
                     type="button" 
                     size="sm" 
                     onClick={handleAddProject}
-                    disabled={!newProject.title || !newProject.description || !newProject.startDate}
+                    disabled={!newProject.title || !newProject.description || !newProject.start_date}
                   >
                     Add Project
                   </Button>
@@ -608,7 +669,10 @@ const ProfileEditDialog = ({ userData, onSave, onClose }: ProfileEditDialogProps
                         )}
                         <div className="flex items-center text-sm text-gray-500 mt-1">
                           <Calendar size={14} className="mr-1" />
-                          <span>{exp.startDate}{exp.endDate ? ` - ${exp.endDate}` : ' - Present'}</span>
+                          <span>
+                            {exp.start_date}
+                            {exp.end_date ? ` - ${exp.end_date}` : ' - Present'}
+                          </span>
                         </div>
                         <p className="text-sm text-gray-600 mt-1 line-clamp-2">{exp.description}</p>
                         {exp.technologies && exp.technologies.length > 0 && (
@@ -657,16 +721,16 @@ const ProfileEditDialog = ({ userData, onSave, onClose }: ProfileEditDialogProps
                     <Label>Start Date</Label>
                     <Input 
                       type="date" 
-                      value={newWorkExperience.startDate || ''} 
-                      onChange={(e) => setNewWorkExperience({...newWorkExperience, startDate: e.target.value})}
+                      value={newWorkExperience.start_date || ''} 
+                      onChange={(e) => setNewWorkExperience({...newWorkExperience, start_date: e.target.value})}
                     />
                   </div>
                   <div>
                     <Label>End Date (Optional)</Label>
                     <Input 
                       type="date" 
-                      value={newWorkExperience.endDate || ''} 
-                      onChange={(e) => setNewWorkExperience({...newWorkExperience, endDate: e.target.value})}
+                      value={newWorkExperience.end_date || ''} 
+                      onChange={(e) => setNewWorkExperience({...newWorkExperience, end_date: e.target.value})}
                     />
                   </div>
                 </div>
@@ -702,7 +766,7 @@ const ProfileEditDialog = ({ userData, onSave, onClose }: ProfileEditDialogProps
                     type="button" 
                     size="sm" 
                     onClick={handleAddWorkExperience}
-                    disabled={!newWorkExperience.position || !newWorkExperience.company || !newWorkExperience.startDate}
+                    disabled={!newWorkExperience.position || !newWorkExperience.company || !newWorkExperience.start_date || !newWorkExperience.description}
                   >
                     Add Experience
                   </Button>
@@ -712,10 +776,20 @@ const ProfileEditDialog = ({ userData, onSave, onClose }: ProfileEditDialogProps
           </div>
 
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={onClose}>
+            <Button 
+              type="button" 
+              variant="outline" 
+              onClick={onClose}
+              disabled={isSubmitting}
+            >
               Cancel
             </Button>
-            <Button type="submit">Save changes</Button>
+            <Button 
+              type="submit"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? "Saving..." : "Save changes"}
+            </Button>
           </DialogFooter>
         </form>
       </Form>

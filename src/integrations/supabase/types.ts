@@ -39,6 +39,50 @@ export type Database = {
         }
         Relationships: []
       }
+      certificates: {
+        Row: {
+          created_at: string
+          credential_url: string | null
+          expiry_date: string | null
+          id: string
+          issue_date: string
+          issuer: string
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          credential_url?: string | null
+          expiry_date?: string | null
+          id?: string
+          issue_date: string
+          issuer: string
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          credential_url?: string | null
+          expiry_date?: string | null
+          id?: string
+          issue_date?: string
+          issuer?: string
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "certificates_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       code_templates: {
         Row: {
           created_at: string | null
@@ -212,6 +256,56 @@ export type Database = {
             columns: ["id"]
             isOneToOne: true
             referencedRelation: "users"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      projects: {
+        Row: {
+          created_at: string
+          description: string
+          end_date: string | null
+          id: string
+          image_url: string | null
+          project_url: string | null
+          start_date: string
+          technologies: string[] | null
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          description: string
+          end_date?: string | null
+          id?: string
+          image_url?: string | null
+          project_url?: string | null
+          start_date: string
+          technologies?: string[] | null
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          end_date?: string | null
+          id?: string
+          image_url?: string | null
+          project_url?: string | null
+          start_date?: string
+          technologies?: string[] | null
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "projects_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -578,6 +672,56 @@ export type Database = {
           username?: string
         }
         Relationships: []
+      }
+      work_experience: {
+        Row: {
+          company: string
+          created_at: string
+          description: string
+          end_date: string | null
+          id: string
+          location: string | null
+          position: string
+          start_date: string
+          technologies: string[] | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          company: string
+          created_at?: string
+          description: string
+          end_date?: string | null
+          id?: string
+          location?: string | null
+          position: string
+          start_date: string
+          technologies?: string[] | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          company?: string
+          created_at?: string
+          description?: string
+          end_date?: string | null
+          id?: string
+          location?: string | null
+          position?: string
+          start_date?: string
+          technologies?: string[] | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "work_experience_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
