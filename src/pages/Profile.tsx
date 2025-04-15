@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useSearchParams, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -127,6 +126,7 @@ const ProfilePage = () => {
     profilePictureUrl: string | null;
     linkedinUrl: string | null;
     githubUrl: string | null;
+    leetcodeUrl: string | null;
     certificates: Certificate[];
     projects: Project[];
     workExperience: WorkExperience[];
@@ -148,7 +148,8 @@ const ProfilePage = () => {
         location: data.location,
         profile_picture_url: data.profilePictureUrl,
         linkedin_url: data.linkedinUrl,
-        github_url: data.githubUrl
+        github_url: data.githubUrl,
+        leetcode_url: data.leetcodeUrl
       });
 
       console.log("Profile update response:", updatedProfile);
@@ -347,6 +348,7 @@ const ProfilePage = () => {
                             profilePictureUrl: profile.profile_picture_url,
                             linkedinUrl: profile.linkedin_url,
                             githubUrl: profile.github_url,
+                            leetcodeUrl: profile.leetcode_url,
                             certificates,
                             projects,
                             workExperience
@@ -378,7 +380,7 @@ const ProfilePage = () => {
                       <span className="font-semibold">{profile.cgpa.toFixed(1)}</span>
                     </div>
 
-                    {(profile.linkedin_url || profile.github_url) && (
+                    {(profile.linkedin_url || profile.github_url || profile.leetcode_url) && (
                       <div className="flex gap-3 mt-4">
                         {profile.linkedin_url && (
                           <a 
@@ -398,6 +400,17 @@ const ProfilePage = () => {
                             className="text-gray-800 hover:text-gray-600"
                           >
                             <Github size={20} />
+                          </a>
+                        )}
+                        {profile.leetcode_url && (
+                          <a 
+                            href={profile.leetcode_url} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="text-orange-500 hover:text-orange-600"
+                            title="LeetCode Profile"
+                          >
+                            <Code size={20} />
                           </a>
                         )}
                       </div>
