@@ -30,7 +30,8 @@ const formSchema = z.object({
   location: z.string().optional(),
   profilePictureUrl: z.string().url({ message: "Please enter a valid URL" }).optional().or(z.literal('')),
   linkedinUrl: z.string().url({ message: "Please enter a valid URL" }).optional().or(z.literal('')),
-  githubUrl: z.string().url({ message: "Please enter a valid URL" }).optional().or(z.literal(''))
+  githubUrl: z.string().url({ message: "Please enter a valid URL" }).optional().or(z.literal('')),
+  leetcodeUrl: z.string().url({ message: "Please enter a valid URL" }).optional().or(z.literal(''))
 });
 
 type ProfileEditDialogProps = {
@@ -43,6 +44,7 @@ type ProfileEditDialogProps = {
     profilePictureUrl: string | null;
     linkedinUrl: string | null;
     githubUrl: string | null;
+    leetcodeUrl: string | null;
     certificates: Certificate[];
     projects: Project[];
     workExperience: WorkExperience[];
@@ -56,6 +58,7 @@ type ProfileEditDialogProps = {
     profilePictureUrl: string | null;
     linkedinUrl: string | null;
     githubUrl: string | null;
+    leetcodeUrl: string | null;
     certificates: Certificate[];
     projects: Project[];
     workExperience: WorkExperience[];
@@ -88,7 +91,8 @@ const ProfileEditDialog = ({ userData, onSave, onClose }: ProfileEditDialogProps
       location: userData.location || "",
       profilePictureUrl: userData.profilePictureUrl || "",
       linkedinUrl: userData.linkedinUrl || "",
-      githubUrl: userData.githubUrl || ""
+      githubUrl: userData.githubUrl || "",
+      leetcodeUrl: userData.leetcodeUrl || ""
     },
   });
 
@@ -205,6 +209,7 @@ const ProfileEditDialog = ({ userData, onSave, onClose }: ProfileEditDialogProps
         profilePictureUrl: data.profilePictureUrl || null,
         linkedinUrl: data.linkedinUrl || null,
         githubUrl: data.githubUrl || null,
+        leetcodeUrl: data.leetcodeUrl || null,
         certificates,
         projects,
         workExperience
@@ -346,6 +351,20 @@ const ProfileEditDialog = ({ userData, onSave, onClose }: ProfileEditDialogProps
                   <FormLabel>GitHub URL</FormLabel>
                   <FormControl>
                     <Input {...field} placeholder="https://github.com/username" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="leetcodeUrl"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>LeetCode URL</FormLabel>
+                  <FormControl>
+                    <Input {...field} placeholder="https://leetcode.com/username" />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
