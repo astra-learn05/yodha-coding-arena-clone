@@ -1,11 +1,10 @@
-
 import { useState, useEffect } from "react";
 import { useSearchParams, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import UserStats from "@/components/UserStats";
-import { Award, Code, Brain, Zap, Trophy, Linkedin, Github, MapPin, Calendar } from "lucide-react";
+import { Award, Code, Brain, Zap, Trophy, Linkedin, Github, MapPin, Calendar, Settings } from "lucide-react";
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import ProfileEditDialog from "@/components/ProfileEditDialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
