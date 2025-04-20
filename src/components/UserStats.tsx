@@ -34,13 +34,18 @@ const UserStats = ({
   const solvedPercentage = Math.round((solved / totalProblems) * 100) || 0;
   
   const calculatePercentage = (completed: number, total: number) => {
-    return total > 0 ? Math.round((completed / (total)) * 100) : 0;
+    return total > 0 ? Math.round((completed / total) * 100) : 0;
   };
 
-  const easyPercentage = calculatePercentage(easyProblems, totalProblems * 0.4);
-  const mediumPercentage = calculatePercentage(mediumProblems, totalProblems * 0.4);
-  const hardPercentage = calculatePercentage(hardProblems, totalProblems * 0.2);
-  const theoryPercentage = calculatePercentage(theoryProblems, totalProblems * 0.2);
+  const easyTotal = Math.round(totalProblems * 0.4);
+  const mediumTotal = Math.round(totalProblems * 0.4);
+  const hardTotal = Math.round(totalProblems * 0.2);
+  const theoryTotal = totalProblems - (easyTotal + mediumTotal + hardTotal);
+
+  const easyPercentage = calculatePercentage(easyProblems, easyTotal);
+  const mediumPercentage = calculatePercentage(mediumProblems, mediumTotal);
+  const hardPercentage = calculatePercentage(hardProblems, hardTotal);
+  const theoryPercentage = calculatePercentage(theoryProblems, theoryTotal);
   
   return (
     <div className="grid grid-cols-1 gap-4">
@@ -66,7 +71,7 @@ const UserStats = ({
                   <span className="text-xs">Easy</span>
                 </div>
                 <span className="text-xs text-gray-500">
-                  {easyProblems} of {Math.round(totalProblems * 0.4)} ({easyPercentage}%)
+                  {easyProblems} of {easyTotal} ({easyPercentage}%)
                 </span>
               </div>
               <Progress 
@@ -83,7 +88,7 @@ const UserStats = ({
                   <span className="text-xs">Medium</span>
                 </div>
                 <span className="text-xs text-gray-500">
-                  {mediumProblems} of {Math.round(totalProblems * 0.4)} ({mediumPercentage}%)
+                  {mediumProblems} of {mediumTotal} ({mediumPercentage}%)
                 </span>
               </div>
               <Progress 
@@ -100,7 +105,7 @@ const UserStats = ({
                   <span className="text-xs">Hard</span>
                 </div>
                 <span className="text-xs text-gray-500">
-                  {hardProblems} of {Math.round(totalProblems * 0.2)} ({hardPercentage}%)
+                  {hardProblems} of {hardTotal} ({hardPercentage}%)
                 </span>
               </div>
               <Progress 
@@ -117,7 +122,7 @@ const UserStats = ({
                   <span className="text-xs">Theory</span>
                 </div>
                 <span className="text-xs text-gray-500">
-                  {theoryProblems} of {Math.round(totalProblems * 0.2)} ({theoryPercentage}%)
+                  {theoryProblems} of {theoryTotal} ({theoryPercentage}%)
                 </span>
               </div>
               <Progress 
