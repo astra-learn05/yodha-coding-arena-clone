@@ -1,14 +1,12 @@
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Check, Star, BookOpen, ExternalLink } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { calculateProgressByDifficulty } from "@/services/learningPathService";
+import { useParams, useSearchParams } from "react-router-dom";
 
 interface UserStatsProps {
-  solved: number;
-  totalProblems: number;
-  easyProblems: number;
-  mediumProblems: number;
-  hardProblems: number;
-  theoryProblems: number;
   learningPathProgress?: Array<{
     learningPath: {
       id: string;
@@ -22,30 +20,37 @@ interface UserStatsProps {
 }
 
 const UserStats = ({ 
-  solved, 
-  totalProblems, 
-  easyProblems, 
-  mediumProblems, 
-  hardProblems,
-  theoryProblems,
   learningPathProgress = [],
   completedTopics = []
 }: UserStatsProps) => {
-  const solvedPercentage = Math.round((solved / totalProblems) * 100) || 0;
+  const [searchParams] = useSearchParams();
+  const params = useParams();
+  const profileId = params.id;
+  const prn = searchParams.get("prn") || params.prn;
+
+  const { data: progressByDifficulty } = useQuery({
+    queryKey: ['difficultyProgress', profileId, prn],
+    queryFn: () => calculateProgressByDifficulty(profileId || ''),
+    enabled: !!profileId
+  });
+  
+  const easyStats = progressByDifficulty?.easy || { total: 0, completed: 0 };
+  const mediumStats = progressByDifficulty?.medium || { total: 0, completed: 0 };
+  const hardStats = progressByDifficulty?.hard || { total: 0, completed: 0 };
+  const theoryStats = progressByDifficulty?.theory || { total: 0, completed: 0 };
+
+  const totalProblems = easyStats.total + mediumStats.total + hardStats.total + theoryStats.total;
+  const solved = easyStats.completed + mediumStats.completed + hardStats.completed + theoryStats.completed;
   
   const calculatePercentage = (completed: number, total: number) => {
     return total > 0 ? Math.round((completed / total) * 100) : 0;
   };
 
-  const easyTotal = Math.round(totalProblems * 0.4);
-  const mediumTotal = Math.round(totalProblems * 0.4);
-  const hardTotal = Math.round(totalProblems * 0.2);
-  const theoryTotal = totalProblems - (easyTotal + mediumTotal + hardTotal);
-
-  const easyPercentage = calculatePercentage(easyProblems, easyTotal);
-  const mediumPercentage = calculatePercentage(mediumProblems, mediumTotal);
-  const hardPercentage = calculatePercentage(hardProblems, hardTotal);
-  const theoryPercentage = calculatePercentage(theoryProblems, theoryTotal);
+  const solvedPercentage = calculatePercentage(solved, totalProblems);
+  const easyPercentage = calculatePercentage(easyStats.completed, easyStats.total);
+  const mediumPercentage = calculatePercentage(mediumStats.completed, mediumStats.total);
+  const hardPercentage = calculatePercentage(hardStats.completed, hardStats.total);
+  const theoryPercentage = calculatePercentage(theoryStats.completed, theoryStats.total);
   
   return (
     <div className="grid grid-cols-1 gap-4">
@@ -71,7 +76,7 @@ const UserStats = ({
                   <span className="text-xs">Easy</span>
                 </div>
                 <span className="text-xs text-gray-500">
-                  {easyProblems} of {easyTotal} ({easyPercentage}%)
+                  {easyStats.completed} of {easyStats.total} ({easyPercentage}%)
                 </span>
               </div>
               <Progress 
@@ -88,7 +93,7 @@ const UserStats = ({
                   <span className="text-xs">Medium</span>
                 </div>
                 <span className="text-xs text-gray-500">
-                  {mediumProblems} of {mediumTotal} ({mediumPercentage}%)
+                  {mediumStats.completed} of {mediumStats.total} ({mediumPercentage}%)
                 </span>
               </div>
               <Progress 
@@ -105,7 +110,7 @@ const UserStats = ({
                   <span className="text-xs">Hard</span>
                 </div>
                 <span className="text-xs text-gray-500">
-                  {hardProblems} of {hardTotal} ({hardPercentage}%)
+                  {hardStats.completed} of {hardStats.total} ({hardPercentage}%)
                 </span>
               </div>
               <Progress 
@@ -122,7 +127,7 @@ const UserStats = ({
                   <span className="text-xs">Theory</span>
                 </div>
                 <span className="text-xs text-gray-500">
-                  {theoryProblems} of {theoryTotal} ({theoryPercentage}%)
+                  {theoryStats.completed} of {theoryStats.total} ({theoryPercentage}%)
                 </span>
               </div>
               <Progress 
