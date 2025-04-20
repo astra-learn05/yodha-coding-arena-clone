@@ -1,7 +1,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { Check, Star, BookOpen, ExternalLink, BookText } from "lucide-react";
+import { Check, Star, BookOpen, ExternalLink } from "lucide-react";
 
 interface UserStatsProps {
   solved: number;
@@ -34,6 +34,16 @@ const UserStats = ({
 }: UserStatsProps) => {
   const solvedPercentage = Math.round((solved / totalProblems) * 100) || 0;
   
+  // Calculate percentages for each difficulty
+  const calculatePercentage = (completed: number, total: number) => {
+    return total > 0 ? Math.round((completed / total) * 100) : 0;
+  };
+
+  const easyPercentage = calculatePercentage(easyProblems, totalProblems * 0.4);
+  const mediumPercentage = calculatePercentage(mediumProblems, totalProblems * 0.4);
+  const hardPercentage = calculatePercentage(hardProblems, totalProblems * 0.2);
+  const theoryPercentage = calculatePercentage(theoryProblems, totalProblems * 0.2);
+  
   return (
     <div className="grid grid-cols-1 gap-4">
       <Card>
@@ -57,10 +67,10 @@ const UserStats = ({
                   <span className="inline-block w-2 h-2 rounded-full bg-green-400 mr-1"></span>
                   <span className="text-xs">Easy</span>
                 </div>
-                <span className="text-xs text-gray-500">{easyProblems}</span>
+                <span className="text-xs text-gray-500">{easyProblems} ({easyPercentage}%)</span>
               </div>
               <Progress 
-                value={(easyProblems / (Math.max(1, totalProblems * 0.4))) * 100} 
+                value={easyPercentage} 
                 className="h-1.5 bg-gray-100" 
                 indicatorClassName="bg-green-400" 
               />
@@ -72,10 +82,10 @@ const UserStats = ({
                   <span className="inline-block w-2 h-2 rounded-full bg-yellow-400 mr-1"></span>
                   <span className="text-xs">Medium</span>
                 </div>
-                <span className="text-xs text-gray-500">{mediumProblems}</span>
+                <span className="text-xs text-gray-500">{mediumProblems} ({mediumPercentage}%)</span>
               </div>
               <Progress 
-                value={(mediumProblems / (Math.max(1, totalProblems * 0.4))) * 100} 
+                value={mediumPercentage} 
                 className="h-1.5 bg-gray-100" 
                 indicatorClassName="bg-yellow-400" 
               />
@@ -87,10 +97,10 @@ const UserStats = ({
                   <span className="inline-block w-2 h-2 rounded-full bg-red-400 mr-1"></span>
                   <span className="text-xs">Hard</span>
                 </div>
-                <span className="text-xs text-gray-500">{hardProblems}</span>
+                <span className="text-xs text-gray-500">{hardProblems} ({hardPercentage}%)</span>
               </div>
               <Progress 
-                value={(hardProblems / (Math.max(1, totalProblems * 0.2))) * 100} 
+                value={hardPercentage} 
                 className="h-1.5 bg-gray-100" 
                 indicatorClassName="bg-red-400" 
               />
@@ -102,10 +112,10 @@ const UserStats = ({
                   <span className="inline-block w-2 h-2 rounded-full bg-purple-400 mr-1"></span>
                   <span className="text-xs">Theory</span>
                 </div>
-                <span className="text-xs text-gray-500">{theoryProblems}</span>
+                <span className="text-xs text-gray-500">{theoryProblems} ({theoryPercentage}%)</span>
               </div>
               <Progress 
-                value={(theoryProblems / (Math.max(1, totalProblems * 0.2))) * 100} 
+                value={theoryPercentage} 
                 className="h-1.5 bg-gray-100" 
                 indicatorClassName="bg-purple-400" 
               />
