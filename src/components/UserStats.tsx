@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Check, Star, BookOpen, ExternalLink } from "lucide-react";
@@ -34,9 +33,8 @@ const UserStats = ({
 }: UserStatsProps) => {
   const solvedPercentage = Math.round((solved / totalProblems) * 100) || 0;
   
-  // Calculate percentages for each difficulty
   const calculatePercentage = (completed: number, total: number) => {
-    return total > 0 ? Math.round((completed / total) * 100) : 0;
+    return total > 0 ? Math.round((completed / (total)) * 100) : 0;
   };
 
   const easyPercentage = calculatePercentage(easyProblems, totalProblems * 0.4);
@@ -67,7 +65,9 @@ const UserStats = ({
                   <span className="inline-block w-2 h-2 rounded-full bg-green-400 mr-1"></span>
                   <span className="text-xs">Easy</span>
                 </div>
-                <span className="text-xs text-gray-500">{easyProblems} ({easyPercentage}%)</span>
+                <span className="text-xs text-gray-500">
+                  {easyProblems} of {Math.round(totalProblems * 0.4)} ({easyPercentage}%)
+                </span>
               </div>
               <Progress 
                 value={easyPercentage} 
@@ -82,7 +82,9 @@ const UserStats = ({
                   <span className="inline-block w-2 h-2 rounded-full bg-yellow-400 mr-1"></span>
                   <span className="text-xs">Medium</span>
                 </div>
-                <span className="text-xs text-gray-500">{mediumProblems} ({mediumPercentage}%)</span>
+                <span className="text-xs text-gray-500">
+                  {mediumProblems} of {Math.round(totalProblems * 0.4)} ({mediumPercentage}%)
+                </span>
               </div>
               <Progress 
                 value={mediumPercentage} 
@@ -97,7 +99,9 @@ const UserStats = ({
                   <span className="inline-block w-2 h-2 rounded-full bg-red-400 mr-1"></span>
                   <span className="text-xs">Hard</span>
                 </div>
-                <span className="text-xs text-gray-500">{hardProblems} ({hardPercentage}%)</span>
+                <span className="text-xs text-gray-500">
+                  {hardProblems} of {Math.round(totalProblems * 0.2)} ({hardPercentage}%)
+                </span>
               </div>
               <Progress 
                 value={hardPercentage} 
@@ -112,7 +116,9 @@ const UserStats = ({
                   <span className="inline-block w-2 h-2 rounded-full bg-purple-400 mr-1"></span>
                   <span className="text-xs">Theory</span>
                 </div>
-                <span className="text-xs text-gray-500">{theoryProblems} ({theoryPercentage}%)</span>
+                <span className="text-xs text-gray-500">
+                  {theoryProblems} of {Math.round(totalProblems * 0.2)} ({theoryPercentage}%)
+                </span>
               </div>
               <Progress 
                 value={theoryPercentage} 
@@ -124,7 +130,6 @@ const UserStats = ({
         </CardContent>
       </Card>
       
-      {/* Learning Path Progress */}
       {learningPathProgress.length > 0 && (
         <Card>
           <CardHeader className="pb-2">
