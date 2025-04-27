@@ -71,6 +71,39 @@ export type Database = {
         }
         Relationships: []
       }
+      blog_posts: {
+        Row: {
+          content: string
+          created_at: string
+          description: string
+          html_content: string | null
+          id: string
+          read_time: number
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          description: string
+          html_content?: string | null
+          id?: string
+          read_time: number
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          description?: string
+          html_content?: string | null
+          id?: string
+          read_time?: number
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       certificates: {
         Row: {
           created_at: string
@@ -144,6 +177,89 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      post_categories: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
+      post_category_relations: {
+        Row: {
+          category_id: string
+          post_id: string
+        }
+        Insert: {
+          category_id: string
+          post_id: string
+        }
+        Update: {
+          category_id?: string
+          post_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "post_category_relations_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "post_categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "post_category_relations_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "blog_posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      post_resources: {
+        Row: {
+          created_at: string
+          id: string
+          post_id: string | null
+          title: string
+          type: string
+          url: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          post_id?: string | null
+          title: string
+          type: string
+          url: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          post_id?: string | null
+          title?: string
+          type?: string
+          url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "post_resources_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "blog_posts"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       profiles: {
         Row: {
@@ -255,7 +371,7 @@ export type Database = {
           id: string
           practice_link: string | null
           questionid: string | null
-          solution_link: string
+          solution_link: string | null
           title: string
           topic_id: string
           updated_at: string
@@ -266,7 +382,7 @@ export type Database = {
           id: string
           practice_link?: string | null
           questionid?: string | null
-          solution_link: string
+          solution_link?: string | null
           title: string
           topic_id: string
           updated_at?: string
@@ -277,7 +393,7 @@ export type Database = {
           id?: string
           practice_link?: string | null
           questionid?: string | null
-          solution_link?: string
+          solution_link?: string | null
           title?: string
           topic_id?: string
           updated_at?: string
@@ -476,6 +592,7 @@ export type Database = {
         Row: {
           created_at: string
           email: string
+          grad_year: number | null
           id: string
           password: string
           prn: string
@@ -485,6 +602,7 @@ export type Database = {
         Insert: {
           created_at?: string
           email: string
+          grad_year?: number | null
           id?: string
           password: string
           prn: string
@@ -494,6 +612,7 @@ export type Database = {
         Update: {
           created_at?: string
           email?: string
+          grad_year?: number | null
           id?: string
           password?: string
           prn?: string

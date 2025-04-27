@@ -1,10 +1,9 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
-import { Check, Star, BookOpen, ExternalLink } from "lucide-react";
+import { Check, BookOpen, ExternalLink } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { calculateProgressByDifficulty } from "@/services/learningPathService";
 import { useParams, useSearchParams } from "react-router-dom";
+import CircularProgress from "./CircularProgress";
 
 interface UserStatsProps {
   learningPathProgress?: Array<{
@@ -62,80 +61,43 @@ const UserStats = ({
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="flex justify-between items-center mb-2">
+          <div className="flex justify-between items-center mb-6">
             <span className="text-2xl font-bold">{solved}</span>
             <span className="text-xs text-gray-500">of {totalProblems}</span>
           </div>
-          <Progress value={solvedPercentage} className="h-2 mb-4" />
           
-          <div className="space-y-3">
-            <div>
-              <div className="flex justify-between items-center mb-1">
-                <div>
-                  <span className="inline-block w-2 h-2 rounded-full bg-green-400 mr-1"></span>
-                  <span className="text-xs">Easy</span>
-                </div>
-                <span className="text-xs text-gray-500">
-                  {easyStats.completed} of {easyStats.total} ({easyPercentage}%)
-                </span>
-              </div>
-              <Progress 
-                value={easyPercentage} 
-                className="h-1.5 bg-gray-100" 
-                indicatorClassName="bg-green-400" 
-              />
-            </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <CircularProgress
+              value={easyPercentage}
+              label="Easy"
+              total={easyStats.total}
+              completed={easyStats.completed}
+              strokeColor="#00AF9B"
+            />
             
-            <div>
-              <div className="flex justify-between items-center mb-1">
-                <div>
-                  <span className="inline-block w-2 h-2 rounded-full bg-yellow-400 mr-1"></span>
-                  <span className="text-xs">Medium</span>
-                </div>
-                <span className="text-xs text-gray-500">
-                  {mediumStats.completed} of {mediumStats.total} ({mediumPercentage}%)
-                </span>
-              </div>
-              <Progress 
-                value={mediumPercentage} 
-                className="h-1.5 bg-gray-100" 
-                indicatorClassName="bg-yellow-400" 
-              />
-            </div>
+            <CircularProgress
+              value={mediumPercentage}
+              label="Medium"
+              total={mediumStats.total}
+              completed={mediumStats.completed}
+              strokeColor="#FFC01E"
+            />
             
-            <div>
-              <div className="flex justify-between items-center mb-1">
-                <div>
-                  <span className="inline-block w-2 h-2 rounded-full bg-red-400 mr-1"></span>
-                  <span className="text-xs">Hard</span>
-                </div>
-                <span className="text-xs text-gray-500">
-                  {hardStats.completed} of {hardStats.total} ({hardPercentage}%)
-                </span>
-              </div>
-              <Progress 
-                value={hardPercentage} 
-                className="h-1.5 bg-gray-100" 
-                indicatorClassName="bg-red-400" 
-              />
-            </div>
+            <CircularProgress
+              value={hardPercentage}
+              label="Hard"
+              total={hardStats.total}
+              completed={hardStats.completed}
+              strokeColor="#FF375F"
+            />
             
-            <div>
-              <div className="flex justify-between items-center mb-1">
-                <div>
-                  <span className="inline-block w-2 h-2 rounded-full bg-purple-400 mr-1"></span>
-                  <span className="text-xs">Theory</span>
-                </div>
-                <span className="text-xs text-gray-500">
-                  {theoryStats.completed} of {theoryStats.total} ({theoryPercentage}%)
-                </span>
-              </div>
-              <Progress 
-                value={theoryPercentage} 
-                className="h-1.5 bg-gray-100" 
-                indicatorClassName="bg-purple-400" 
-              />
-            </div>
+            <CircularProgress
+              value={theoryPercentage}
+              label="Theory"
+              total={theoryStats.total}
+              completed={theoryStats.completed}
+              strokeColor="#9b87f5"
+            />
           </div>
         </CardContent>
       </Card>
