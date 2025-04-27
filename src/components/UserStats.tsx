@@ -1,11 +1,10 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Check, BookOpen, ExternalLink, Zap } from "lucide-react";
+import { Progress } from "@/components/ui/progress";
+import { Check, Star, BookOpen, ExternalLink } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { calculateProgressByDifficulty } from "@/services/learningPathService";
 import { useParams, useSearchParams } from "react-router-dom";
-import CircularProgress from "./CircularProgress";
-import { Progress } from "@/components/ui/progress";
 
 interface UserStatsProps {
   learningPathProgress?: Array<{
@@ -54,92 +53,116 @@ const UserStats = ({
   const theoryPercentage = calculatePercentage(theoryStats.completed, theoryStats.total);
   
   return (
-    <div className="grid grid-cols-1 gap-6">
-      <Card className="overflow-hidden border-none shadow-md bg-gradient-to-br from-white to-gray-50">
-        <CardHeader className="pb-2 border-b bg-gray-50/50">
-          <CardTitle className="text-md font-medium flex items-center gap-2 text-gray-700">
-            <Zap size={18} className="text-yodha-primary" />
-            Problem Solving Progress
+    <div className="grid grid-cols-1 gap-4">
+      <Card>
+        <CardHeader className="pb-2">
+          <CardTitle className="text-sm text-gray-500 font-normal flex items-center gap-2">
+            <Check size={16} className="text-green-500" />
+            Solved Problems
           </CardTitle>
         </CardHeader>
-        <CardContent className="pt-6">
-          <div className="flex justify-between items-center mb-8">
-            <div>
-              <span className="text-3xl font-bold text-gray-800">{solved}</span>
-              <span className="text-gray-500 ml-2 text-sm">of {totalProblems} problems solved</span>
-            </div>
-            <div className="bg-gray-50 px-4 py-2 rounded-full">
-              <span className="text-xl font-semibold text-yodha-primary">{solvedPercentage}%</span>
-              <span className="text-xs text-gray-500 ml-1">completion</span>
-            </div>
+        <CardContent>
+          <div className="flex justify-between items-center mb-2">
+            <span className="text-2xl font-bold">{solved}</span>
+            <span className="text-xs text-gray-500">of {totalProblems}</span>
           </div>
+          <Progress value={solvedPercentage} className="h-2 mb-4" />
           
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-            <CircularProgress
-              value={easyPercentage}
-              label="Easy"
-              total={easyStats.total}
-              completed={easyStats.completed}
-              strokeColor="var(--difficulty-easy)"
-              className="hover:scale-105 transition-transform"
-            />
+          <div className="space-y-3">
+            <div>
+              <div className="flex justify-between items-center mb-1">
+                <div>
+                  <span className="inline-block w-2 h-2 rounded-full bg-green-400 mr-1"></span>
+                  <span className="text-xs">Easy</span>
+                </div>
+                <span className="text-xs text-gray-500">
+                  {easyStats.completed} of {easyStats.total} ({easyPercentage}%)
+                </span>
+              </div>
+              <Progress 
+                value={easyPercentage} 
+                className="h-1.5 bg-gray-100" 
+                indicatorClassName="bg-green-400" 
+              />
+            </div>
             
-            <CircularProgress
-              value={mediumPercentage}
-              label="Medium"
-              total={mediumStats.total}
-              completed={mediumStats.completed}
-              strokeColor="var(--difficulty-medium)"
-              className="hover:scale-105 transition-transform"
-            />
+            <div>
+              <div className="flex justify-between items-center mb-1">
+                <div>
+                  <span className="inline-block w-2 h-2 rounded-full bg-yellow-400 mr-1"></span>
+                  <span className="text-xs">Medium</span>
+                </div>
+                <span className="text-xs text-gray-500">
+                  {mediumStats.completed} of {mediumStats.total} ({mediumPercentage}%)
+                </span>
+              </div>
+              <Progress 
+                value={mediumPercentage} 
+                className="h-1.5 bg-gray-100" 
+                indicatorClassName="bg-yellow-400" 
+              />
+            </div>
             
-            <CircularProgress
-              value={hardPercentage}
-              label="Hard"
-              total={hardStats.total}
-              completed={hardStats.completed}
-              strokeColor="var(--difficulty-hard)"
-              className="hover:scale-105 transition-transform"
-            />
+            <div>
+              <div className="flex justify-between items-center mb-1">
+                <div>
+                  <span className="inline-block w-2 h-2 rounded-full bg-red-400 mr-1"></span>
+                  <span className="text-xs">Hard</span>
+                </div>
+                <span className="text-xs text-gray-500">
+                  {hardStats.completed} of {hardStats.total} ({hardPercentage}%)
+                </span>
+              </div>
+              <Progress 
+                value={hardPercentage} 
+                className="h-1.5 bg-gray-100" 
+                indicatorClassName="bg-red-400" 
+              />
+            </div>
             
-            <CircularProgress
-              value={theoryPercentage}
-              label="Theory"
-              total={theoryStats.total}
-              completed={theoryStats.completed}
-              strokeColor="#9b87f5"
-              className="hover:scale-105 transition-transform"
-            />
+            <div>
+              <div className="flex justify-between items-center mb-1">
+                <div>
+                  <span className="inline-block w-2 h-2 rounded-full bg-purple-400 mr-1"></span>
+                  <span className="text-xs">Theory</span>
+                </div>
+                <span className="text-xs text-gray-500">
+                  {theoryStats.completed} of {theoryStats.total} ({theoryPercentage}%)
+                </span>
+              </div>
+              <Progress 
+                value={theoryPercentage} 
+                className="h-1.5 bg-gray-100" 
+                indicatorClassName="bg-purple-400" 
+              />
+            </div>
           </div>
         </CardContent>
       </Card>
       
       {learningPathProgress.length > 0 && (
-        <Card className="overflow-hidden border-none shadow-md bg-gradient-to-br from-white to-gray-50">
-          <CardHeader className="pb-2 border-b bg-gray-50/50">
-            <CardTitle className="text-md font-medium flex items-center gap-2 text-gray-700">
-              <ExternalLink size={18} className="text-purple-500" />
+        <Card>
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm text-gray-500 font-normal flex items-center gap-2">
+              <ExternalLink size={16} className="text-purple-500" />
               Learning Paths
             </CardTitle>
           </CardHeader>
-          <CardContent className="pt-6">
-            <div className="space-y-6">
+          <CardContent>
+            <div className="space-y-4">
               {learningPathProgress.map((path) => (
-                <div key={path.learningPath.id} className="group">
-                  <div className="flex justify-between items-center mb-2">
-                    <div>
-                      <span className="text-sm font-semibold text-gray-700 group-hover:text-yodha-primary transition-colors">{path.learningPath.title}</span>
-                      <p className="text-xs text-gray-500 mt-0.5">{path.learningPath.description.slice(0, 60)}{path.learningPath.description.length > 60 ? '...' : ''}</p>
-                    </div>
-                    <span className="text-sm font-bold px-3 py-1.5 rounded-full bg-gray-50 text-gray-700">{path.progress}%</span>
+                <div key={path.learningPath.id}>
+                  <div className="flex justify-between items-center mb-1">
+                    <span className="text-sm font-medium">{path.learningPath.title}</span>
+                    <span className="text-xs text-gray-500">{path.progress}%</span>
                   </div>
                   <Progress 
                     value={path.progress} 
                     className="h-2 bg-gray-100" 
                     indicatorClassName={`
-                      ${path.learningPath.difficulty.toLowerCase() === 'easy' ? 'bg-difficulty-easy' : 
-                        path.learningPath.difficulty.toLowerCase() === 'medium' ? 'bg-difficulty-medium' : 
-                        'bg-difficulty-hard'}
+                      ${path.learningPath.difficulty.toLowerCase() === 'easy' ? 'bg-green-400' : 
+                        path.learningPath.difficulty.toLowerCase() === 'medium' ? 'bg-yellow-400' : 
+                        'bg-red-400'}
                     `} 
                   />
                 </div>
@@ -149,32 +172,29 @@ const UserStats = ({
         </Card>
       )}
       
-      <Card className="overflow-hidden border-none shadow-md bg-gradient-to-br from-white to-gray-50">
-        <CardHeader className="pb-2 border-b bg-gray-50/50">
-          <CardTitle className="text-md font-medium flex items-center gap-2 text-gray-700">
-            <BookOpen size={18} className="text-blue-500" />
-            Topics Mastered
+      <Card>
+        <CardHeader className="pb-2">
+          <CardTitle className="text-sm text-gray-500 font-normal flex items-center gap-2">
+            <BookOpen size={16} className="text-blue-500" />
+            Topics Covered
           </CardTitle>
         </CardHeader>
-        <CardContent className="pt-6">
+        <CardContent>
           {completedTopics.length > 0 ? (
             <div className="flex flex-wrap gap-2">
               {completedTopics.map((topic, index) => (
                 <span 
                   key={index} 
-                  className="text-xs px-3 py-1.5 bg-blue-50 text-blue-600 rounded-full hover:bg-blue-100 transition-colors cursor-default"
+                  className="text-xs px-2.5 py-1 bg-blue-50 text-blue-600 rounded-full"
                 >
                   {topic}
                 </span>
               ))}
             </div>
           ) : (
-            <div className="text-center py-8 bg-gray-50 rounded-lg">
-              <BookOpen size={24} className="text-gray-400 mx-auto mb-2" />
-              <p className="text-sm text-gray-500">
-                No topics completed yet. Complete all questions in a topic to see it here.
-              </p>
-            </div>
+            <p className="text-sm text-gray-500">
+              No topics completed yet. Complete all questions in a topic to see it here.
+            </p>
           )}
         </CardContent>
       </Card>
