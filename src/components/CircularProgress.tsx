@@ -25,36 +25,40 @@ const CircularProgress = ({
 
   return (
     <div className={cn("relative flex flex-col items-center justify-center", className)}>
-      <div className="relative">
+      <div className="relative group">
         <CircleDashed 
           size={100} 
-          className="text-gray-200 transform -rotate-90"
+          className="text-gray-200 transform -rotate-90" 
+          strokeWidth={1}
         />
         <svg
           className="absolute top-0 left-0 transform -rotate-90"
           width="100"
           height="100"
+          viewBox="0 0 100 100"
         >
           <circle
             stroke={strokeColor}
-            strokeWidth="2"
+            strokeWidth="3"
             fill="none"
             r={radius}
             cx="50"
             cy="50"
+            strokeLinecap="round"
             style={{
               strokeDasharray: circumference,
               strokeDashoffset: offset,
-              transition: "stroke-dashoffset 0.5s ease"
+              transition: "stroke-dashoffset 0.8s ease"
             }}
+            className="drop-shadow-md"
           />
         </svg>
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
-          <span className="text-lg font-semibold">{value}%</span>
+          <span className="text-lg font-bold text-gray-800 group-hover:scale-110 transition-transform">{value}%</span>
           <span className="text-xs text-gray-500">{completed}/{total}</span>
         </div>
       </div>
-      <span className="mt-2 text-sm font-medium">{label}</span>
+      <span className="mt-3 text-sm font-medium text-gray-700">{label}</span>
     </div>
   );
 };

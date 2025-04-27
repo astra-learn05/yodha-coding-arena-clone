@@ -1,5 +1,6 @@
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Check, BookOpen, ExternalLink } from "lucide-react";
+import { Check, BookOpen, ExternalLink, Zap } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { calculateProgressByDifficulty } from "@/services/learningPathService";
 import { useParams, useSearchParams } from "react-router-dom";
@@ -53,27 +54,34 @@ const UserStats = ({
   const theoryPercentage = calculatePercentage(theoryStats.completed, theoryStats.total);
   
   return (
-    <div className="grid grid-cols-1 gap-4">
-      <Card>
-        <CardHeader className="pb-2">
-          <CardTitle className="text-sm text-gray-500 font-normal flex items-center gap-2">
-            <Check size={16} className="text-green-500" />
-            Solved Problems
+    <div className="grid grid-cols-1 gap-6">
+      <Card className="overflow-hidden border-none shadow-md bg-gradient-to-br from-white to-gray-50">
+        <CardHeader className="pb-2 border-b bg-gray-50/50">
+          <CardTitle className="text-md font-medium flex items-center gap-2 text-gray-700">
+            <Zap size={18} className="text-yodha-primary" />
+            Problem Solving Progress
           </CardTitle>
         </CardHeader>
-        <CardContent>
-          <div className="flex justify-between items-center mb-6">
-            <span className="text-2xl font-bold">{solved}</span>
-            <span className="text-xs text-gray-500">of {totalProblems}</span>
+        <CardContent className="pt-6">
+          <div className="flex justify-between items-center mb-8">
+            <div>
+              <span className="text-3xl font-bold text-gray-800">{solved}</span>
+              <span className="text-gray-500 ml-2 text-sm">of {totalProblems} problems solved</span>
+            </div>
+            <div className="bg-gray-50 px-4 py-2 rounded-full">
+              <span className="text-xl font-semibold text-yodha-primary">{solvedPercentage}%</span>
+              <span className="text-xs text-gray-500 ml-1">completion</span>
+            </div>
           </div>
           
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             <CircularProgress
               value={easyPercentage}
               label="Easy"
               total={easyStats.total}
               completed={easyStats.completed}
-              strokeColor="#00AF9B"
+              strokeColor="var(--difficulty-easy)"
+              className="hover:scale-105 transition-transform"
             />
             
             <CircularProgress
@@ -81,7 +89,8 @@ const UserStats = ({
               label="Medium"
               total={mediumStats.total}
               completed={mediumStats.completed}
-              strokeColor="#FFC01E"
+              strokeColor="var(--difficulty-medium)"
+              className="hover:scale-105 transition-transform"
             />
             
             <CircularProgress
@@ -89,7 +98,8 @@ const UserStats = ({
               label="Hard"
               total={hardStats.total}
               completed={hardStats.completed}
-              strokeColor="#FF375F"
+              strokeColor="var(--difficulty-hard)"
+              className="hover:scale-105 transition-transform"
             />
             
             <CircularProgress
@@ -98,34 +108,38 @@ const UserStats = ({
               total={theoryStats.total}
               completed={theoryStats.completed}
               strokeColor="#9b87f5"
+              className="hover:scale-105 transition-transform"
             />
           </div>
         </CardContent>
       </Card>
       
       {learningPathProgress.length > 0 && (
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm text-gray-500 font-normal flex items-center gap-2">
-              <ExternalLink size={16} className="text-purple-500" />
+        <Card className="overflow-hidden border-none shadow-md bg-gradient-to-br from-white to-gray-50">
+          <CardHeader className="pb-2 border-b bg-gray-50/50">
+            <CardTitle className="text-md font-medium flex items-center gap-2 text-gray-700">
+              <ExternalLink size={18} className="text-purple-500" />
               Learning Paths
             </CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
+          <CardContent className="pt-6">
+            <div className="space-y-6">
               {learningPathProgress.map((path) => (
-                <div key={path.learningPath.id}>
-                  <div className="flex justify-between items-center mb-1">
-                    <span className="text-sm font-medium">{path.learningPath.title}</span>
-                    <span className="text-xs text-gray-500">{path.progress}%</span>
+                <div key={path.learningPath.id} className="group">
+                  <div className="flex justify-between items-center mb-2">
+                    <div>
+                      <span className="text-sm font-semibold text-gray-700 group-hover:text-yodha-primary transition-colors">{path.learningPath.title}</span>
+                      <p className="text-xs text-gray-500 mt-0.5">{path.learningPath.description.slice(0, 60)}{path.learningPath.description.length > 60 ? '...' : ''}</p>
+                    </div>
+                    <span className="text-sm font-bold px-3 py-1.5 rounded-full bg-gray-50 text-gray-700">{path.progress}%</span>
                   </div>
                   <Progress 
                     value={path.progress} 
                     className="h-2 bg-gray-100" 
                     indicatorClassName={`
-                      ${path.learningPath.difficulty.toLowerCase() === 'easy' ? 'bg-green-400' : 
-                        path.learningPath.difficulty.toLowerCase() === 'medium' ? 'bg-yellow-400' : 
-                        'bg-red-400'}
+                      ${path.learningPath.difficulty.toLowerCase() === 'easy' ? 'bg-difficulty-easy' : 
+                        path.learningPath.difficulty.toLowerCase() === 'medium' ? 'bg-difficulty-medium' : 
+                        'bg-difficulty-hard'}
                     `} 
                   />
                 </div>
@@ -135,29 +149,32 @@ const UserStats = ({
         </Card>
       )}
       
-      <Card>
-        <CardHeader className="pb-2">
-          <CardTitle className="text-sm text-gray-500 font-normal flex items-center gap-2">
-            <BookOpen size={16} className="text-blue-500" />
-            Topics Covered
+      <Card className="overflow-hidden border-none shadow-md bg-gradient-to-br from-white to-gray-50">
+        <CardHeader className="pb-2 border-b bg-gray-50/50">
+          <CardTitle className="text-md font-medium flex items-center gap-2 text-gray-700">
+            <BookOpen size={18} className="text-blue-500" />
+            Topics Mastered
           </CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="pt-6">
           {completedTopics.length > 0 ? (
             <div className="flex flex-wrap gap-2">
               {completedTopics.map((topic, index) => (
                 <span 
                   key={index} 
-                  className="text-xs px-2.5 py-1 bg-blue-50 text-blue-600 rounded-full"
+                  className="text-xs px-3 py-1.5 bg-blue-50 text-blue-600 rounded-full hover:bg-blue-100 transition-colors cursor-default"
                 >
                   {topic}
                 </span>
               ))}
             </div>
           ) : (
-            <p className="text-sm text-gray-500">
-              No topics completed yet. Complete all questions in a topic to see it here.
-            </p>
+            <div className="text-center py-8 bg-gray-50 rounded-lg">
+              <BookOpen size={24} className="text-gray-400 mx-auto mb-2" />
+              <p className="text-sm text-gray-500">
+                No topics completed yet. Complete all questions in a topic to see it here.
+              </p>
+            </div>
           )}
         </CardContent>
       </Card>
