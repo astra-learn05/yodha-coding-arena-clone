@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { calculateProgressByDifficulty } from "@/services/learningPathService";
 import { useParams, useSearchParams } from "react-router-dom";
 import CircularProgress from "./CircularProgress";
+import { Progress } from "@/components/ui/progress";
 
 interface UserStatsProps {
   learningPathProgress?: Array<{
