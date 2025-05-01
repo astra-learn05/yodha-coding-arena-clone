@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useSearchParams, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -189,30 +188,26 @@ const ProfilePage = () => {
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
             <div className="lg:col-span-1 space-y-6">
-              <Card className="overflow-hidden border-none shadow-lg hover:shadow-xl transition-all bg-gradient-to-br from-white to-gray-50">
+              <Card className="overflow-hidden border-none shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-white to-gray-50">
                 <CardHeader className="pb-2 bg-gradient-to-r from-blue-50 to-indigo-50 border-b">
                   <CardTitle className="text-lg font-bold text-blue-800">Profile</CardTitle>
                 </CardHeader>
-                <div className="relative">
-                  <div className="h-24 bg-gradient-to-r from-blue-400 to-indigo-500"></div>
-                  <div className="absolute -bottom-12 left-6">
+                <CardContent className="p-6">
+                  <div className="flex flex-col items-center space-y-5">
                     <Avatar className="h-24 w-24 border-4 border-white shadow-lg">
                       {profile.profile_picture_url ? (
                         <AvatarImage src={profile.profile_picture_url} alt={profile.real_name} className="object-cover" />
                       ) : (
-                        <AvatarFallback className="bg-gradient-to-br from-blue-500 to-indigo-600 text-white text-3xl">
+                        <AvatarFallback className="text-white text-3xl">
                           {profile.real_name.charAt(0).toUpperCase()}
                         </AvatarFallback>
                       )}
                     </Avatar>
-                  </div>
-                </div>
-                <CardContent className="pt-14 pb-5">
-                  <div className="space-y-5">
-                    <div>
+                    
+                    <div className="text-center space-y-2">
                       <h2 className="text-xl font-bold text-gray-800">{profile.real_name}</h2>
                       {profile.location && (
-                        <div className="flex items-center text-sm text-gray-500 mt-1">
+                        <div className="flex items-center justify-center text-sm text-gray-500">
                           <MapPin size={14} className="mr-1 text-indigo-500" />
                           <span>{profile.location}</span>
                         </div>
@@ -220,19 +215,19 @@ const ProfilePage = () => {
                     </div>
                     
                     {profile.bio && (
-                      <div className="py-3 px-4 bg-gray-50 rounded-lg border border-gray-100">
+                      <div className="py-3 px-4 bg-gray-50 rounded-lg border border-gray-100 w-full">
                         <p className="text-sm text-gray-700 italic">{profile.bio}</p>
                       </div>
                     )}
                     
-                    <div className="space-y-3 pt-2">
+                    <div className="space-y-3 pt-2 w-full">
                       {profile.college_name && (
-                        <div className="flex items-center justify-between">
+                        <div className="flex items-center justify-between bg-gradient-to-r from-blue-50 to-indigo-50 p-3 rounded-lg border border-blue-100">
                           <div className="flex items-center gap-2 text-gray-700">
-                            <School size={16} className="text-indigo-500" />
+                            <School size={18} className="text-indigo-600" />
                             <span className="text-sm font-medium">College</span>
                           </div>
-                          <span className="font-medium text-gray-800">{profile.college_name}</span>
+                          <span className="font-medium text-gray-800 text-right">{profile.college_name}</span>
                         </div>
                       )}
                       
@@ -246,13 +241,13 @@ const ProfilePage = () => {
                     </div>
 
                     {(profile.linkedin_url || profile.github_url || profile.leetcode_url) && (
-                      <div className="flex justify-center gap-5 mt-6 pt-5 border-t border-gray-100">
+                      <div className="flex justify-center gap-5 mt-4 pt-4 border-t border-gray-100 w-full">
                         {profile.linkedin_url && (
                           <a 
                             href={profile.linkedin_url.startsWith('http') ? profile.linkedin_url : `https://${profile.linkedin_url}`}
                             target="_blank" 
                             rel="noopener noreferrer"
-                            className="p-2 bg-blue-50 rounded-full text-blue-600 hover:bg-blue-100 hover:text-blue-700 transition-colors"
+                            className="p-2 bg-blue-50 rounded-full text-blue-600 hover:bg-blue-100 hover:text-blue-700 transition-colors transform hover:scale-110 duration-200"
                             aria-label="LinkedIn Profile"
                           >
                             <Linkedin size={18} />
@@ -263,7 +258,7 @@ const ProfilePage = () => {
                             href={profile.github_url.startsWith('http') ? profile.github_url : `https://${profile.github_url}`}
                             target="_blank" 
                             rel="noopener noreferrer"
-                            className="p-2 bg-gray-100 rounded-full text-gray-800 hover:bg-gray-200 hover:text-gray-900 transition-colors"
+                            className="p-2 bg-gray-100 rounded-full text-gray-800 hover:bg-gray-200 hover:text-gray-900 transition-colors transform hover:scale-110 duration-200"
                             aria-label="GitHub Profile"
                           >
                             <Github size={18} />
@@ -274,7 +269,7 @@ const ProfilePage = () => {
                             href={profile.leetcode_url.startsWith('http') ? profile.leetcode_url : `https://${profile.leetcode_url}`}
                             target="_blank" 
                             rel="noopener noreferrer"
-                            className="p-2 bg-orange-50 rounded-full text-orange-600 hover:bg-orange-100 hover:text-orange-700 transition-colors"
+                            className="p-2 bg-orange-50 rounded-full text-orange-600 hover:bg-orange-100 hover:text-orange-700 transition-colors transform hover:scale-110 duration-200"
                             aria-label="LeetCode Profile"
                           >
                             <Code size={18} />
@@ -286,7 +281,7 @@ const ProfilePage = () => {
                 </CardContent>
               </Card>
               
-              <Card className="overflow-hidden border-none shadow-lg hover:shadow-xl transition-all bg-gradient-to-br from-white to-gray-50">
+              <Card className="overflow-hidden border-none shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-white to-gray-50">
                 <CardHeader className="pb-2 bg-gradient-to-r from-purple-50 to-indigo-50 border-b">
                   <div className="flex items-center justify-between">
                     <CardTitle className="text-lg font-bold text-purple-800 flex items-center gap-2">
@@ -312,8 +307,8 @@ const ProfilePage = () => {
                         
                         return (
                           <div key={badge.id} className="flex flex-col items-center group">
-                            <div className={`h-16 w-16 rounded-full ${badge.badge?.background_color || 'bg-purple-100'} flex items-center justify-center ${badge.badge?.text_color || 'text-purple-700'} mb-2 shadow-md transform transition-transform group-hover:scale-110 group-hover:shadow-lg`}>
-                              <IconComponent size={24} />
+                            <div className={`h-16 w-16 rounded-full ${badge.badge?.background_color || 'bg-purple-100'} flex items-center justify-center ${badge.badge?.text_color || 'text-purple-700'} mb-2 shadow-md transform transition-transform group-hover:scale-110 group-hover:shadow-lg duration-200`}>
+                              <IconComponent size={24} className="animate-pulse" />
                             </div>
                             <span className="text-xs font-medium text-center text-gray-700">{badge.badge?.name || ''}</span>
                             <span className="text-[10px] text-gray-500 text-center hidden group-hover:block animate-fade-in mt-1">
@@ -325,7 +320,7 @@ const ProfilePage = () => {
                     </div>
                   ) : (
                     <div className="flex flex-col items-center justify-center py-8 px-3 text-center">
-                      <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+                      <div className="w-16 h-16 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full flex items-center justify-center mb-4 animate-pulse">
                         <Trophy size={24} className="text-gray-400" />
                       </div>
                       <p className="text-sm text-gray-600 mb-1">No badges earned yet</p>
