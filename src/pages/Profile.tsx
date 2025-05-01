@@ -1,10 +1,11 @@
+
 import { useState, useEffect } from "react";
 import { useSearchParams, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import UserStats from "@/components/UserStats";
-import { Award, Code, Brain, Zap, Trophy, Linkedin, Github, MapPin, Calendar } from "lucide-react";
+import { Award, Code, Brain, Zap, Trophy, Linkedin, Github, MapPin, Calendar, School, Sparkles, Mail } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { toast } from "sonner";
 import { format, parseISO } from "date-fns";
@@ -40,6 +41,8 @@ import {
 import {
   checkAndAwardPathBadges
 } from "@/services/badgeService";
+
+import { cn } from "@/lib/utils";
 
 const ProfilePage = () => {
   const [searchParams] = useSearchParams();
@@ -181,66 +184,78 @@ const ProfilePage = () => {
   console.log("Profile ID:", profileId, "PRN:", prn, "Is Editable:", isEditable);
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50">
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-gray-50 to-gray-100">
       <main className="flex-1 py-8">
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-            <div className="lg:col-span-1">
-              <Card>
-                <CardHeader className="pb-2">
-                  <div className="flex justify-between items-center">
-                    <div className="flex items-center gap-3">
-                      <Avatar className="h-16 w-16">
-                        {profile.profile_picture_url ? (
-                          <AvatarImage src={profile.profile_picture_url} alt={profile.real_name} />
-                        ) : (
-                          <AvatarFallback className="bg-primary/10 text-primary text-xl">
-                            {profile.real_name.charAt(0).toUpperCase()}
-                          </AvatarFallback>
-                        )}
-                      </Avatar>
-                      <div>
-                        <CardTitle>{profile.real_name}</CardTitle>
-                        {profile.location && (
-                          <div className="flex items-center text-sm text-gray-500 mt-1">
-                            <MapPin size={14} className="mr-1" />
-                            {profile.location}
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  </div>
+            <div className="lg:col-span-1 space-y-6">
+              <Card className="overflow-hidden border-none shadow-lg hover:shadow-xl transition-all bg-gradient-to-br from-white to-gray-50">
+                <CardHeader className="pb-2 bg-gradient-to-r from-blue-50 to-indigo-50 border-b">
+                  <CardTitle className="text-lg font-bold text-blue-800">Profile</CardTitle>
                 </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
+                <div className="relative">
+                  <div className="h-24 bg-gradient-to-r from-blue-400 to-indigo-500"></div>
+                  <div className="absolute -bottom-12 left-6">
+                    <Avatar className="h-24 w-24 border-4 border-white shadow-lg">
+                      {profile.profile_picture_url ? (
+                        <AvatarImage src={profile.profile_picture_url} alt={profile.real_name} className="object-cover" />
+                      ) : (
+                        <AvatarFallback className="bg-gradient-to-br from-blue-500 to-indigo-600 text-white text-3xl">
+                          {profile.real_name.charAt(0).toUpperCase()}
+                        </AvatarFallback>
+                      )}
+                    </Avatar>
+                  </div>
+                </div>
+                <CardContent className="pt-14 pb-5">
+                  <div className="space-y-5">
+                    <div>
+                      <h2 className="text-xl font-bold text-gray-800">{profile.real_name}</h2>
+                      {profile.location && (
+                        <div className="flex items-center text-sm text-gray-500 mt-1">
+                          <MapPin size={14} className="mr-1 text-indigo-500" />
+                          <span>{profile.location}</span>
+                        </div>
+                      )}
+                    </div>
+                    
                     {profile.bio && (
-                      <div className="text-sm text-gray-600 mt-2">
-                        {profile.bio}
+                      <div className="py-3 px-4 bg-gray-50 rounded-lg border border-gray-100">
+                        <p className="text-sm text-gray-700 italic">{profile.bio}</p>
                       </div>
                     )}
                     
-                    {profile.college_name && (
+                    <div className="space-y-3 pt-2">
+                      {profile.college_name && (
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2 text-gray-700">
+                            <School size={16} className="text-indigo-500" />
+                            <span className="text-sm font-medium">College</span>
+                          </div>
+                          <span className="font-medium text-gray-800">{profile.college_name}</span>
+                        </div>
+                      )}
+                      
                       <div className="flex items-center justify-between">
-                        <span className="text-sm text-gray-600">College</span>
-                        <span className="font-medium">{profile.college_name}</span>
+                        <div className="flex items-center gap-2 text-gray-700">
+                          <Sparkles size={16} className="text-indigo-500" />
+                          <span className="text-sm font-medium">CGPA</span>
+                        </div>
+                        <span className="font-semibold text-gray-800 bg-blue-50 px-2 py-0.5 rounded-md">{profile.cgpa.toFixed(1)}</span>
                       </div>
-                    )}
-                    
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm text-gray-600">CGPA</span>
-                      <span className="font-semibold">{profile.cgpa.toFixed(1)}</span>
                     </div>
 
                     {(profile.linkedin_url || profile.github_url || profile.leetcode_url) && (
-                      <div className="flex gap-3 mt-4">
+                      <div className="flex justify-center gap-5 mt-6 pt-5 border-t border-gray-100">
                         {profile.linkedin_url && (
                           <a 
                             href={profile.linkedin_url.startsWith('http') ? profile.linkedin_url : `https://${profile.linkedin_url}`}
                             target="_blank" 
                             rel="noopener noreferrer"
-                            className="text-blue-600 hover:text-blue-800"
+                            className="p-2 bg-blue-50 rounded-full text-blue-600 hover:bg-blue-100 hover:text-blue-700 transition-colors"
+                            aria-label="LinkedIn Profile"
                           >
-                            <Linkedin size={20} />
+                            <Linkedin size={18} />
                           </a>
                         )}
                         {profile.github_url && (
@@ -248,9 +263,10 @@ const ProfilePage = () => {
                             href={profile.github_url.startsWith('http') ? profile.github_url : `https://${profile.github_url}`}
                             target="_blank" 
                             rel="noopener noreferrer"
-                            className="text-gray-800 hover:text-gray-600"
+                            className="p-2 bg-gray-100 rounded-full text-gray-800 hover:bg-gray-200 hover:text-gray-900 transition-colors"
+                            aria-label="GitHub Profile"
                           >
-                            <Github size={20} />
+                            <Github size={18} />
                           </a>
                         )}
                         {profile.leetcode_url && (
@@ -258,10 +274,10 @@ const ProfilePage = () => {
                             href={profile.leetcode_url.startsWith('http') ? profile.leetcode_url : `https://${profile.leetcode_url}`}
                             target="_blank" 
                             rel="noopener noreferrer"
-                            className="text-orange-500 hover:text-orange-600"
-                            title="LeetCode Profile"
+                            className="p-2 bg-orange-50 rounded-full text-orange-600 hover:bg-orange-100 hover:text-orange-700 transition-colors"
+                            aria-label="LeetCode Profile"
                           >
-                            <Code size={20} />
+                            <Code size={18} />
                           </a>
                         )}
                       </div>
@@ -270,14 +286,22 @@ const ProfilePage = () => {
                 </CardContent>
               </Card>
               
-              <Card className="mt-4">
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm">Badges</CardTitle>
+              <Card className="overflow-hidden border-none shadow-lg hover:shadow-xl transition-all bg-gradient-to-br from-white to-gray-50">
+                <CardHeader className="pb-2 bg-gradient-to-r from-purple-50 to-indigo-50 border-b">
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="text-lg font-bold text-purple-800 flex items-center gap-2">
+                      <Award size={18} className="text-purple-600" />
+                      Achievements
+                    </CardTitle>
+                    <Badge variant="outline" className="bg-purple-50 text-purple-700 border-purple-200">
+                      {badges.length} {badges.length === 1 ? 'Badge' : 'Badges'}
+                    </Badge>
+                  </div>
                 </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-3 gap-3">
-                    {badges.length > 0 ? (
-                      badges.map((badge) => {
+                <CardContent className="p-5">
+                  {badges.length > 0 ? (
+                    <div className="grid grid-cols-3 gap-3">
+                      {badges.map((badge) => {
                         const IconComponent = {
                           'Award': Award,
                           'Code': Code,
@@ -287,18 +311,27 @@ const ProfilePage = () => {
                         }[badge.badge?.icon_name || ''] || Award;
                         
                         return (
-                          <div key={badge.id} className="flex flex-col items-center">
-                            <div className={`h-12 w-12 rounded-full ${badge.badge?.background_color} flex items-center justify-center ${badge.badge?.text_color} mb-1`}>
-                              <IconComponent size={20} />
+                          <div key={badge.id} className="flex flex-col items-center group">
+                            <div className={`h-16 w-16 rounded-full ${badge.badge?.background_color || 'bg-purple-100'} flex items-center justify-center ${badge.badge?.text_color || 'text-purple-700'} mb-2 shadow-md transform transition-transform group-hover:scale-110 group-hover:shadow-lg`}>
+                              <IconComponent size={24} />
                             </div>
-                            <span className="text-xs text-center">{badge.badge?.name || ''}</span>
+                            <span className="text-xs font-medium text-center text-gray-700">{badge.badge?.name || ''}</span>
+                            <span className="text-[10px] text-gray-500 text-center hidden group-hover:block animate-fade-in mt-1">
+                              {new Date(badge.earned_at).toLocaleDateString()}
+                            </span>
                           </div>
                         );
-                      })
-                    ) : (
-                      <p className="text-sm text-gray-500 col-span-3">No badges earned yet</p>
-                    )}
-                  </div>
+                      })}
+                    </div>
+                  ) : (
+                    <div className="flex flex-col items-center justify-center py-8 px-3 text-center">
+                      <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+                        <Trophy size={24} className="text-gray-400" />
+                      </div>
+                      <p className="text-sm text-gray-600 mb-1">No badges earned yet</p>
+                      <p className="text-xs text-gray-500">Complete learning paths to earn badges</p>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             </div>
