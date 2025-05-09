@@ -26,5 +26,5 @@ export const HackerrankIcon: React.FC<{ className?: string }> = ({ className = "
 );
 
 export const GeeksforGeeksIcon: React.FC<{ className?: string }> = ({ className = "w-5 h-5" }) => (
-<svg width="800px" height="800px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="none"><path stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m8 7-5 5 5 5m8 0 5-5-5-5"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" className={className} fill="currentColor" viewBox="0 0 24 24"><path stroke="#000000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m8 7-5 5 5 5m8 0 5-5-5-5"/></svg>
 );
