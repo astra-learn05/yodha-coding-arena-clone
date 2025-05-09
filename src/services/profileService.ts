@@ -14,6 +14,8 @@ export type Profile = {
   linkedin_url: string | null;
   github_url: string | null;
   leetcode_url: string | null;
+  hackerrank_url: string | null;
+  gfg_url: string | null;
 };
 
 export type UserSkill = {
@@ -23,7 +25,15 @@ export type UserSkill = {
   created_at: string;
 };
 
-export type BadgeType = {
+export type Badge = {
+  id: string;
+  user_id: string;
+  badge_id: string;
+  earned_at: string;
+  badge?: BadgeDefinition;
+};
+
+export type BadgeDefinition = {
   id: string;
   name: string;
   description: string | null;
@@ -31,14 +41,6 @@ export type BadgeType = {
   background_color: string;
   text_color: string;
   created_at: string;
-};
-
-export type UserBadge = {
-  id: string;
-  user_id: string;
-  badge_id: string;
-  earned_at: string;
-  badge?: BadgeType;
 };
 
 export type UserStreak = {
@@ -276,7 +278,7 @@ export const syncUserSkills = async (userId: string, skills: string[]): Promise<
 };
 
 // Get badges for a user
-export const getUserBadges = async (userId: string): Promise<UserBadge[]> => {
+export const getUserBadges = async (userId: string): Promise<Badge[]> => {
   const { data, error } = await supabase
     .from('user_badges')
     .select(`
