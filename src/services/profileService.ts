@@ -253,9 +253,10 @@ export const deleteWorkExperience = async (id: string): Promise<boolean> => {
 
 interface Badge {
   id: string;
-  badge_id: string;
   user_id: string;
+  badge_id: string;
   earned_at: string;
+  badge?: BadgeDefinition;
 }
 
 interface BadgeDefinition {
@@ -273,12 +274,28 @@ export const mockBadges: Badge[] = [
     badge_id: "award1",
     user_id: "user123",
     earned_at: new Date().toISOString(),
+    badge: {
+      id: "award1",
+      name: "Completionist",
+      description: "Completed first learning path",
+      icon_name: "Award",
+      background_color: "#E0E7FF",
+      text_color: "#4F46E5",
+    }
   },
   {
     id: "badge2",
     badge_id: "code1",
     user_id: "user123",
     earned_at: new Date().toISOString(),
+    badge: {
+      id: "code1",
+      name: "Code Warrior",
+      description: "Solved 10 coding challenges",
+      icon_name: "Code",
+      background_color: "#D1FAE5",
+      text_color: "#065F46",
+    }
   },
 ];
 

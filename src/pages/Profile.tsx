@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useSearchParams, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -50,6 +49,22 @@ import {
 } from "@/services/badgeService";
 
 import { cn } from "@/lib/utils";
+
+// Define the badge interface to match what's returned from getUserBadges
+interface UserBadge {
+  id: string;
+  badge_id: string;
+  user_id: string;
+  earned_at: string;
+  badge?: {
+    id: string;
+    name: string;
+    description: string;
+    icon_name: string;
+    background_color: string;
+    text_color: string;
+  };
+}
 
 const ProfilePage = () => {
   const [searchParams] = useSearchParams();
@@ -329,7 +344,7 @@ const ProfilePage = () => {
                 <CardContent className="p-5">
                   {badges.length > 0 ? (
                     <div className="grid grid-cols-3 gap-3">
-                      {badges.map((badge) => {
+                      {badges.map((badge: UserBadge) => {
                         const IconComponent = {
                           'Award': Award,
                           'Code': Code,
