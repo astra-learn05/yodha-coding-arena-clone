@@ -1,511 +1,407 @@
-import { supabase } from "@/integrations/supabase/client";
+import { mockUser } from "./userService";
 
-// Types for profile data
-export type Profile = {
+export interface Profile {
   id: string;
+  user_id: string;
   real_name: string;
+  email: string;
+  prn: string;
   cgpa: number;
-  created_at: string;
-  updated_at: string;
+  profile_picture_url: string | null;
   bio: string | null;
   college_name: string | null;
   location: string | null;
-  profile_picture_url: string | null;
   linkedin_url: string | null;
   github_url: string | null;
   leetcode_url: string | null;
-};
-
-export type UserSkill = {
-  id: string;
-  user_id: string;
-  skill_name: string;
-  created_at: string;
-};
-
-export type BadgeType = {
-  id: string;
-  name: string;
-  description: string | null;
-  icon_name: string;
-  background_color: string;
-  text_color: string;
-  created_at: string;
-};
-
-export type UserBadge = {
-  id: string;
-  user_id: string;
-  badge_id: string;
-  earned_at: string;
-  badge?: BadgeType;
-};
-
-export type UserStreak = {
-  id: string;
-  user_id: string;
-  current_streak: number;
-  max_streak: number;
-  last_activity_date: string | null;
+  hackerrank_url: string | null;
+  geeksforgeeks_url: string | null;
   created_at: string;
   updated_at: string;
-};
+}
 
-export type Certificate = {
+export interface Certificate {
   id: string;
   user_id: string;
   title: string;
   issuer: string;
   issue_date: string;
-  expiry_date?: string;
-  credential_url?: string;
+  expiry_date: string | null;
+  credential_url: string | null;
   created_at: string;
   updated_at: string;
-};
+}
 
-export type Project = {
+export interface Project {
   id: string;
   user_id: string;
   title: string;
   description: string;
-  technologies?: string[];
+  technologies: string[];
   start_date: string;
-  end_date?: string;
-  project_url?: string;
-  image_url?: string;
+  end_date: string | null;
+  project_url: string | null;
+  image_url: string | null;
   created_at: string;
   updated_at: string;
-};
+}
 
-export type WorkExperience = {
+export interface WorkExperience {
   id: string;
   user_id: string;
   company: string;
   position: string;
-  location?: string;
+  location: string | null;
   start_date: string;
-  end_date?: string;
+  end_date: string | null;
   description: string;
-  technologies?: string[];
+  technologies: string[];
   created_at: string;
   updated_at: string;
-};
+}
 
-// Fetch profile by PRN (using the users table to lookup)
-export const getProfileByPRN = async (prn: string): Promise<Profile | null> => {
-  // First get the user ID from the users table using PRN
-  const { data: userData, error: userError } = await supabase
-    .from('users')
-    .select('id')
-    .eq('prn', prn)
-    .maybeSingle();
-
-  if (userError || !userData) {
-    console.error('Error fetching user by PRN:', userError);
-    return null;
-  }
-
-  // Now fetch the profile using the user ID
-  const { data: profileData, error: profileError } = await supabase
-    .from('profiles')
-    .select('*')
-    .eq('id', userData.id)
-    .maybeSingle();
-
-  if (profileError) {
-    console.error('Error fetching profile:', profileError);
-    return null;
-  }
-
-  return profileData;
-};
-
-// Fetch profile by ID
 export const getProfileById = async (id: string): Promise<Profile | null> => {
-  const { data, error } = await supabase
-    .from('profiles')
-    .select('*')
-    .eq('id', id)
-    .maybeSingle();
-
-  if (error) {
-    console.error('Error fetching profile:', error);
-    return null;
-  }
-
-  return data;
+  // Mock implementation
+  const profile = mockProfiles.find((profile) => profile.id === id);
+  return profile || null;
 };
 
-// Update profile
-export const updateProfile = async (id: string, profile: Partial<Profile>): Promise<Profile | null> => {
-  console.log("Updating profile with ID:", id);
-  console.log("Update data:", profile);
-  
-  // Ensure CGPA is a valid number
-  const updates = {
-    ...profile,
-    cgpa: typeof profile.cgpa === 'number' ? profile.cgpa : parseFloat(String(profile.cgpa))
+export const getProfileByPRN = async (prn: string): Promise<Profile | null> => {
+  // Mock implementation
+  const profile = mockProfiles.find((profile) => profile.prn === prn);
+  return profile || null;
+};
+
+export const updateProfile = async (
+  id: string, 
+  data: { 
+    realName: string; 
+    cgpa: number;
+    bio: string | null;
+    collegeName: string | null;
+    location: string | null;
+    profilePictureUrl: string | null;
+    linkedinUrl: string | null;
+    githubUrl: string | null;
+    leetcodeUrl: string | null;
+    hackerrankUrl: string | null;
+    geeksforgeeksUrl: string | null;
+  }
+) => {
+  console.log("Updating profile", id, data);
+  return {
+    id,
+    user_id: "user123",
+    real_name: data.realName,
+    email: "student@example.com",
+    prn: "PRN12345",
+    cgpa: data.cgpa,
+    profile_picture_url: data.profilePictureUrl,
+    bio: data.bio,
+    college_name: data.collegeName,
+    location: data.location,
+    linkedin_url: data.linkedinUrl,
+    github_url: data.githubUrl,
+    leetcode_url: data.leetcodeUrl,
+    hackerrank_url: data.hackerrankUrl,
+    geeksforgeeks_url: data.geeksforgeeksUrl,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString()
   };
-  
-  const { data, error } = await supabase
-    .from('profiles')
-    .update(updates)
-    .eq('id', id)
-    .select()
-    .single();
-
-  if (error) {
-    console.error('Error updating profile:', error);
-    return null;
-  }
-
-  console.log("Profile updated successfully:", data);
-  return data;
 };
 
-// Get skills for a user
-export const getUserSkills = async (userId: string): Promise<UserSkill[]> => {
-  const { data, error } = await supabase
-    .from('user_skills')
-    .select('*')
-    .eq('user_id', userId);
-
-  if (error) {
-    console.error('Error fetching user skills:', error);
-    return [];
-  }
-
-  return data || [];
+export const getUserBadges = async (userId: string) => {
+  // Mock implementation
+  console.log("Fetching badges for user", userId);
+  return mockBadges;
 };
 
-// Add a skill
-export const addUserSkill = async (userId: string, skillName: string): Promise<UserSkill | null> => {
-  // First check if skill already exists to avoid duplicates
-  const { data: existingSkills } = await supabase
-    .from('user_skills')
-    .select('*')
-    .eq('user_id', userId)
-    .eq('skill_name', skillName);
-    
-  // If skill already exists, return it
-  if (existingSkills && existingSkills.length > 0) {
-    return existingSkills[0];
-  }
-
-  // Otherwise add the new skill
-  const { data, error } = await supabase
-    .from('user_skills')
-    .insert({ user_id: userId, skill_name: skillName })
-    .select()
-    .single();
-
-  if (error) {
-    console.error('Error adding skill:', error);
-    return null;
-  }
-
-  return data;
-};
-
-// Remove a skill
-export const removeUserSkill = async (skillId: string): Promise<boolean> => {
-  const { error } = await supabase
-    .from('user_skills')
-    .delete()
-    .eq('id', skillId);
-
-  if (error) {
-    console.error('Error removing skill:', error);
-    return false;
-  }
-
-  return true;
-};
-
-// Find and remove a skill by name
-export const removeUserSkillByName = async (userId: string, skillName: string): Promise<boolean> => {
-  // First find the skill by name
-  const { data: skills } = await supabase
-    .from('user_skills')
-    .select('id')
-    .eq('user_id', userId)
-    .eq('skill_name', skillName);
-  
-  if (!skills || skills.length === 0) {
-    console.log(`Skill "${skillName}" not found for user ${userId}`);
-    return false;
-  }
-  
-  // Then delete it using the id
-  return removeUserSkill(skills[0].id);
-};
-
-// Sync user skills - add new ones, remove old ones
-export const syncUserSkills = async (userId: string, skills: string[]): Promise<boolean> => {
-  try {
-    console.log("Syncing skills for user:", userId);
-    console.log("New skills list:", skills);
-    
-    // Get current skills
-    const currentSkills = await getUserSkills(userId);
-    const currentSkillNames = currentSkills.map(s => s.skill_name);
-    
-    console.log("Current skills:", currentSkillNames);
-    
-    // Skills to add (in new list but not in current)
-    const skillsToAdd = skills.filter(skill => !currentSkillNames.includes(skill));
-    console.log("Skills to add:", skillsToAdd);
-    
-    // Skills to remove (in current but not in new list)
-    const skillsToRemove = currentSkills.filter(skill => !skills.includes(skill.skill_name));
-    console.log("Skills to remove:", skillsToRemove.map(s => s.skill_name));
-    
-    // Add new skills
-    const addPromises = skillsToAdd.map(skill => addUserSkill(userId, skill));
-    await Promise.all(addPromises);
-    
-    // Remove old skills
-    const removePromises = skillsToRemove.map(skill => removeUserSkill(skill.id));
-    await Promise.all(removePromises);
-    
-    return true;
-  } catch (error) {
-    console.error("Error syncing user skills:", error);
-    return false;
-  }
-};
-
-// Get badges for a user
-export const getUserBadges = async (userId: string): Promise<UserBadge[]> => {
-  const { data, error } = await supabase
-    .from('user_badges')
-    .select(`
-      *,
-      badge:badge_id(*)
-    `)
-    .eq('user_id', userId);
-
-  if (error) {
-    console.error('Error fetching user badges:', error);
-    return [];
-  }
-
-  return data || [];
-};
-
-// Get user streak
-export const getUserStreak = async (userId: string): Promise<UserStreak | null> => {
-  const { data, error } = await supabase
-    .from('user_streaks')
-    .select('*')
-    .eq('user_id', userId)
-    .maybeSingle();
-
-  if (error) {
-    console.error('Error fetching user streak:', error);
-    return null;
-  }
-
-  return data;
-};
-
-// Get certificates for a user
 export const getUserCertificates = async (userId: string): Promise<Certificate[]> => {
-  const { data, error } = await supabase
-    .from('certificates')
-    .select('*')
-    .eq('user_id', userId)
-    .order('issue_date', { ascending: false });
-
-  if (error) {
-    console.error('Error fetching user certificates:', error);
-    return [];
-  }
-
-  return data || [];
+  // Mock implementation
+  console.log("Fetching certificates for user", userId);
+  return mockCertificates.filter(certificate => certificate.user_id === userId);
 };
 
-// Add a certificate
-export const addCertificate = async (userId: string, certificate: Omit<Certificate, 'id' | 'user_id' | 'created_at' | 'updated_at'>): Promise<Certificate | null> => {
-  const { data, error } = await supabase
-    .from('certificates')
-    .insert({ 
-      user_id: userId,
-      ...certificate
-    })
-    .select()
-    .single();
-
-  if (error) {
-    console.error('Error adding certificate:', error);
-    return null;
-  }
-
-  return data;
-};
-
-// Update a certificate
-export const updateCertificate = async (certificateId: string, certificate: Partial<Certificate>): Promise<Certificate | null> => {
-  const { data, error } = await supabase
-    .from('certificates')
-    .update(certificate)
-    .eq('id', certificateId)
-    .select()
-    .single();
-
-  if (error) {
-    console.error('Error updating certificate:', error);
-    return null;
-  }
-
-  return data;
-};
-
-// Delete a certificate
-export const deleteCertificate = async (certificateId: string): Promise<boolean> => {
-  const { error } = await supabase
-    .from('certificates')
-    .delete()
-    .eq('id', certificateId);
-
-  if (error) {
-    console.error('Error deleting certificate:', error);
-    return false;
-  }
-
-  return true;
-};
-
-// Get projects for a user
 export const getUserProjects = async (userId: string): Promise<Project[]> => {
-  const { data, error } = await supabase
-    .from('projects')
-    .select('*')
-    .eq('user_id', userId)
-    .order('start_date', { ascending: false });
-
-  if (error) {
-    console.error('Error fetching user projects:', error);
-    return [];
-  }
-
-  return data || [];
+  // Mock implementation
+  console.log("Fetching projects for user", userId);
+  return mockProjects.filter(project => project.user_id === userId);
 };
 
-// Add a project
-export const addProject = async (userId: string, project: Omit<Project, 'id' | 'user_id' | 'created_at' | 'updated_at'>): Promise<Project | null> => {
-  const { data, error } = await supabase
-    .from('projects')
-    .insert({ 
-      user_id: userId,
-      ...project
-    })
-    .select()
-    .single();
-
-  if (error) {
-    console.error('Error adding project:', error);
-    return null;
-  }
-
-  return data;
-};
-
-// Update a project
-export const updateProject = async (projectId: string, project: Partial<Project>): Promise<Project | null> => {
-  const { data, error } = await supabase
-    .from('projects')
-    .update(project)
-    .eq('id', projectId)
-    .select()
-    .single();
-
-  if (error) {
-    console.error('Error updating project:', error);
-    return null;
-  }
-
-  return data;
-};
-
-// Delete a project
-export const deleteProject = async (projectId: string): Promise<boolean> => {
-  const { error } = await supabase
-    .from('projects')
-    .delete()
-    .eq('id', projectId);
-
-  if (error) {
-    console.error('Error deleting project:', error);
-    return false;
-  }
-
-  return true;
-};
-
-// Get work experiences for a user
 export const getUserWorkExperiences = async (userId: string): Promise<WorkExperience[]> => {
-  const { data, error } = await supabase
-    .from('work_experience')
-    .select('*')
-    .eq('user_id', userId)
-    .order('start_date', { ascending: false });
-
-  if (error) {
-    console.error('Error fetching user work experiences:', error);
-    return [];
-  }
-
-  return data || [];
+  // Mock implementation
+  console.log("Fetching work experience for user", userId);
+  return mockWorkExperiences.filter(experience => experience.user_id === userId);
 };
 
-// Add a work experience
-export const addWorkExperience = async (userId: string, workExperience: Omit<WorkExperience, 'id' | 'user_id' | 'created_at' | 'updated_at'>): Promise<WorkExperience | null> => {
-  const { data, error } = await supabase
-    .from('work_experience')
-    .insert({ 
-      user_id: userId,
-      ...workExperience
-    })
-    .select()
-    .single();
+export const addCertificate = async (certificate: Omit<Certificate, 'id' | 'created_at' | 'updated_at'>): Promise<Certificate> => {
+  // Mock implementation
+  console.log("Adding certificate", certificate);
+  const newCertificate: Certificate = {
+    id: `cert-${Math.random()}`,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+    ...certificate
+  };
+  mockCertificates.push(newCertificate);
+  return newCertificate;
+};
 
-  if (error) {
-    console.error('Error adding work experience:', error);
+export const updateCertificate = async (id: string, updates: Partial<Certificate>): Promise<Certificate | null> => {
+  // Mock implementation
+  console.log("Updating certificate", id, updates);
+  const certificateIndex = mockCertificates.findIndex(certificate => certificate.id === id);
+  if (certificateIndex === -1) {
     return null;
   }
-
-  return data;
+  mockCertificates[certificateIndex] = {
+    ...mockCertificates[certificateIndex],
+    ...updates,
+    updated_at: new Date().toISOString()
+  };
+  return mockCertificates[certificateIndex];
 };
 
-// Update a work experience
-export const updateWorkExperience = async (workExperienceId: string, workExperience: Partial<WorkExperience>): Promise<WorkExperience | null> => {
-  const { data, error } = await supabase
-    .from('work_experience')
-    .update(workExperience)
-    .eq('id', workExperienceId)
-    .select()
-    .single();
-
-  if (error) {
-    console.error('Error updating work experience:', error);
-    return null;
-  }
-
-  return data;
-};
-
-// Delete a work experience
-export const deleteWorkExperience = async (workExperienceId: string): Promise<boolean> => {
-  const { error } = await supabase
-    .from('work_experience')
-    .delete()
-    .eq('id', workExperienceId);
-
-  if (error) {
-    console.error('Error deleting work experience:', error);
+export const deleteCertificate = async (id: string): Promise<boolean> => {
+  // Mock implementation
+  console.log("Deleting certificate", id);
+  const certificateIndex = mockCertificates.findIndex(certificate => certificate.id === id);
+  if (certificateIndex === -1) {
     return false;
   }
-
+  mockCertificates.splice(certificateIndex, 1);
   return true;
 };
+
+export const addProject = async (project: Omit<Project, 'id' | 'created_at' | 'updated_at'>): Promise<Project> => {
+  // Mock implementation
+  console.log("Adding project", project);
+  const newProject: Project = {
+    id: `project-${Math.random()}`,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+    ...project
+  };
+  mockProjects.push(newProject);
+  return newProject;
+};
+
+export const updateProject = async (id: string, updates: Partial<Project>): Promise<Project | null> => {
+  // Mock implementation
+  console.log("Updating project", id, updates);
+  const projectIndex = mockProjects.findIndex(project => project.id === id);
+  if (projectIndex === -1) {
+    return null;
+  }
+  mockProjects[projectIndex] = {
+    ...mockProjects[projectIndex],
+    ...updates,
+    updated_at: new Date().toISOString()
+  };
+  return mockProjects[projectIndex];
+};
+
+export const deleteProject = async (id: string): Promise<boolean> => {
+  // Mock implementation
+  console.log("Deleting project", id);
+  const projectIndex = mockProjects.findIndex(project => project.id === id);
+  if (projectIndex === -1) {
+    return false;
+  }
+  mockProjects.splice(projectIndex, 1);
+  return true;
+};
+
+export const addWorkExperience = async (experience: Omit<WorkExperience, 'id' | 'created_at' | 'updated_at'>): Promise<WorkExperience> => {
+  // Mock implementation
+  console.log("Adding work experience", experience);
+  const newExperience: WorkExperience = {
+    id: `exp-${Math.random()}`,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+    ...experience
+  };
+  mockWorkExperiences.push(newExperience);
+  return newExperience;
+};
+
+export const updateWorkExperience = async (id: string, updates: Partial<WorkExperience>): Promise<WorkExperience | null> => {
+  // Mock implementation
+  console.log("Updating work experience", id, updates);
+  const experienceIndex = mockWorkExperiences.findIndex(experience => experience.id === id);
+  if (experienceIndex === -1) {
+    return null;
+  }
+  mockWorkExperiences[experienceIndex] = {
+    ...mockWorkExperiences[experienceIndex],
+    ...updates,
+    updated_at: new Date().toISOString()
+  };
+  return mockWorkExperiences[experienceIndex];
+};
+
+export const deleteWorkExperience = async (id: string): Promise<boolean> => {
+  // Mock implementation
+  console.log("Deleting work experience", id);
+  const experienceIndex = mockWorkExperiences.findIndex(experience => experience.id === id);
+  if (experienceIndex === -1) {
+    return false;
+  }
+  mockWorkExperiences.splice(experienceIndex, 1);
+  return true;
+};
+
+interface Badge {
+  id: string;
+  badge_id: string;
+  user_id: string;
+  earned_at: string;
+}
+
+interface BadgeDefinition {
+  id: string;
+  name: string;
+  description: string;
+  icon_name: string;
+  background_color: string;
+  text_color: string;
+}
+
+export const mockBadges: Badge[] = [
+  {
+    id: "badge1",
+    badge_id: "award1",
+    user_id: "user123",
+    earned_at: new Date().toISOString(),
+  },
+  {
+    id: "badge2",
+    badge_id: "code1",
+    user_id: "user123",
+    earned_at: new Date().toISOString(),
+  },
+];
+
+export const mockBadgeDefinitions: BadgeDefinition[] = [
+  {
+    id: "award1",
+    name: "Completionist",
+    description: "Completed first learning path",
+    icon_name: "Award",
+    background_color: "#E0E7FF",
+    text_color: "#4F46E5",
+  },
+  {
+    id: "code1",
+    name: "Code Warrior",
+    description: "Solved 10 coding challenges",
+    icon_name: "Code",
+    background_color: "#D1FAE5",
+    text_color: "#065F46",
+  },
+];
+
+export const mockCertificates: Certificate[] = [
+  {
+    id: "cert1",
+    user_id: "user123",
+    title: "AWS Certified Solutions Architect",
+    issuer: "Amazon Web Services",
+    issue_date: "2022-01-01",
+    expiry_date: "2025-01-01",
+    credential_url: "https://example.com/cert1",
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  },
+  {
+    id: "cert2",
+    user_id: "user123",
+    title: "Google Cloud Certified Professional Cloud Architect",
+    issuer: "Google Cloud",
+    issue_date: "2023-01-01",
+    expiry_date: null,
+    credential_url: "https://example.com/cert2",
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  },
+];
+
+export const mockProjects: Project[] = [
+  {
+    id: "project1",
+    user_id: "user123",
+    title: "E-commerce Platform",
+    description: "Developed a fully functional e-commerce platform using React, Node.js, and MongoDB.",
+    technologies: ["React", "Node.js", "MongoDB"],
+    start_date: "2022-01-01",
+    end_date: "2022-06-01",
+    project_url: "https://example.com/project1",
+    image_url: null,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  },
+  {
+    id: "project2",
+    user_id: "user123",
+    title: "Mobile Task Manager",
+    description: "Created a mobile task manager app using React Native.",
+    technologies: ["React Native", "Firebase"],
+    start_date: "2023-01-01",
+    end_date: null,
+    project_url: null,
+    image_url: null,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  },
+];
+
+export const mockWorkExperiences: WorkExperience[] = [
+  {
+    id: "exp1",
+    user_id: "user123",
+    company: "TechCorp Inc",
+    position: "Software Engineer",
+    location: "San Francisco, CA",
+    start_date: "2021-01-01",
+    end_date: "2022-01-01",
+    description: "Developed and maintained web applications using React and Node.js.",
+    technologies: ["React", "Node.js", "JavaScript"],
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  },
+  {
+    id: "exp2",
+    user_id: "user123",
+    company: "Innovate Solutions",
+    position: "Frontend Developer",
+    location: "New York, NY",
+    start_date: "2022-01-01",
+    end_date: null,
+    description: "Worked on the frontend development of a large-scale e-commerce platform.",
+    technologies: ["React", "Redux", "TypeScript"],
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+  },
+];
+
+export const mockProfiles: Profile[] = [
+  {
+    id: "1",
+    user_id: "user123",
+    real_name: "Jane Smith",
+    email: "jane.smith@example.com",
+    prn: "PRN12345",
+    cgpa: 8.7,
+    profile_picture_url: null,
+    bio: "Computer Science student interested in AI and machine learning.",
+    college_name: "Engineering College of Technology",
+    location: "Mumbai, India",
+    linkedin_url: "https://linkedin.com/in/janesmith",
+    github_url: "https://github.com/janesmith",
+    leetcode_url: "https://leetcode.com/janesmith",
+    hackerrank_url: "https://hackerrank.com/janesmith",
+    geeksforgeeks_url: "https://geeksforgeeks.org/user/janesmith",
+    created_at: "2023-01-01T00:00:00Z",
+    updated_at: "2023-01-01T00:00:00Z"
+  },
+];
