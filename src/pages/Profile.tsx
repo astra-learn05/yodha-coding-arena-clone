@@ -35,7 +35,9 @@ import {
   deleteProject,
   addWorkExperience,
   updateWorkExperience,
-  deleteWorkExperience
+  deleteWorkExperience,
+  Badge,
+  BadgeDefinition
 } from "@/services/profileService";
 
 import {
@@ -69,7 +71,7 @@ interface UserBadge {
 const ProfilePage = () => {
   const [searchParams] = useSearchParams();
   const params = useParams();
-  const profileId = params.id;
+  const profileId = params.id || "1"; // Default to ID "1" if no ID is provided
   const prn = searchParams.get("prn") || params.prn;
   
   const [open, setOpen] = useState(false);
@@ -156,16 +158,9 @@ const ProfilePage = () => {
     toast.error("Profile editing is currently disabled");
   };
 
-  if (!profileId && !prn) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-800 mb-2">Profile Not Found</h1>
-          <p className="text-gray-600">Please provide a valid ID or PRN parameter</p>
-        </div>
-      </div>
-    );
-  }
+  // This block is for debugging purposes
+  console.log("Profile ID:", profileId, "PRN:", prn, "Is Editable:", isEditable);
+  console.log("Profile data:", profile);
 
   if (profileLoading) {
     return (
@@ -204,8 +199,6 @@ const ProfilePage = () => {
     learningPathProgress: learningPathProgressData,
     completedTopics
   };
-
-  console.log("Profile ID:", profileId, "PRN:", prn, "Is Editable:", isEditable);
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-gray-50 to-gray-100">
