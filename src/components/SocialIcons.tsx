@@ -26,7 +26,7 @@ export const HackerrankIcon: React.FC<{ className?: string }> = ({ className = "
 );
 
 export const GeeksforGeeksIcon: React.FC<{ className?: string }> = ({ className = "w-5 h-5" }) => (
-  <svg xmlns="http://www.w3.org/2000/svg" className={className} fill="currentColor" viewBox="0 0 24 24">
+  <svg xmlns="http://www.w3.org/2000/svg" className={className} fill="currentColor" width="24px" height="24px" viewBox="0 0 24 24">
     <path d="M20.9 17.1a.6.6 0 0 1-.6.6h-6.8a.6.6 0 0 1 0-1.2h6.8c.3 0 .6.3.6.6zm-9-5.2a3 3 0 0 0 6 0V7.9a.6.6 0 0 0-.6-.6h-4.8c-.3 0-.6.3-.6.6v4zm1.2-.6V8.5h3.6v2.8a1.8 1.8 0 0 1-3.6 0zm-4 4.8c-2.3 0-4.2-1.8-4.2-4s1.9-4 4.2-4c.7 0 1.4.2 2 .5a.6.6 0 0 1-.5 1c-.5-.2-1-.3-1.5-.3-1.8 0-3 1.3-3 2.8 0 1.5 1.2 2.8 3 2.8.5 0 1-.1 1.4-.4a.6.6 0 0 1 .8 0c.3.2.3.5.1.7-.6.5-1.4.8-2.3.8zm15-10.9v15.4c0 1.4-1.2 2.6-2.7 2.6H4.7A2.7 2.7 0 0 1 2 21.2V5.8c0-1.4 1.2-2.6 2.7-2.6h16.6c1.5 0 2.7 1.2 2.7 2.6zm-1.2 0c0-.9-.7-1.4-1.5-1.4H4.7c-.8 0-1.5.5-1.5 1.4v15.4c0 .8.7 1.4 1.5 1.4h16.6c.8 0 1.5-.6 1.5-1.4V5.8z"/>
   </svg>
 );
