@@ -349,7 +349,7 @@ const ProfilePage = () => {
                         <Trophy size={24} className="text-gray-400" />
                       </div>
                       <p className="text-sm text-gray-600 mb-1">No badges earned yet</p>
-                      <p className="text-xs text-gray-500">Complete learning paths to earn badges</p>
+{/*                       <p className="text-xs text-gray-500">Complete learning paths to earn badges</p> */}
                     </div>
                   )}
                 </CardContent>
