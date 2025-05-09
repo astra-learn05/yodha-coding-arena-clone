@@ -20,9 +20,7 @@ export const LeetcodeIcon: React.FC<{ className?: string }> = ({ className = "w-
 );
 
 export const HackerrankIcon: React.FC<{ className?: string }> = ({ className = "w-5 h-5" }) => (
-  <svg xmlns="http://www.w3.org/2000/svg" className={className} fill="currentColor" viewBox="0 0 24 24">
-    <path d="M12 0c1.285 0 9.75 4.886 10.932 6 1.182 1.114 1.182 11.223 0 12.337-1.182 1.114-9.647 6-10.932 6s-9.75-4.886-10.932-6c-1.182-1.114-1.182-11.223 0-12.337C2.25 4.886 10.715 0 12 0zm2.144 6.709h-4.33v10.582h4.33V6.709zm-1.629 4.33c0 .7-.631 1.256-1.415 1.256-.783 0-1.415-.556-1.415-1.256 0-.7.631-1.256 1.415-1.256.784-.001 1.415.555 1.415 1.256z"/>
-  </svg>
+<svg width="24px" height="24px" viewBox="0 0 24 24" role="img" xmlns="http://www.w3.org/2000/svg"><path d="M0 0v24h24V0zm9.95 8.002h1.805c.061 0 .111.05.111.111v7.767c0 .061-.05.111-.11.111H9.95a.111.111 0 0 1-.111-.11v-2.87H7.894v2.87c0 .06-.05.11-.11.11H5.976a.11.11 0 0 1-.11-.11V8.112c0-.06.05-.11.11-.11h1.806c.061 0 .11.05.11.11v2.869H9.84v-2.87c0-.06.05-.11.11-.11zm2.999 0h5.778c.061 0 .111.05.111.11v7.767a.11.11 0 0 1-.11.112h-5.78a.11.11 0 0 1-.11-.11v-7.77c0-.06.05-.11.11-.11z"/></svg>
 );
 
 export const GeeksforGeeksIcon: React.FC<{ className?: string }> = ({ className = "w-5 h-5" }) => (
