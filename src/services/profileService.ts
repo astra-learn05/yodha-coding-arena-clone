@@ -1,4 +1,6 @@
-import { mockUser } from "./userService";
+
+// Remove the import that's causing the error and replace it with a direct implementation
+// since we're using mock data anyway
 
 export interface Profile {
   id: string;
@@ -251,7 +253,8 @@ export const deleteWorkExperience = async (id: string): Promise<boolean> => {
   return true;
 };
 
-interface Badge {
+// Define the Badge and BadgeDefinition interfaces to ensure type safety
+export interface Badge {
   id: string;
   user_id: string;
   badge_id: string;
@@ -259,7 +262,7 @@ interface Badge {
   badge?: BadgeDefinition;
 }
 
-interface BadgeDefinition {
+export interface BadgeDefinition {
   id: string;
   name: string;
   description: string;
