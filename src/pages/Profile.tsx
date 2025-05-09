@@ -2,19 +2,12 @@ import { useState, useEffect } from "react";
 import { useSearchParams, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge as UiBadge } from "@/components/ui/badge";
+import { Badge } from "@/components/ui/badge";
 import UserStats from "@/components/UserStats";
-import { Award, Code, Brain, Zap, Trophy, MapPin, Calendar, School, Sparkles, Mail } from "lucide-react";
+import { Award, Code, Brain, Zap, Trophy, Linkedin, Github, MapPin, Calendar, School, Sparkles, Mail } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { toast } from "sonner";
 import { format, parseISO } from "date-fns";
-import {
-  LinkedinIcon,
-  GithubIcon,
-  LeetcodeIcon,
-  HackerrankIcon,
-  GeeksforGeeksIcon
-} from "@/components/SocialIcons";
 
 import {
   getProfileById, 
@@ -35,9 +28,7 @@ import {
   deleteProject,
   addWorkExperience,
   updateWorkExperience,
-  deleteWorkExperience,
-  Badge,
-  BadgeDefinition
+  deleteWorkExperience
 } from "@/services/profileService";
 
 import {
@@ -52,26 +43,10 @@ import {
 
 import { cn } from "@/lib/utils";
 
-// Define the badge interface to match what's returned from getUserBadges
-interface UserBadge {
-  id: string;
-  badge_id: string;
-  user_id: string;
-  earned_at: string;
-  badge?: {
-    id: string;
-    name: string;
-    description: string;
-    icon_name: string;
-    background_color: string;
-    text_color: string;
-  };
-}
-
 const ProfilePage = () => {
   const [searchParams] = useSearchParams();
   const params = useParams();
-  const profileId = params.id || "1"; // Default to ID "1" if no ID is provided
+  const profileId = params.id;
   const prn = searchParams.get("prn") || params.prn;
   
   const [open, setOpen] = useState(false);
@@ -152,15 +127,20 @@ const ProfilePage = () => {
     linkedinUrl: string | null;
     githubUrl: string | null;
     leetcodeUrl: string | null;
-    hackerrankUrl: string | null;
-    geeksforgeeksUrl: string | null;
   }) => {
     toast.error("Profile editing is currently disabled");
   };
 
-  // This block is for debugging purposes
-  console.log("Profile ID:", profileId, "PRN:", prn, "Is Editable:", isEditable);
-  console.log("Profile data:", profile);
+  if (!profileId && !prn) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-gray-800 mb-2">Profile Not Found</h1>
+          <p className="text-gray-600">Please provide a valid ID or PRN parameter</p>
+        </div>
+      </div>
+    );
+  }
 
   if (profileLoading) {
     return (
@@ -199,6 +179,8 @@ const ProfilePage = () => {
     learningPathProgress: learningPathProgressData,
     completedTopics
   };
+
+  console.log("Profile ID:", profileId, "PRN:", prn, "Is Editable:", isEditable);
 
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-gray-50 to-gray-100">
@@ -258,9 +240,8 @@ const ProfilePage = () => {
                       </div>
                     </div>
 
-                    {(profile.linkedin_url || profile.github_url || profile.leetcode_url || 
-                      profile.hackerrank_url || profile.geeksforgeeks_url) && (
-                      <div className="flex justify-center gap-3 mt-4 pt-4 border-t border-gray-100 w-full">
+                    {(profile.linkedin_url || profile.github_url || profile.leetcode_url) && (
+                      <div className="flex justify-center gap-5 mt-4 pt-4 border-t border-gray-100 w-full">
                         {profile.linkedin_url && (
                           <a 
                             href={profile.linkedin_url.startsWith('http') ? profile.linkedin_url : `https://${profile.linkedin_url}`}
@@ -269,7 +250,7 @@ const ProfilePage = () => {
                             className="p-2 bg-blue-50 rounded-full text-blue-600 hover:bg-blue-100 hover:text-blue-700 transition-colors transform hover:scale-110 duration-200"
                             aria-label="LinkedIn Profile"
                           >
-                            <LinkedinIcon className="w-5 h-5" />
+                            <Linkedin size={18} />
                           </a>
                         )}
                         {profile.github_url && (
@@ -280,7 +261,7 @@ const ProfilePage = () => {
                             className="p-2 bg-gray-100 rounded-full text-gray-800 hover:bg-gray-200 hover:text-gray-900 transition-colors transform hover:scale-110 duration-200"
                             aria-label="GitHub Profile"
                           >
-                            <GithubIcon className="w-5 h-5" />
+                            <Github size={18} />
                           </a>
                         )}
                         {profile.leetcode_url && (
@@ -291,29 +272,7 @@ const ProfilePage = () => {
                             className="p-2 bg-orange-50 rounded-full text-orange-600 hover:bg-orange-100 hover:text-orange-700 transition-colors transform hover:scale-110 duration-200"
                             aria-label="LeetCode Profile"
                           >
-                            <LeetcodeIcon className="w-5 h-5" />
-                          </a>
-                        )}
-                        {profile.hackerrank_url && (
-                          <a 
-                            href={profile.hackerrank_url.startsWith('http') ? profile.hackerrank_url : `https://${profile.hackerrank_url}`}
-                            target="_blank" 
-                            rel="noopener noreferrer"
-                            className="p-2 bg-green-50 rounded-full text-green-600 hover:bg-green-100 hover:text-green-700 transition-colors transform hover:scale-110 duration-200"
-                            aria-label="HackerRank Profile"
-                          >
-                            <HackerrankIcon className="w-5 h-5" />
-                          </a>
-                        )}
-                        {profile.geeksforgeeks_url && (
-                          <a 
-                            href={profile.geeksforgeeks_url.startsWith('http') ? profile.geeksforgeeks_url : `https://${profile.geeksforgeeks_url}`}
-                            target="_blank" 
-                            rel="noopener noreferrer"
-                            className="p-2 bg-emerald-50 rounded-full text-emerald-600 hover:bg-emerald-100 hover:text-emerald-700 transition-colors transform hover:scale-110 duration-200"
-                            aria-label="GeeksforGeeks Profile"
-                          >
-                            <GeeksforGeeksIcon className="w-5 h-5" />
+                            <Code size={18} />
                           </a>
                         )}
                       </div>
@@ -329,15 +288,15 @@ const ProfilePage = () => {
                       <Award size={18} className="text-purple-600" />
                       Achievements
                     </CardTitle>
-                    <UiBadge variant="outline" className="bg-purple-50 text-purple-700 border-purple-200">
+                    <Badge variant="outline" className="bg-purple-50 text-purple-700 border-purple-200">
                       {badges.length} {badges.length === 1 ? 'Badge' : 'Badges'}
-                    </UiBadge>
+                    </Badge>
                   </div>
                 </CardHeader>
                 <CardContent className="p-5">
                   {badges.length > 0 ? (
                     <div className="grid grid-cols-3 gap-3">
-                      {badges.map((badge: UserBadge) => {
+                      {badges.map((badge) => {
                         const IconComponent = {
                           'Award': Award,
                           'Code': Code,

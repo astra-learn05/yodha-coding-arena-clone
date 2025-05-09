@@ -15,13 +15,6 @@ import { addCertificate, updateCertificate, deleteCertificate } from "@/services
 import { addProject, updateProject, deleteProject } from "@/services/profileService";
 import { addWorkExperience, updateWorkExperience, deleteWorkExperience } from "@/services/profileService";
 import { toast } from "sonner";
-import {
-  LinkedinIcon,
-  GithubIcon,
-  LeetcodeIcon,
-  HackerrankIcon,
-  GeeksforGeeksIcon
-} from "@/components/SocialIcons";
 
 const formSchema = z.object({
   realName: z.string().min(2, {
@@ -38,9 +31,7 @@ const formSchema = z.object({
   profilePictureUrl: z.string().url({ message: "Please enter a valid URL" }).optional().or(z.literal('')),
   linkedinUrl: z.string().url({ message: "Please enter a valid URL" }).optional().or(z.literal('')),
   githubUrl: z.string().url({ message: "Please enter a valid URL" }).optional().or(z.literal('')),
-  leetcodeUrl: z.string().url({ message: "Please enter a valid URL" }).optional().or(z.literal('')),
-  hackerrankUrl: z.string().url({ message: "Please enter a valid URL" }).optional().or(z.literal('')),
-  geeksforgeeksUrl: z.string().url({ message: "Please enter a valid URL" }).optional().or(z.literal(''))
+  leetcodeUrl: z.string().url({ message: "Please enter a valid URL" }).optional().or(z.literal(''))
 });
 
 type ProfileEditDialogProps = {
@@ -54,8 +45,6 @@ type ProfileEditDialogProps = {
     linkedinUrl: string | null;
     githubUrl: string | null;
     leetcodeUrl: string | null;
-    hackerrankUrl: string | null;
-    geeksforgeeksUrl: string | null;
     certificates: Certificate[];
     projects: Project[];
     workExperience: WorkExperience[];
@@ -70,8 +59,6 @@ type ProfileEditDialogProps = {
     linkedinUrl: string | null;
     githubUrl: string | null;
     leetcodeUrl: string | null;
-    hackerrankUrl: string | null;
-    geeksforgeeksUrl: string | null;
     certificates: Certificate[];
     projects: Project[];
     workExperience: WorkExperience[];
@@ -105,9 +92,7 @@ const ProfileEditDialog = ({ userData, onSave, onClose }: ProfileEditDialogProps
       profilePictureUrl: userData.profilePictureUrl || "",
       linkedinUrl: userData.linkedinUrl || "",
       githubUrl: userData.githubUrl || "",
-      leetcodeUrl: userData.leetcodeUrl || "",
-      hackerrankUrl: userData.hackerrankUrl || "",
-      geeksforgeeksUrl: userData.geeksforgeeksUrl || ""
+      leetcodeUrl: userData.leetcodeUrl || ""
     },
   });
 
@@ -225,8 +210,6 @@ const ProfileEditDialog = ({ userData, onSave, onClose }: ProfileEditDialogProps
         linkedinUrl: data.linkedinUrl || null,
         githubUrl: data.githubUrl || null,
         leetcodeUrl: data.leetcodeUrl || null,
-        hackerrankUrl: data.hackerrankUrl || null,
-        geeksforgeeksUrl: data.geeksforgeeksUrl || null,
         certificates,
         projects,
         workExperience
@@ -345,98 +328,48 @@ const ProfileEditDialog = ({ userData, onSave, onClose }: ProfileEditDialogProps
             />
           </div>
 
-          <div className="space-y-3">
-            <Label className="text-base font-medium">Social Profiles</Label>
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-              <div className="space-y-2">
-                <FormField
-                  control={form.control}
-                  name="linkedinUrl"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="flex items-center gap-1.5">
-                        <LinkedinIcon className="w-4 h-4 text-blue-600" />
-                        LinkedIn URL
-                      </FormLabel>
-                      <FormControl>
-                        <Input {...field} placeholder="https://linkedin.com/in/username" />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <FormField
+              control={form.control}
+              name="linkedinUrl"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>LinkedIn URL</FormLabel>
+                  <FormControl>
+                    <Input {...field} placeholder="https://linkedin.com/in/username" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-                <FormField
-                  control={form.control}
-                  name="githubUrl"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="flex items-center gap-1.5">
-                        <GithubIcon className="w-4 h-4" />
-                        GitHub URL
-                      </FormLabel>
-                      <FormControl>
-                        <Input {...field} placeholder="https://github.com/username" />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+            <FormField
+              control={form.control}
+              name="githubUrl"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>GitHub URL</FormLabel>
+                  <FormControl>
+                    <Input {...field} placeholder="https://github.com/username" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
-                <FormField
-                  control={form.control}
-                  name="leetcodeUrl"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="flex items-center gap-1.5">
-                        <LeetcodeIcon className="w-4 h-4 text-orange-500" />
-                        LeetCode URL
-                      </FormLabel>
-                      <FormControl>
-                        <Input {...field} placeholder="https://leetcode.com/username" />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-              
-              <div className="space-y-2">
-                <FormField
-                  control={form.control}
-                  name="hackerrankUrl"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="flex items-center gap-1.5">
-                        <HackerrankIcon className="w-4 h-4 text-green-600" />
-                        HackerRank URL
-                      </FormLabel>
-                      <FormControl>
-                        <Input {...field} placeholder="https://hackerrank.com/username" />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="geeksforgeeksUrl"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="flex items-center gap-1.5">
-                        <GeeksforGeeksIcon className="w-4 h-4 text-emerald-600" />
-                        GeeksforGeeks URL
-                      </FormLabel>
-                      <FormControl>
-                        <Input {...field} placeholder="https://geeksforgeeks.org/user/username" />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-            </div>
+            <FormField
+              control={form.control}
+              name="leetcodeUrl"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>LeetCode URL</FormLabel>
+                  <FormControl>
+                    <Input {...field} placeholder="https://leetcode.com/username" />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
           </div>
 
           {/* Certificates Section */}
