@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useSearchParams, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { Badge as UiBadge } from "@/components/ui/badge";
 import UserStats from "@/components/UserStats";
 import { Award, Code, Brain, Zap, Trophy, MapPin, Calendar, School, Sparkles, Mail } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -329,9 +329,9 @@ const ProfilePage = () => {
                       <Award size={18} className="text-purple-600" />
                       Achievements
                     </CardTitle>
-                    <Badge variant="outline" className="bg-purple-50 text-purple-700 border-purple-200">
+                    <UiBadge variant="outline" className="bg-purple-50 text-purple-700 border-purple-200">
                       {badges.length} {badges.length === 1 ? 'Badge' : 'Badges'}
-                    </Badge>
+                    </UiBadge>
                   </div>
                 </CardHeader>
                 <CardContent className="p-5">
