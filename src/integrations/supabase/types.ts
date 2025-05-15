@@ -71,39 +71,6 @@ export type Database = {
         }
         Relationships: []
       }
-      blog_posts: {
-        Row: {
-          content: string
-          created_at: string
-          description: string
-          html_content: string | null
-          id: string
-          read_time: number
-          title: string
-          updated_at: string
-        }
-        Insert: {
-          content: string
-          created_at?: string
-          description: string
-          html_content?: string | null
-          id?: string
-          read_time: number
-          title: string
-          updated_at?: string
-        }
-        Update: {
-          content?: string
-          created_at?: string
-          description?: string
-          html_content?: string | null
-          id?: string
-          read_time?: number
-          title?: string
-          updated_at?: string
-        }
-        Relationships: []
-      }
       certificates: {
         Row: {
           created_at: string
@@ -148,6 +115,36 @@ export type Database = {
           },
         ]
       }
+      contact_submissions: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          message: string
+          name: string
+          status: string
+          subject: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          message: string
+          name: string
+          status?: string
+          subject: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          message?: string
+          name?: string
+          status?: string
+          subject?: string
+        }
+        Relationships: []
+      }
       learning_paths: {
         Row: {
           created_at: string
@@ -177,89 +174,6 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
-      }
-      post_categories: {
-        Row: {
-          created_at: string
-          id: string
-          name: string
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          name: string
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          name?: string
-        }
-        Relationships: []
-      }
-      post_category_relations: {
-        Row: {
-          category_id: string
-          post_id: string
-        }
-        Insert: {
-          category_id: string
-          post_id: string
-        }
-        Update: {
-          category_id?: string
-          post_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "post_category_relations_category_id_fkey"
-            columns: ["category_id"]
-            isOneToOne: false
-            referencedRelation: "post_categories"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "post_category_relations_post_id_fkey"
-            columns: ["post_id"]
-            isOneToOne: false
-            referencedRelation: "blog_posts"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      post_resources: {
-        Row: {
-          created_at: string
-          id: string
-          post_id: string | null
-          title: string
-          type: string
-          url: string
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          post_id?: string | null
-          title: string
-          type: string
-          url: string
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          post_id?: string | null
-          title?: string
-          type?: string
-          url?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "post_resources_post_id_fkey"
-            columns: ["post_id"]
-            isOneToOne: false
-            referencedRelation: "blog_posts"
-            referencedColumns: ["id"]
-          },
-        ]
       }
       profiles: {
         Row: {
@@ -370,6 +284,53 @@ export type Database = {
           },
         ]
       }
+      publications: {
+        Row: {
+          authors: string[]
+          created_at: string
+          doi: string | null
+          id: string
+          publication_date: string
+          publication_name: string
+          title: string
+          updated_at: string
+          url: string | null
+          user_id: string
+        }
+        Insert: {
+          authors: string[]
+          created_at?: string
+          doi?: string | null
+          id?: string
+          publication_date: string
+          publication_name: string
+          title: string
+          updated_at?: string
+          url?: string | null
+          user_id: string
+        }
+        Update: {
+          authors?: string[]
+          created_at?: string
+          doi?: string | null
+          id?: string
+          publication_date?: string
+          publication_name?: string
+          title?: string
+          updated_at?: string
+          url?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "publications_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       questions: {
         Row: {
           created_at: string
@@ -442,6 +403,50 @@ export type Database = {
             columns: ["learning_path_id"]
             isOneToOne: false
             referencedRelation: "learning_paths"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      trainings: {
+        Row: {
+          created_at: string
+          description: string | null
+          end_date: string | null
+          id: string
+          organization: string
+          start_date: string
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          end_date?: string | null
+          id?: string
+          organization: string
+          start_date: string
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          end_date?: string | null
+          id?: string
+          organization?: string
+          start_date?: string
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "trainings_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -551,44 +556,6 @@ export type Database = {
             foreignKeyName: "user_skills_user_id_fkey"
             columns: ["user_id"]
             isOneToOne: false
-            referencedRelation: "profiles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      user_streaks: {
-        Row: {
-          created_at: string
-          current_streak: number
-          id: string
-          last_activity_date: string | null
-          max_streak: number
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          created_at?: string
-          current_streak?: number
-          id?: string
-          last_activity_date?: string | null
-          max_streak?: number
-          updated_at?: string
-          user_id: string
-        }
-        Update: {
-          created_at?: string
-          current_streak?: number
-          id?: string
-          last_activity_date?: string | null
-          max_streak?: number
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "user_streaks_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: true
             referencedRelation: "profiles"
             referencedColumns: ["id"]
           },

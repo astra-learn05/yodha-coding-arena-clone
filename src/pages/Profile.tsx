@@ -22,6 +22,7 @@ import {
   getProfileByPRN, 
   updateProfile,
   getUserBadges,
+  getUserSkills,
   getUserCertificates,
   getUserProjects,
   getUserWorkExperiences,
@@ -51,6 +52,7 @@ import {
 } from "@/services/badgeService";
 
 import { cn } from "@/lib/utils";
+import { SkillsSection, CertificatesSection, ProjectsSection, WorkExperienceSection } from "@/components/ProfileSections";
 
 const ProfilePage = () => {
   const [searchParams] = useSearchParams();
@@ -94,6 +96,12 @@ const ProfilePage = () => {
   const { data: difficultyProgress } = useQuery({
     queryKey: ['difficultyProgress', profile?.id],
     queryFn: () => calculateProgressByDifficulty(profile?.id || ''),
+    enabled: !!profile?.id
+  });
+
+  const { data: skills = [] } = useQuery({
+    queryKey: ['skills', profile?.id],
+    queryFn: () => getUserSkills(profile?.id || ''),
     enabled: !!profile?.id
   });
 
@@ -238,7 +246,7 @@ const ProfilePage = () => {
                           <Sparkles size={16} className="text-indigo-500" />
                           <span className="text-sm font-medium">CGPA</span>
                         </div>
-                        <span className="font-semibold text-gray-800 bg-blue-50 px-2 py-0.5 rounded-md">{profile.cgpa.toFixed(1)}</span>
+                        <span className="font-semibold text-gray-800 bg-blue-50 px-2 py-0.5 rounded-md">{profile.cgpa?.toFixed(1) || "N/A"}</span>
                       </div>
                     </div>
 
@@ -349,15 +357,22 @@ const ProfilePage = () => {
                         <Trophy size={24} className="text-gray-400" />
                       </div>
                       <p className="text-sm text-gray-600 mb-1">No badges earned yet</p>
-{/*                       <p className="text-xs text-gray-500">Complete learning paths to earn badges</p> */}
                     </div>
                   )}
                 </CardContent>
               </Card>
+
+              <SkillsSection skills={skills} />
             </div>
             
-            <div className="lg:col-span-3">
+            <div className="lg:col-span-3 space-y-6">
               <UserStats {...statsData} />
+
+              <ProjectsSection projects={projects} />
+
+              <WorkExperienceSection experiences={workExperience} />
+
+              <CertificatesSection certificates={certificates} />
             </div>
           </div>
         </div>
