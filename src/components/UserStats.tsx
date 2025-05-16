@@ -1,3 +1,4 @@
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Check, Star, BookOpen, ExternalLink, Award } from "lucide-react";
@@ -6,7 +7,6 @@ import { calculateProgressByDifficulty } from "@/services/learningPathService";
 import { useParams, useSearchParams } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { useState, useEffect } from "react";
-import ProfileCharts from "./ProfileCharts";
 
 interface UserStatsProps {
   learningPathProgress?: Array<{
@@ -101,14 +101,8 @@ const UserStats = ({
               style={{ width: animateStats ? `${solvedPercentage}%` : '0%', transition: 'width 1.5s ease-in-out' }}
             ></div>
           </div>
-
-          {/* Insert data visualization charts */}
-          <ProfileCharts 
-            difficultyProgress={progressByDifficulty}
-            learningPathProgress={learningPathProgress}
-          />
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Easy Problems */}
             <div className="bg-gradient-to-br from-green-50 to-green-100 p-5 rounded-xl shadow-sm border border-green-100 transform transition-all duration-300 hover:shadow-md hover:translate-y-[-2px]">
               <div className="flex justify-between items-center mb-3">

@@ -4,7 +4,6 @@ import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge as UiBadge } from "@/components/ui/badge";
 import UserStats from "@/components/UserStats";
-import PublicationsSection from "@/components/PublicationsSection";
 import { Award, Code, Brain, Zap, Trophy, Linkedin, Github, MapPin, Calendar, School, Sparkles, Mail } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { toast } from "sonner";
@@ -29,13 +28,11 @@ import {
   getUserWorkExperiences,
   getUserTrainings,
   getUserAssessments,
-  getUserPublications,
   Certificate,
   Project,
   WorkExperience,
   Training,
   Assessment,
-  Publication,
   addCertificate,
   updateCertificate,
   deleteCertificate,
@@ -146,12 +143,6 @@ const ProfilePage = () => {
   const { data: assessments = [], refetch: refetchAssessments } = useQuery({
     queryKey: ['assessments', profile?.id],
     queryFn: () => getUserAssessments(profile?.id || ''),
-    enabled: !!profile?.id
-  });
-
-  const { data: publications = [], refetch: refetchPublications } = useQuery({
-    queryKey: ['publications', profile?.id],
-    queryFn: () => getUserPublications(profile?.id || ''),
     enabled: !!profile?.id
   });
 
@@ -283,7 +274,7 @@ const ProfilePage = () => {
                     </div>
 
                     {(profile.linkedin_url || profile.github_url || profile.leetcode_url || 
-                      profile.hackerrank_url || profile.geeksforgeeks_url) && (
+                      profile.hackerrank_url || profile.gfg_url) && (
                       <div className="flex justify-center gap-3 mt-4 pt-4 border-t border-gray-100 w-full">
                         {profile.linkedin_url && (
                           <a 
@@ -329,9 +320,9 @@ const ProfilePage = () => {
                             <HackerrankIcon className="w-5 h-5" />
                           </a>
                         )}
-                        {profile.geeksforgeeks_url && (
+                        {profile.gfg_url && (
                           <a 
-                            href={profile.geeksforgeeks_url.startsWith('http') ? profile.geeksforgeeks_url : `https://${profile.geeksforgeeks_url}`}
+                            href={profile.gfg_url.startsWith('http') ? profile.gfg_url : `https://${profile.gfg_url}`}
                             target="_blank" 
                             rel="noopener noreferrer"
                             className="p-2 bg-emerald-50 rounded-full text-emerald-600 hover:bg-emerald-100 hover:text-emerald-700 transition-colors transform hover:scale-110 duration-200"
@@ -407,8 +398,6 @@ const ProfilePage = () => {
               <TrainingsSection trainings={trainings} />
 
               <AssessmentsSection assessments={assessments} />
-
-              <PublicationsSection publications={publications} />
 
               <CertificatesSection certificates={certificates} />
             </div>
