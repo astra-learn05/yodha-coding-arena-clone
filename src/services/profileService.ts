@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 
 export interface Profile {
@@ -139,7 +138,8 @@ export const getProfileById = async (id: string): Promise<Profile | null> => {
       return null;
     }
 
-    return data as Profile;
+    // Type cast to ensure compatibility with our Profile interface
+    return data as unknown as Profile;
   } catch (err) {
     console.error('Error in getProfileById:', err);
     return null;
@@ -159,7 +159,7 @@ export const getProfileByPRN = async (prn: string): Promise<Profile | null> => {
       return null;
     }
 
-    return data as Profile;
+    return data as unknown as Profile;
   } catch (err) {
     console.error('Error in getProfileByPRN:', err);
     return null;
@@ -183,7 +183,7 @@ export const updateProfile = async (
       return null;
     }
 
-    return data as Profile;
+    return data as unknown as Profile;
   } catch (err) {
     console.error('Error in updateProfile:', err);
     return null;
@@ -203,7 +203,7 @@ export const getUserBadges = async (userId: string): Promise<UserBadge[]> => {
       return [];
     }
 
-    return data as UserBadge[];
+    return data as unknown as UserBadge[];
   } catch (err) {
     console.error('Error in getUserBadges:', err);
     return [];
@@ -303,7 +303,7 @@ export const getUserTrainings = async (userId: string): Promise<Training[]> => {
       return [];
     }
 
-    return data as Training[];
+    return data || [];
   } catch (err) {
     console.error('Error in getUserTrainings:', err);
     return [];
@@ -323,7 +323,7 @@ export const getUserAssessments = async (userId: string): Promise<Assessment[]> 
       return [];
     }
 
-    return data as Assessment[];
+    return data || [];
   } catch (err) {
     console.error('Error in getUserAssessments:', err);
     return [];

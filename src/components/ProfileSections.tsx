@@ -1,20 +1,22 @@
+
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, Briefcase, Award, Book, BookOpen, Brain, Trophy, GraduationCap, School } from "lucide-react";
+import { Calendar, Briefcase, Award, Book, BookOpen, Brain, Trophy, GraduationCap, School, Code, FileText } from "lucide-react";
 import { format, parseISO } from "date-fns";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
+import { Progress } from "@/components/ui/progress";
 import { 
   Certificate, 
   Project, 
   WorkExperience,
-  UserSkill,
+  Skill,
   Training,
   Assessment
 } from "@/services/profileService";
 
 // Skills Section
-export const SkillsSection = ({ skills }: { skills: UserSkill[] }) => {
+export const SkillsSection = ({ skills }: { skills: Skill[] }) => {
   return (
     <Card className="overflow-hidden border-none shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-white to-gray-50">
       <CardHeader className="pb-2 bg-gradient-to-r from-cyan-50 to-blue-50 border-b">
