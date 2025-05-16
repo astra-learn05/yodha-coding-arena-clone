@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, Briefcase, Award, Book, FileText, Code, GraduationCap, School } from "lucide-react";
+import { Calendar, Briefcase, Award, Book, BookOpen, Brain, Trophy, GraduationCap, School } from "lucide-react";
 import { format, parseISO } from "date-fns";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { 
@@ -199,93 +199,136 @@ export const WorkExperienceSection = ({ experiences }: { experiences: WorkExperi
   );
 };
 
-// Trainings Section
-export const TrainingsSection = ({ trainings }: { trainings: Training[] }) => {
+// Training section
+export const TrainingsSection: React.FC<{ trainings: Training[] }> = ({ trainings = [] }) => {
   return (
     <Card className="overflow-hidden border-none shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-white to-gray-50">
-      <CardHeader className="pb-2 bg-gradient-to-r from-emerald-50 to-teal-50 border-b">
-        <CardTitle className="text-lg font-bold text-emerald-800 flex items-center gap-2">
-          <GraduationCap size={18} className="text-emerald-600" />
-          Training & Courses
-        </CardTitle>
+      <CardHeader className="pb-2 bg-gradient-to-r from-indigo-50 to-purple-50 border-b">
+        <div className="flex items-center justify-between">
+          <CardTitle className="text-lg font-bold text-indigo-800 flex items-center gap-2">
+            <BookOpen size={18} className="text-indigo-600" />
+            Trainings & Workshops
+          </CardTitle>
+          <Badge variant="outline" className="bg-indigo-50 text-indigo-700 border-indigo-200">
+            {trainings.length} {trainings.length === 1 ? 'Training' : 'Trainings'}
+          </Badge>
+        </div>
       </CardHeader>
       <CardContent className="p-5">
         {trainings.length > 0 ? (
           <div className="space-y-4">
             {trainings.map((training) => (
-              <div key={training.id} className="border border-emerald-100 rounded-lg p-4 bg-emerald-50/30 hover:bg-emerald-50/70 transition-colors">
-                <div className="flex justify-between items-start">
-                  <h3 className="font-medium text-gray-800">{training.title}</h3>
-                  <span className="text-xs bg-emerald-100 text-emerald-800 px-2 py-1 rounded">
-                    {format(new Date(training.start_date), "MMM yyyy")} - 
-                    {training.end_date ? format(new Date(training.end_date), " MMM yyyy") : " Present"}
-                  </span>
+              <div key={training.id} className="rounded-lg border border-indigo-100 p-4 bg-gradient-to-r from-indigo-50/20 to-white animate-fade-in hover:shadow-md transition-all">
+                <div className="flex flex-wrap justify-between items-start gap-2">
+                  <div className="space-y-1">
+                    <h3 className="font-semibold text-gray-800">{training.title}</h3>
+                    <div className="flex items-center gap-1 text-indigo-700 text-sm">
+                      <School size={14} />
+                      <span>{training.organization}</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-1 text-gray-600 text-xs">
+                    <Calendar size={12} />
+                    <span>
+                      {format(parseISO(training.start_date), "MMM yyyy")}
+                      {training.end_date ? ` - ${format(parseISO(training.end_date), "MMM yyyy")}` : " - Present"}
+                    </span>
+                  </div>
                 </div>
-                <p className="text-sm font-medium text-emerald-700 mt-1">{training.organization}</p>
                 {training.description && (
-                  <p className="text-sm text-gray-600 mt-2">{training.description}</p>
+                  <div className="mt-2 text-sm text-gray-600">
+                    <p>{training.description}</p>
+                  </div>
                 )}
               </div>
             ))}
           </div>
         ) : (
-          <div className="text-center py-6 text-gray-500">No trainings or courses added yet</div>
+          <div className="flex flex-col items-center justify-center py-10 text-center bg-gradient-to-br from-indigo-50/50 to-purple-50/50 rounded-xl border border-indigo-100 mt-3">
+            <div className="w-16 h-16 bg-gradient-to-br from-indigo-100 to-indigo-200 rounded-full flex items-center justify-center mb-4 shadow-sm">
+              <BookOpen size={24} className="text-indigo-500" />
+            </div>
+            <p className="text-gray-700 mb-1 font-medium">No trainings yet</p>
+            <p className="text-sm text-gray-600 max-w-lg">
+              Trainings represent your educational workshops and professional development courses.
+            </p>
+          </div>
         )}
       </CardContent>
     </Card>
   );
 };
 
-// Assessments Section
-export const AssessmentsSection = ({ assessments }: { assessments: Assessment[] }) => {
+// Assessment section
+export const AssessmentsSection: React.FC<{ assessments: Assessment[] }> = ({ assessments = [] }) => {
   return (
     <Card className="overflow-hidden border-none shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-white to-gray-50">
-      <CardHeader className="pb-2 bg-gradient-to-r from-blue-50 to-cyan-50 border-b">
-        <CardTitle className="text-lg font-bold text-blue-800 flex items-center gap-2">
-          <School size={18} className="text-blue-600" />
-          Assessments & Tests
-        </CardTitle>
+      <CardHeader className="pb-2 bg-gradient-to-r from-emerald-50 to-teal-50 border-b">
+        <div className="flex items-center justify-between">
+          <CardTitle className="text-lg font-bold text-emerald-800 flex items-center gap-2">
+            <Trophy size={18} className="text-emerald-600" />
+            Assessments & Tests
+          </CardTitle>
+          <Badge variant="outline" className="bg-emerald-50 text-emerald-700 border-emerald-200">
+            {assessments.length} {assessments.length === 1 ? 'Assessment' : 'Assessments'}
+          </Badge>
+        </div>
       </CardHeader>
       <CardContent className="p-5">
         {assessments.length > 0 ? (
           <div className="space-y-4">
             {assessments.map((assessment) => (
-              <div key={assessment.id} className="border border-blue-100 rounded-lg p-4 bg-blue-50/30 hover:bg-blue-50/70 transition-colors">
-                <div className="flex justify-between items-start">
-                  <h3 className="font-medium text-gray-800">{assessment.title}</h3>
-                  <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">
-                    {format(new Date(assessment.assessment_date), "MMM yyyy")}
-                  </span>
-                </div>
-                <p className="text-sm font-medium text-blue-700 mt-1">{assessment.provider}</p>
-                <div className="flex items-center mt-2">
-                  <div className="w-full bg-gray-200 rounded-full h-2.5">
-                    <div 
-                      className="bg-blue-600 h-2.5 rounded-full" 
-                      style={{ 
-                        width: `${(parseInt(assessment.score) / parseInt(assessment.max_score)) * 100}%` 
-                      }}
-                    ></div>
+              <div key={assessment.id} className="rounded-lg border border-emerald-100 p-4 bg-gradient-to-r from-emerald-50/20 to-white animate-fade-in hover:shadow-md transition-all">
+                <div className="flex flex-wrap justify-between items-start gap-2">
+                  <div className="space-y-1">
+                    <h3 className="font-semibold text-gray-800">{assessment.title}</h3>
+                    <div className="flex items-center gap-1 text-emerald-700 text-sm">
+                      <Brain size={14} />
+                      <span>{assessment.provider}</span>
+                    </div>
                   </div>
-                  <span className="ml-2 text-sm font-medium text-gray-700">
-                    {assessment.score}/{assessment.max_score}
-                  </span>
+                  <div className="flex items-center gap-1 text-gray-600 text-xs">
+                    <Calendar size={12} />
+                    <span>{format(parseISO(assessment.assessment_date), "MMMM d, yyyy")}</span>
+                  </div>
+                </div>
+                <div className="mt-3 flex items-center">
+                  <div className="w-full">
+                    <div className="flex justify-between text-xs mb-1">
+                      <span className="font-medium text-emerald-700">Score</span>
+                      <span className="font-bold">{assessment.score}/{assessment.max_score}</span>
+                    </div>
+                    <Progress 
+                      value={(parseFloat(assessment.score) / parseFloat(assessment.max_score)) * 100} 
+                      className="h-2 bg-emerald-100" 
+                    />
+                  </div>
                 </div>
                 {assessment.certificate_url && (
-                  <a 
-                    href={assessment.certificate_url} 
-                    target="_blank" 
-                    rel="noreferrer" 
-                    className="text-xs text-blue-600 hover:text-blue-800 mt-2 inline-block"
-                  >
-                    View Certificate
-                  </a>
+                  <div className="mt-3 flex justify-end">
+                    <a 
+                      href={assessment.certificate_url} 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center text-xs text-emerald-700 hover:text-emerald-800 gap-1"
+                    >
+                      <Award size={12} /> View Certificate
+                    </a>
+                  </div>
                 )}
               </div>
             ))}
           </div>
         ) : (
-          <div className="text-center py-6 text-gray-500">No assessments added yet</div>
+          <div className="flex flex-col items-center justify-center py-10 text-center bg-gradient-to-br from-emerald-50/50 to-teal-50/50 rounded-xl border border-emerald-100 mt-3">
+            <div className="w-16 h-16 bg-gradient-to-br from-emerald-100 to-emerald-200 rounded-full flex items-center justify-center mb-4 shadow-sm">
+              <Trophy size={24} className="text-emerald-500" />
+            </div>
+            <p className="text-gray-700 mb-1 font-medium">No assessments yet</p>
+            <p className="text-sm text-gray-600 max-w-lg">
+              Assessments represent your test scores and technical evaluations.
+            </p>
+          </div>
         )}
       </CardContent>
     </Card>

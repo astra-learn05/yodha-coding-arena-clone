@@ -283,7 +283,7 @@ const ProfilePage = () => {
                     </div>
 
                     {(profile.linkedin_url || profile.github_url || profile.leetcode_url || 
-                      profile.hackerrank_url || profile.gfg_url) && (
+                      profile.hackerrank_url || profile.geeksforgeeks_url) && (
                       <div className="flex justify-center gap-3 mt-4 pt-4 border-t border-gray-100 w-full">
                         {profile.linkedin_url && (
                           <a 
@@ -329,9 +329,9 @@ const ProfilePage = () => {
                             <HackerrankIcon className="w-5 h-5" />
                           </a>
                         )}
-                        {profile.gfg_url && (
+                        {profile.geeksforgeeks_url && (
                           <a 
-                            href={profile.gfg_url.startsWith('http') ? profile.gfg_url : `https://${profile.gfg_url}`}
+                            href={profile.geeksforgeeks_url.startsWith('http') ? profile.geeksforgeeks_url : `https://${profile.geeksforgeeks_url}`}
                             target="_blank" 
                             rel="noopener noreferrer"
                             className="p-2 bg-emerald-50 rounded-full text-emerald-600 hover:bg-emerald-100 hover:text-emerald-700 transition-colors transform hover:scale-110 duration-200"

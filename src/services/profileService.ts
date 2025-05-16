@@ -1,9 +1,9 @@
-import { supabaseClient } from "@/lib/supabase";
+
+import { supabase } from "@/integrations/supabase/client";
 
 export interface Profile {
   id: string;
   user_id: string;
-  prn: string;
   real_name: string;
   cgpa: number;
   bio: string | null;
@@ -92,11 +92,10 @@ export interface Training {
   id: string;
   user_id: string;
   title: string;
-  institution: string;
+  organization: string;
   start_date: string;
   end_date: string | null;
   description: string | null;
-  certificate_url: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -105,10 +104,11 @@ export interface Assessment {
   id: string;
   user_id: string;
   title: string;
-  platform: string;
-  score: number | null;
-  date_taken: string;
-  url: string | null;
+  provider: string;
+  score: string;
+  max_score: string;
+  assessment_date: string;
+  certificate_url: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -128,7 +128,7 @@ export interface Publication {
 
 export const getProfileById = async (id: string): Promise<Profile | null> => {
   try {
-    const { data, error } = await supabaseClient
+    const { data, error } = await supabase
       .from('profiles')
       .select('*')
       .eq('id', id)
@@ -148,7 +148,7 @@ export const getProfileById = async (id: string): Promise<Profile | null> => {
 
 export const getProfileByPRN = async (prn: string): Promise<Profile | null> => {
   try {
-    const { data, error } = await supabaseClient
+    const { data, error } = await supabase
       .from('profiles')
       .select('*')
       .eq('prn', prn)
@@ -171,7 +171,7 @@ export const updateProfile = async (
   updates: Partial<Profile>
 ): Promise<Profile | null> => {
   try {
-    const { data, error } = await supabaseClient
+    const { data, error } = await supabase
       .from('profiles')
       .update(updates)
       .eq('id', id)
@@ -192,7 +192,7 @@ export const updateProfile = async (
 
 export const getUserBadges = async (userId: string): Promise<UserBadge[]> => {
   try {
-    const { data, error } = await supabaseClient
+    const { data, error } = await supabase
       .from('user_badges')
       .select('*, badge:badges(*)')
       .eq('user_id', userId)
@@ -212,8 +212,8 @@ export const getUserBadges = async (userId: string): Promise<UserBadge[]> => {
 
 export const getUserSkills = async (userId: string): Promise<Skill[]> => {
   try {
-    const { data, error } = await supabaseClient
-      .from('skills')
+    const { data, error } = await supabase
+      .from('user_skills')
       .select('*')
       .eq('user_id', userId)
       .order('skill_name', { ascending: true });
@@ -232,7 +232,7 @@ export const getUserSkills = async (userId: string): Promise<Skill[]> => {
 
 export const getUserCertificates = async (userId: string): Promise<Certificate[]> => {
   try {
-    const { data, error } = await supabaseClient
+    const { data, error } = await supabase
       .from('certificates')
       .select('*')
       .eq('user_id', userId)
@@ -252,7 +252,7 @@ export const getUserCertificates = async (userId: string): Promise<Certificate[]
 
 export const getUserProjects = async (userId: string): Promise<Project[]> => {
   try {
-    const { data, error } = await supabaseClient
+    const { data, error } = await supabase
       .from('projects')
       .select('*')
       .eq('user_id', userId)
@@ -272,7 +272,7 @@ export const getUserProjects = async (userId: string): Promise<Project[]> => {
 
 export const getUserWorkExperiences = async (userId: string): Promise<WorkExperience[]> => {
   try {
-    const { data, error } = await supabaseClient
+    const { data, error } = await supabase
       .from('work_experience')
       .select('*')
       .eq('user_id', userId)
@@ -292,7 +292,7 @@ export const getUserWorkExperiences = async (userId: string): Promise<WorkExperi
 
 export const getUserTrainings = async (userId: string): Promise<Training[]> => {
   try {
-    const { data, error } = await supabaseClient
+    const { data, error } = await supabase
       .from('trainings')
       .select('*')
       .eq('user_id', userId)
@@ -312,11 +312,11 @@ export const getUserTrainings = async (userId: string): Promise<Training[]> => {
 
 export const getUserAssessments = async (userId: string): Promise<Assessment[]> => {
   try {
-    const { data, error } = await supabaseClient
+    const { data, error } = await supabase
       .from('assessments')
       .select('*')
       .eq('user_id', userId)
-      .order('date_taken', { ascending: false });
+      .order('assessment_date', { ascending: false });
 
     if (error) {
       console.error('Error fetching user assessments:', error);
@@ -332,7 +332,7 @@ export const getUserAssessments = async (userId: string): Promise<Assessment[]> 
 
 export const addCertificate = async (certificate: Omit<Certificate, 'id' | 'created_at' | 'updated_at' >): Promise<Certificate | null> => {
   try {
-    const { data, error } = await supabaseClient
+    const { data, error } = await supabase
       .from('certificates')
       .insert([certificate])
       .select('*')
@@ -352,7 +352,7 @@ export const addCertificate = async (certificate: Omit<Certificate, 'id' | 'crea
 
 export const updateCertificate = async (id: string, updates: Partial<Certificate>): Promise<Certificate | null> => {
   try {
-    const { data, error } = await supabaseClient
+    const { data, error } = await supabase
       .from('certificates')
       .update(updates)
       .eq('id', id)
@@ -373,7 +373,7 @@ export const updateCertificate = async (id: string, updates: Partial<Certificate
 
 export const deleteCertificate = async (id: string): Promise<boolean> => {
   try {
-    const { error } = await supabaseClient
+    const { error } = await supabase
       .from('certificates')
       .delete()
       .eq('id', id);
@@ -392,7 +392,7 @@ export const deleteCertificate = async (id: string): Promise<boolean> => {
 
 export const addProject = async (project: Omit<Project, 'id' | 'created_at' | 'updated_at'>): Promise<Project | null> => {
   try {
-    const { data, error } = await supabaseClient
+    const { data, error } = await supabase
       .from('projects')
       .insert([project])
       .select('*')
@@ -412,7 +412,7 @@ export const addProject = async (project: Omit<Project, 'id' | 'created_at' | 'u
 
 export const updateProject = async (id: string, updates: Partial<Project>): Promise<Project | null> => {
   try {
-    const { data, error } = await supabaseClient
+    const { data, error } = await supabase
       .from('projects')
       .update(updates)
       .eq('id', id)
@@ -433,7 +433,7 @@ export const updateProject = async (id: string, updates: Partial<Project>): Prom
 
 export const deleteProject = async (id: string): Promise<boolean> => {
   try {
-    const { error } = await supabaseClient
+    const { error } = await supabase
       .from('projects')
       .delete()
       .eq('id', id);
@@ -452,7 +452,7 @@ export const deleteProject = async (id: string): Promise<boolean> => {
 
 export const addWorkExperience = async (workExperience: Omit<WorkExperience, 'id' | 'created_at' | 'updated_at'>): Promise<WorkExperience | null> => {
   try {
-    const { data, error } = await supabaseClient
+    const { data, error } = await supabase
       .from('work_experience')
       .insert([workExperience])
       .select('*')
@@ -472,7 +472,7 @@ export const addWorkExperience = async (workExperience: Omit<WorkExperience, 'id
 
 export const updateWorkExperience = async (id: string, updates: Partial<WorkExperience>): Promise<WorkExperience | null> => {
   try {
-    const { data, error } = await supabaseClient
+    const { data, error } = await supabase
       .from('work_experience')
       .update(updates)
       .eq('id', id)
@@ -493,7 +493,7 @@ export const updateWorkExperience = async (id: string, updates: Partial<WorkExpe
 
 export const deleteWorkExperience = async (id: string): Promise<boolean> => {
   try {
-    const { error } = await supabaseClient
+    const { error } = await supabase
       .from('work_experience')
       .delete()
       .eq('id', id);
@@ -512,7 +512,7 @@ export const deleteWorkExperience = async (id: string): Promise<boolean> => {
 
 export const getUserPublications = async (userId: string): Promise<Publication[]> => {
   try {
-    const { data, error } = await supabaseClient
+    const { data, error } = await supabase
       .from('publications')
       .select('*')
       .eq('user_id', userId)
@@ -528,27 +528,4 @@ export const getUserPublications = async (userId: string): Promise<Publication[]
     console.error('Error in getUserPublications:', err);
     return [];
   }
-};
-
-export {
-  getProfileById,
-  getProfileByPRN,
-  updateProfile,
-  getUserBadges,
-  getUserSkills,
-  getUserCertificates,
-  getUserProjects,
-  getUserWorkExperiences,
-  getUserTrainings,
-  getUserAssessments,
-  addCertificate,
-  updateCertificate,
-  deleteCertificate,
-  addProject,
-  updateProject,
-  deleteProject,
-  addWorkExperience,
-  updateWorkExperience,
-  deleteWorkExperience,
-  getUserPublications,
 };

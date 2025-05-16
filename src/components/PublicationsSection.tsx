@@ -12,16 +12,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { BookOpen, Calendar, ExternalLink, Users } from "lucide-react";
 import { format, parseISO } from "date-fns";
-
-export interface Publication {
-  id: string;
-  title: string;
-  publication_name: string;
-  publication_date: string;
-  authors: string[];
-  doi?: string;
-  url?: string;
-}
+import { Publication } from "@/services/profileService";
 
 interface PublicationsSectionProps {
   publications: Publication[];
