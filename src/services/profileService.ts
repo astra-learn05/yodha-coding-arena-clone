@@ -93,6 +93,31 @@ export type WorkExperience = {
   updated_at: string;
 };
 
+export type Training = {
+  id: string;
+  user_id: string;
+  title: string;
+  organization: string;
+  description: string | null;
+  start_date: string;
+  end_date: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type Assessment = {
+  id: string;
+  user_id: string;
+  title: string;
+  provider: string;
+  score: string;
+  max_score: string;
+  assessment_date: string;
+  certificate_url: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
 // Fetch profile by PRN (using the users table to lookup)
 export const getProfileByPRN = async (prn: string): Promise<Profile | null> => {
   // First get the user ID from the users table using PRN
@@ -506,6 +531,140 @@ export const deleteWorkExperience = async (workExperienceId: string): Promise<bo
 
   if (error) {
     console.error('Error deleting work experience:', error);
+    return false;
+  }
+
+  return true;
+};
+
+// Get trainings for a user
+export const getUserTrainings = async (userId: string): Promise<Training[]> => {
+  const { data, error } = await supabase
+    .from('trainings')
+    .select('*')
+    .eq('user_id', userId)
+    .order('start_date', { ascending: false });
+
+  if (error) {
+    console.error('Error fetching user trainings:', error);
+    return [];
+  }
+
+  return data || [];
+};
+
+// Add a training
+export const addTraining = async (userId: string, training: Omit<Training, 'id' | 'user_id' | 'created_at' | 'updated_at'>): Promise<Training | null> => {
+  const { data, error } = await supabase
+    .from('trainings')
+    .insert({ 
+      user_id: userId,
+      ...training
+    })
+    .select()
+    .single();
+
+  if (error) {
+    console.error('Error adding training:', error);
+    return null;
+  }
+
+  return data;
+};
+
+// Update a training
+export const updateTraining = async (trainingId: string, training: Partial<Training>): Promise<Training | null> => {
+  const { data, error } = await supabase
+    .from('trainings')
+    .update(training)
+    .eq('id', trainingId)
+    .select()
+    .single();
+
+  if (error) {
+    console.error('Error updating training:', error);
+    return null;
+  }
+
+  return data;
+};
+
+// Delete a training
+export const deleteTraining = async (trainingId: string): Promise<boolean> => {
+  const { error } = await supabase
+    .from('trainings')
+    .delete()
+    .eq('id', trainingId);
+
+  if (error) {
+    console.error('Error deleting training:', error);
+    return false;
+  }
+
+  return true;
+};
+
+// Get assessments for a user
+export const getUserAssessments = async (userId: string): Promise<Assessment[]> => {
+  const { data, error } = await supabase
+    .from('assessments')
+    .select('*')
+    .eq('user_id', userId)
+    .order('assessment_date', { ascending: false });
+
+  if (error) {
+    console.error('Error fetching user assessments:', error);
+    return [];
+  }
+
+  return data || [];
+};
+
+// Add an assessment
+export const addAssessment = async (userId: string, assessment: Omit<Assessment, 'id' | 'user_id' | 'created_at' | 'updated_at'>): Promise<Assessment | null> => {
+  const { data, error } = await supabase
+    .from('assessments')
+    .insert({ 
+      user_id: userId,
+      ...assessment
+    })
+    .select()
+    .single();
+
+  if (error) {
+    console.error('Error adding assessment:', error);
+    return null;
+  }
+
+  return data;
+};
+
+// Update an assessment
+export const updateAssessment = async (assessmentId: string, assessment: Partial<Assessment>): Promise<Assessment | null> => {
+  const { data, error } = await supabase
+    .from('assessments')
+    .update(assessment)
+    .eq('id', assessmentId)
+    .select()
+    .single();
+
+  if (error) {
+    console.error('Error updating assessment:', error);
+    return null;
+  }
+
+  return data;
+};
+
+// Delete an assessment
+export const deleteAssessment = async (assessmentId: string): Promise<boolean> => {
+  const { error } = await supabase
+    .from('assessments')
+    .delete()
+    .eq('id', assessmentId);
+
+  if (error) {
+    console.error('Error deleting assessment:', error);
     return false;
   }
 

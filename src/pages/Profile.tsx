@@ -26,9 +26,13 @@ import {
   getUserCertificates,
   getUserProjects,
   getUserWorkExperiences,
+  getUserTrainings,
+  getUserAssessments,
   Certificate,
   Project,
   WorkExperience,
+  Training,
+  Assessment,
   addCertificate,
   updateCertificate,
   deleteCertificate,
@@ -52,7 +56,14 @@ import {
 } from "@/services/badgeService";
 
 import { cn } from "@/lib/utils";
-import { SkillsSection, CertificatesSection, ProjectsSection, WorkExperienceSection } from "@/components/ProfileSections";
+import { 
+  SkillsSection, 
+  CertificatesSection, 
+  ProjectsSection, 
+  WorkExperienceSection,
+  TrainingsSection,
+  AssessmentsSection 
+} from "@/components/ProfileSections";
 
 const ProfilePage = () => {
   const [searchParams] = useSearchParams();
@@ -120,6 +131,18 @@ const ProfilePage = () => {
   const { data: workExperience = [], refetch: refetchWorkExperience } = useQuery({
     queryKey: ['workExperience', profile?.id],
     queryFn: () => getUserWorkExperiences(profile?.id || ''),
+    enabled: !!profile?.id
+  });
+
+  const { data: trainings = [], refetch: refetchTrainings } = useQuery({
+    queryKey: ['trainings', profile?.id],
+    queryFn: () => getUserTrainings(profile?.id || ''),
+    enabled: !!profile?.id
+  });
+
+  const { data: assessments = [], refetch: refetchAssessments } = useQuery({
+    queryKey: ['assessments', profile?.id],
+    queryFn: () => getUserAssessments(profile?.id || ''),
     enabled: !!profile?.id
   });
 
@@ -371,6 +394,10 @@ const ProfilePage = () => {
               <ProjectsSection projects={projects} />
 
               <WorkExperienceSection experiences={workExperience} />
+
+              <TrainingsSection trainings={trainings} />
+
+              <AssessmentsSection assessments={assessments} />
 
               <CertificatesSection certificates={certificates} />
             </div>

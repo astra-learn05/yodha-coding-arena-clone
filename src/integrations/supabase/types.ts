@@ -41,6 +41,53 @@ export type Database = {
           },
         ]
       }
+      assessments: {
+        Row: {
+          assessment_date: string
+          certificate_url: string | null
+          created_at: string
+          id: string
+          max_score: string
+          provider: string
+          score: string
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          assessment_date: string
+          certificate_url?: string | null
+          created_at?: string
+          id?: string
+          max_score: string
+          provider: string
+          score: string
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          assessment_date?: string
+          certificate_url?: string | null
+          created_at?: string
+          id?: string
+          max_score?: string
+          provider?: string
+          score?: string
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "assessments_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       badge_types: {
         Row: {
           background_color: string

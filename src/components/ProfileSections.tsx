@@ -1,15 +1,16 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, Briefcase, Award, Book, FileText, Code } from "lucide-react";
+import { Calendar, Briefcase, Award, Book, FileText, Code, GraduationCap, School } from "lucide-react";
 import { format, parseISO } from "date-fns";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { 
   Certificate, 
   Project, 
   WorkExperience,
-  UserSkill
+  UserSkill,
+  Training,
+  Assessment
 } from "@/services/profileService";
 
 // Skills Section
@@ -192,6 +193,99 @@ export const WorkExperienceSection = ({ experiences }: { experiences: WorkExperi
           </div>
         ) : (
           <div className="text-center py-6 text-gray-500">No work experience added yet</div>
+        )}
+      </CardContent>
+    </Card>
+  );
+};
+
+// Trainings Section
+export const TrainingsSection = ({ trainings }: { trainings: Training[] }) => {
+  return (
+    <Card className="overflow-hidden border-none shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-white to-gray-50">
+      <CardHeader className="pb-2 bg-gradient-to-r from-emerald-50 to-teal-50 border-b">
+        <CardTitle className="text-lg font-bold text-emerald-800 flex items-center gap-2">
+          <GraduationCap size={18} className="text-emerald-600" />
+          Training & Courses
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="p-5">
+        {trainings.length > 0 ? (
+          <div className="space-y-4">
+            {trainings.map((training) => (
+              <div key={training.id} className="border border-emerald-100 rounded-lg p-4 bg-emerald-50/30 hover:bg-emerald-50/70 transition-colors">
+                <div className="flex justify-between items-start">
+                  <h3 className="font-medium text-gray-800">{training.title}</h3>
+                  <span className="text-xs bg-emerald-100 text-emerald-800 px-2 py-1 rounded">
+                    {format(new Date(training.start_date), "MMM yyyy")} - 
+                    {training.end_date ? format(new Date(training.end_date), " MMM yyyy") : " Present"}
+                  </span>
+                </div>
+                <p className="text-sm font-medium text-emerald-700 mt-1">{training.organization}</p>
+                {training.description && (
+                  <p className="text-sm text-gray-600 mt-2">{training.description}</p>
+                )}
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-6 text-gray-500">No trainings or courses added yet</div>
+        )}
+      </CardContent>
+    </Card>
+  );
+};
+
+// Assessments Section
+export const AssessmentsSection = ({ assessments }: { assessments: Assessment[] }) => {
+  return (
+    <Card className="overflow-hidden border-none shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-white to-gray-50">
+      <CardHeader className="pb-2 bg-gradient-to-r from-blue-50 to-cyan-50 border-b">
+        <CardTitle className="text-lg font-bold text-blue-800 flex items-center gap-2">
+          <School size={18} className="text-blue-600" />
+          Assessments & Tests
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="p-5">
+        {assessments.length > 0 ? (
+          <div className="space-y-4">
+            {assessments.map((assessment) => (
+              <div key={assessment.id} className="border border-blue-100 rounded-lg p-4 bg-blue-50/30 hover:bg-blue-50/70 transition-colors">
+                <div className="flex justify-between items-start">
+                  <h3 className="font-medium text-gray-800">{assessment.title}</h3>
+                  <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">
+                    {format(new Date(assessment.assessment_date), "MMM yyyy")}
+                  </span>
+                </div>
+                <p className="text-sm font-medium text-blue-700 mt-1">{assessment.provider}</p>
+                <div className="flex items-center mt-2">
+                  <div className="w-full bg-gray-200 rounded-full h-2.5">
+                    <div 
+                      className="bg-blue-600 h-2.5 rounded-full" 
+                      style={{ 
+                        width: `${(parseInt(assessment.score) / parseInt(assessment.max_score)) * 100}%` 
+                      }}
+                    ></div>
+                  </div>
+                  <span className="ml-2 text-sm font-medium text-gray-700">
+                    {assessment.score}/{assessment.max_score}
+                  </span>
+                </div>
+                {assessment.certificate_url && (
+                  <a 
+                    href={assessment.certificate_url} 
+                    target="_blank" 
+                    rel="noreferrer" 
+                    className="text-xs text-blue-600 hover:text-blue-800 mt-2 inline-block"
+                  >
+                    View Certificate
+                  </a>
+                )}
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-6 text-gray-500">No assessments added yet</div>
         )}
       </CardContent>
     </Card>
