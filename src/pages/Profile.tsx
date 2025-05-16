@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge as UiBadge } from "@/components/ui/badge";
 import UserStats from "@/components/UserStats";
+import PublicationsSection from "@/components/PublicationsSection";
 import { Award, Code, Brain, Zap, Trophy, Linkedin, Github, MapPin, Calendar, School, Sparkles, Mail } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { toast } from "sonner";
@@ -28,11 +29,13 @@ import {
   getUserWorkExperiences,
   getUserTrainings,
   getUserAssessments,
+  getUserPublications,
   Certificate,
   Project,
   WorkExperience,
   Training,
   Assessment,
+  Publication,
   addCertificate,
   updateCertificate,
   deleteCertificate,
@@ -143,6 +146,12 @@ const ProfilePage = () => {
   const { data: assessments = [], refetch: refetchAssessments } = useQuery({
     queryKey: ['assessments', profile?.id],
     queryFn: () => getUserAssessments(profile?.id || ''),
+    enabled: !!profile?.id
+  });
+
+  const { data: publications = [], refetch: refetchPublications } = useQuery({
+    queryKey: ['publications', profile?.id],
+    queryFn: () => getUserPublications(profile?.id || ''),
     enabled: !!profile?.id
   });
 
@@ -398,6 +407,8 @@ const ProfilePage = () => {
               <TrainingsSection trainings={trainings} />
 
               <AssessmentsSection assessments={assessments} />
+
+              <PublicationsSection publications={publications} />
 
               <CertificatesSection certificates={certificates} />
             </div>

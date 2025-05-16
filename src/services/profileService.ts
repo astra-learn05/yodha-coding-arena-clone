@@ -1,12 +1,11 @@
-import { supabase } from "@/integrations/supabase/client";
+import { supabaseClient } from "@/lib/supabase";
 
-// Types for profile data
-export type Profile = {
+export interface Profile {
   id: string;
+  user_id: string;
+  prn: string;
   real_name: string;
   cgpa: number;
-  created_at: string;
-  updated_at: string;
   bio: string | null;
   college_name: string | null;
   location: string | null;
@@ -15,658 +14,541 @@ export type Profile = {
   github_url: string | null;
   leetcode_url: string | null;
   hackerrank_url: string | null;
-  gfg_url: string | null;
-};
-
-export type UserSkill = {
-  id: string;
-  user_id: string;
-  skill_name: string;
+  geeksforgeeks_url: string | null;
   created_at: string;
-};
+  updated_at: string;
+}
 
-export type Badge = {
-  id: string;
-  user_id: string;
-  badge_id: string;
-  earned_at: string;
-  badge?: BadgeDefinition;
-};
-
-export type BadgeDefinition = {
+export interface Badge {
   id: string;
   name: string;
-  description: string | null;
+  description: string;
   icon_name: string;
   background_color: string;
   text_color: string;
   created_at: string;
-};
+  updated_at: string;
+}
 
-export type UserStreak = {
+export interface UserBadge {
   id: string;
   user_id: string;
-  current_streak: number;
-  max_streak: number;
-  last_activity_date: string | null;
+  badge_id: string;
+  earned_at: string;
   created_at: string;
   updated_at: string;
-};
+  badge?: Badge;
+}
 
-export type Certificate = {
+export interface Skill {
+  id: string;
+  user_id: string;
+  skill_name: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Certificate {
   id: string;
   user_id: string;
   title: string;
   issuer: string;
   issue_date: string;
-  expiry_date?: string;
-  credential_url?: string;
+  expiry_date: string | null;
+  credential_url: string | null;
   created_at: string;
   updated_at: string;
-};
+}
 
-export type Project = {
+export interface Project {
   id: string;
   user_id: string;
   title: string;
   description: string;
-  technologies?: string[];
+  technologies: string[];
   start_date: string;
-  end_date?: string;
-  project_url?: string;
-  image_url?: string;
+  end_date: string | null;
+  project_url: string | null;
+  image_url: string | null;
   created_at: string;
   updated_at: string;
-};
+}
 
-export type WorkExperience = {
+export interface WorkExperience {
   id: string;
   user_id: string;
   company: string;
   position: string;
-  location?: string;
-  start_date: string;
-  end_date?: string;
-  description: string;
-  technologies?: string[];
-  created_at: string;
-  updated_at: string;
-};
-
-export type Training = {
-  id: string;
-  user_id: string;
-  title: string;
-  organization: string;
-  description: string | null;
+  location: string | null;
   start_date: string;
   end_date: string | null;
+  description: string;
+  technologies: string[];
   created_at: string;
   updated_at: string;
-};
+}
 
-export type Assessment = {
+export interface Training {
   id: string;
   user_id: string;
   title: string;
-  provider: string;
-  score: string;
-  max_score: string;
-  assessment_date: string;
+  institution: string;
+  start_date: string;
+  end_date: string | null;
+  description: string | null;
   certificate_url: string | null;
   created_at: string;
   updated_at: string;
-};
+}
 
-// Fetch profile by PRN (using the users table to lookup)
-export const getProfileByPRN = async (prn: string): Promise<Profile | null> => {
-  // First get the user ID from the users table using PRN
-  const { data: userData, error: userError } = await supabase
-    .from('users')
-    .select('id')
-    .eq('prn', prn)
-    .maybeSingle();
+export interface Assessment {
+  id: string;
+  user_id: string;
+  title: string;
+  platform: string;
+  score: number | null;
+  date_taken: string;
+  url: string | null;
+  created_at: string;
+  updated_at: string;
+}
 
-  if (userError || !userData) {
-    console.error('Error fetching user by PRN:', userError);
-    return null;
-  }
+export interface Publication {
+  id: string;
+  user_id: string;
+  title: string;
+  publication_name: string;
+  publication_date: string;
+  authors: string[];
+  doi?: string;
+  url?: string;
+  created_at: string;
+  updated_at: string;
+}
 
-  // Now fetch the profile using the user ID
-  const { data: profileData, error: profileError } = await supabase
-    .from('profiles')
-    .select('*')
-    .eq('id', userData.id)
-    .maybeSingle();
-
-  if (profileError) {
-    console.error('Error fetching profile:', profileError);
-    return null;
-  }
-
-  return profileData;
-};
-
-// Fetch profile by ID
 export const getProfileById = async (id: string): Promise<Profile | null> => {
-  const { data, error } = await supabase
-    .from('profiles')
-    .select('*')
-    .eq('id', id)
-    .maybeSingle();
-
-  if (error) {
-    console.error('Error fetching profile:', error);
-    return null;
-  }
-
-  return data;
-};
-
-// Update profile
-export const updateProfile = async (id: string, profile: Partial<Profile>): Promise<Profile | null> => {
-  console.log("Updating profile with ID:", id);
-  console.log("Update data:", profile);
-  
-  // Ensure CGPA is a valid number
-  const updates = {
-    ...profile,
-    cgpa: typeof profile.cgpa === 'number' ? profile.cgpa : parseFloat(String(profile.cgpa))
-  };
-  
-  const { data, error } = await supabase
-    .from('profiles')
-    .update(updates)
-    .eq('id', id)
-    .select()
-    .single();
-
-  if (error) {
-    console.error('Error updating profile:', error);
-    return null;
-  }
-
-  console.log("Profile updated successfully:", data);
-  return data;
-};
-
-// Get skills for a user
-export const getUserSkills = async (userId: string): Promise<UserSkill[]> => {
-  const { data, error } = await supabase
-    .from('user_skills')
-    .select('*')
-    .eq('user_id', userId);
-
-  if (error) {
-    console.error('Error fetching user skills:', error);
-    return [];
-  }
-
-  return data || [];
-};
-
-// Add a skill
-export const addUserSkill = async (userId: string, skillName: string): Promise<UserSkill | null> => {
-  // First check if skill already exists to avoid duplicates
-  const { data: existingSkills } = await supabase
-    .from('user_skills')
-    .select('*')
-    .eq('user_id', userId)
-    .eq('skill_name', skillName);
-    
-  // If skill already exists, return it
-  if (existingSkills && existingSkills.length > 0) {
-    return existingSkills[0];
-  }
-
-  // Otherwise add the new skill
-  const { data, error } = await supabase
-    .from('user_skills')
-    .insert({ user_id: userId, skill_name: skillName })
-    .select()
-    .single();
-
-  if (error) {
-    console.error('Error adding skill:', error);
-    return null;
-  }
-
-  return data;
-};
-
-// Remove a skill
-export const removeUserSkill = async (skillId: string): Promise<boolean> => {
-  const { error } = await supabase
-    .from('user_skills')
-    .delete()
-    .eq('id', skillId);
-
-  if (error) {
-    console.error('Error removing skill:', error);
-    return false;
-  }
-
-  return true;
-};
-
-// Find and remove a skill by name
-export const removeUserSkillByName = async (userId: string, skillName: string): Promise<boolean> => {
-  // First find the skill by name
-  const { data: skills } = await supabase
-    .from('user_skills')
-    .select('id')
-    .eq('user_id', userId)
-    .eq('skill_name', skillName);
-  
-  if (!skills || skills.length === 0) {
-    console.log(`Skill "${skillName}" not found for user ${userId}`);
-    return false;
-  }
-  
-  // Then delete it using the id
-  return removeUserSkill(skills[0].id);
-};
-
-// Sync user skills - add new ones, remove old ones
-export const syncUserSkills = async (userId: string, skills: string[]): Promise<boolean> => {
   try {
-    console.log("Syncing skills for user:", userId);
-    console.log("New skills list:", skills);
-    
-    // Get current skills
-    const currentSkills = await getUserSkills(userId);
-    const currentSkillNames = currentSkills.map(s => s.skill_name);
-    
-    console.log("Current skills:", currentSkillNames);
-    
-    // Skills to add (in new list but not in current)
-    const skillsToAdd = skills.filter(skill => !currentSkillNames.includes(skill));
-    console.log("Skills to add:", skillsToAdd);
-    
-    // Skills to remove (in current but not in new list)
-    const skillsToRemove = currentSkills.filter(skill => !skills.includes(skill.skill_name));
-    console.log("Skills to remove:", skillsToRemove.map(s => s.skill_name));
-    
-    // Add new skills
-    const addPromises = skillsToAdd.map(skill => addUserSkill(userId, skill));
-    await Promise.all(addPromises);
-    
-    // Remove old skills
-    const removePromises = skillsToRemove.map(skill => removeUserSkill(skill.id));
-    await Promise.all(removePromises);
-    
-    return true;
-  } catch (error) {
-    console.error("Error syncing user skills:", error);
-    return false;
-  }
-};
+    const { data, error } = await supabaseClient
+      .from('profiles')
+      .select('*')
+      .eq('id', id)
+      .single();
 
-// Get badges for a user
-export const getUserBadges = async (userId: string): Promise<Badge[]> => {
-  const { data, error } = await supabase
-    .from('user_badges')
-    .select(`
-      *,
-      badge:badge_id(*)
-    `)
-    .eq('user_id', userId);
+    if (error) {
+      console.error('Error fetching profile by ID:', error);
+      return null;
+    }
 
-  if (error) {
-    console.error('Error fetching user badges:', error);
-    return [];
-  }
-
-  return data || [];
-};
-
-// Get user streak
-export const getUserStreak = async (userId: string): Promise<UserStreak | null> => {
-  const { data, error } = await supabase
-    .from('user_streaks')
-    .select('*')
-    .eq('user_id', userId)
-    .maybeSingle();
-
-  if (error) {
-    console.error('Error fetching user streak:', error);
+    return data as Profile;
+  } catch (err) {
+    console.error('Error in getProfileById:', err);
     return null;
   }
-
-  return data;
 };
 
-// Get certificates for a user
+export const getProfileByPRN = async (prn: string): Promise<Profile | null> => {
+  try {
+    const { data, error } = await supabaseClient
+      .from('profiles')
+      .select('*')
+      .eq('prn', prn)
+      .single();
+
+    if (error) {
+      console.error('Error fetching profile by PRN:', error);
+      return null;
+    }
+
+    return data as Profile;
+  } catch (err) {
+    console.error('Error in getProfileByPRN:', err);
+    return null;
+  }
+};
+
+export const updateProfile = async (
+  id: string,
+  updates: Partial<Profile>
+): Promise<Profile | null> => {
+  try {
+    const { data, error } = await supabaseClient
+      .from('profiles')
+      .update(updates)
+      .eq('id', id)
+      .select('*')
+      .single();
+
+    if (error) {
+      console.error('Error updating profile:', error);
+      return null;
+    }
+
+    return data as Profile;
+  } catch (err) {
+    console.error('Error in updateProfile:', err);
+    return null;
+  }
+};
+
+export const getUserBadges = async (userId: string): Promise<UserBadge[]> => {
+  try {
+    const { data, error } = await supabaseClient
+      .from('user_badges')
+      .select('*, badge:badges(*)')
+      .eq('user_id', userId)
+      .order('earned_at', { ascending: false });
+
+    if (error) {
+      console.error('Error fetching user badges:', error);
+      return [];
+    }
+
+    return data as UserBadge[];
+  } catch (err) {
+    console.error('Error in getUserBadges:', err);
+    return [];
+  }
+};
+
+export const getUserSkills = async (userId: string): Promise<Skill[]> => {
+  try {
+    const { data, error } = await supabaseClient
+      .from('skills')
+      .select('*')
+      .eq('user_id', userId)
+      .order('skill_name', { ascending: true });
+
+    if (error) {
+      console.error('Error fetching user skills:', error);
+      return [];
+    }
+
+    return data as Skill[];
+  } catch (err) {
+    console.error('Error in getUserSkills:', err);
+    return [];
+  }
+};
+
 export const getUserCertificates = async (userId: string): Promise<Certificate[]> => {
-  const { data, error } = await supabase
-    .from('certificates')
-    .select('*')
-    .eq('user_id', userId)
-    .order('issue_date', { ascending: false });
+  try {
+    const { data, error } = await supabaseClient
+      .from('certificates')
+      .select('*')
+      .eq('user_id', userId)
+      .order('issue_date', { ascending: false });
 
-  if (error) {
-    console.error('Error fetching user certificates:', error);
+    if (error) {
+      console.error('Error fetching user certificates:', error);
+      return [];
+    }
+
+    return data as Certificate[];
+  } catch (err) {
+    console.error('Error in getUserCertificates:', err);
     return [];
   }
-
-  return data || [];
 };
 
-// Add a certificate
-export const addCertificate = async (userId: string, certificate: Omit<Certificate, 'id' | 'user_id' | 'created_at' | 'updated_at'>): Promise<Certificate | null> => {
-  const { data, error } = await supabase
-    .from('certificates')
-    .insert({ 
-      user_id: userId,
-      ...certificate
-    })
-    .select()
-    .single();
-
-  if (error) {
-    console.error('Error adding certificate:', error);
-    return null;
-  }
-
-  return data;
-};
-
-// Update a certificate
-export const updateCertificate = async (certificateId: string, certificate: Partial<Certificate>): Promise<Certificate | null> => {
-  const { data, error } = await supabase
-    .from('certificates')
-    .update(certificate)
-    .eq('id', certificateId)
-    .select()
-    .single();
-
-  if (error) {
-    console.error('Error updating certificate:', error);
-    return null;
-  }
-
-  return data;
-};
-
-// Delete a certificate
-export const deleteCertificate = async (certificateId: string): Promise<boolean> => {
-  const { error } = await supabase
-    .from('certificates')
-    .delete()
-    .eq('id', certificateId);
-
-  if (error) {
-    console.error('Error deleting certificate:', error);
-    return false;
-  }
-
-  return true;
-};
-
-// Get projects for a user
 export const getUserProjects = async (userId: string): Promise<Project[]> => {
-  const { data, error } = await supabase
-    .from('projects')
-    .select('*')
-    .eq('user_id', userId)
-    .order('start_date', { ascending: false });
+  try {
+    const { data, error } = await supabaseClient
+      .from('projects')
+      .select('*')
+      .eq('user_id', userId)
+      .order('start_date', { ascending: false });
 
-  if (error) {
-    console.error('Error fetching user projects:', error);
+    if (error) {
+      console.error('Error fetching user projects:', error);
+      return [];
+    }
+
+    return data as Project[];
+  } catch (err) {
+    console.error('Error in getUserProjects:', err);
     return [];
   }
-
-  return data || [];
 };
 
-// Add a project
-export const addProject = async (userId: string, project: Omit<Project, 'id' | 'user_id' | 'created_at' | 'updated_at'>): Promise<Project | null> => {
-  const { data, error } = await supabase
-    .from('projects')
-    .insert({ 
-      user_id: userId,
-      ...project
-    })
-    .select()
-    .single();
-
-  if (error) {
-    console.error('Error adding project:', error);
-    return null;
-  }
-
-  return data;
-};
-
-// Update a project
-export const updateProject = async (projectId: string, project: Partial<Project>): Promise<Project | null> => {
-  const { data, error } = await supabase
-    .from('projects')
-    .update(project)
-    .eq('id', projectId)
-    .select()
-    .single();
-
-  if (error) {
-    console.error('Error updating project:', error);
-    return null;
-  }
-
-  return data;
-};
-
-// Delete a project
-export const deleteProject = async (projectId: string): Promise<boolean> => {
-  const { error } = await supabase
-    .from('projects')
-    .delete()
-    .eq('id', projectId);
-
-  if (error) {
-    console.error('Error deleting project:', error);
-    return false;
-  }
-
-  return true;
-};
-
-// Get work experiences for a user
 export const getUserWorkExperiences = async (userId: string): Promise<WorkExperience[]> => {
-  const { data, error } = await supabase
-    .from('work_experience')
-    .select('*')
-    .eq('user_id', userId)
-    .order('start_date', { ascending: false });
+  try {
+    const { data, error } = await supabaseClient
+      .from('work_experience')
+      .select('*')
+      .eq('user_id', userId)
+      .order('start_date', { ascending: false });
 
-  if (error) {
-    console.error('Error fetching user work experiences:', error);
+    if (error) {
+      console.error('Error fetching user work experience:', error);
+      return [];
+    }
+
+    return data as WorkExperience[];
+  } catch (err) {
+    console.error('Error in getUserWorkExperiences:', err);
     return [];
   }
-
-  return data || [];
 };
 
-// Add a work experience
-export const addWorkExperience = async (userId: string, workExperience: Omit<WorkExperience, 'id' | 'user_id' | 'created_at' | 'updated_at'>): Promise<WorkExperience | null> => {
-  const { data, error } = await supabase
-    .from('work_experience')
-    .insert({ 
-      user_id: userId,
-      ...workExperience
-    })
-    .select()
-    .single();
-
-  if (error) {
-    console.error('Error adding work experience:', error);
-    return null;
-  }
-
-  return data;
-};
-
-// Update a work experience
-export const updateWorkExperience = async (workExperienceId: string, workExperience: Partial<WorkExperience>): Promise<WorkExperience | null> => {
-  const { data, error } = await supabase
-    .from('work_experience')
-    .update(workExperience)
-    .eq('id', workExperienceId)
-    .select()
-    .single();
-
-  if (error) {
-    console.error('Error updating work experience:', error);
-    return null;
-  }
-
-  return data;
-};
-
-// Delete a work experience
-export const deleteWorkExperience = async (workExperienceId: string): Promise<boolean> => {
-  const { error } = await supabase
-    .from('work_experience')
-    .delete()
-    .eq('id', workExperienceId);
-
-  if (error) {
-    console.error('Error deleting work experience:', error);
-    return false;
-  }
-
-  return true;
-};
-
-// Get trainings for a user
 export const getUserTrainings = async (userId: string): Promise<Training[]> => {
-  const { data, error } = await supabase
-    .from('trainings')
-    .select('*')
-    .eq('user_id', userId)
-    .order('start_date', { ascending: false });
+  try {
+    const { data, error } = await supabaseClient
+      .from('trainings')
+      .select('*')
+      .eq('user_id', userId)
+      .order('start_date', { ascending: false });
 
-  if (error) {
-    console.error('Error fetching user trainings:', error);
+    if (error) {
+      console.error('Error fetching user trainings:', error);
+      return [];
+    }
+
+    return data as Training[];
+  } catch (err) {
+    console.error('Error in getUserTrainings:', err);
     return [];
   }
-
-  return data || [];
 };
 
-// Add a training
-export const addTraining = async (userId: string, training: Omit<Training, 'id' | 'user_id' | 'created_at' | 'updated_at'>): Promise<Training | null> => {
-  const { data, error } = await supabase
-    .from('trainings')
-    .insert({ 
-      user_id: userId,
-      ...training
-    })
-    .select()
-    .single();
-
-  if (error) {
-    console.error('Error adding training:', error);
-    return null;
-  }
-
-  return data;
-};
-
-// Update a training
-export const updateTraining = async (trainingId: string, training: Partial<Training>): Promise<Training | null> => {
-  const { data, error } = await supabase
-    .from('trainings')
-    .update(training)
-    .eq('id', trainingId)
-    .select()
-    .single();
-
-  if (error) {
-    console.error('Error updating training:', error);
-    return null;
-  }
-
-  return data;
-};
-
-// Delete a training
-export const deleteTraining = async (trainingId: string): Promise<boolean> => {
-  const { error } = await supabase
-    .from('trainings')
-    .delete()
-    .eq('id', trainingId);
-
-  if (error) {
-    console.error('Error deleting training:', error);
-    return false;
-  }
-
-  return true;
-};
-
-// Get assessments for a user
 export const getUserAssessments = async (userId: string): Promise<Assessment[]> => {
-  const { data, error } = await supabase
-    .from('assessments')
-    .select('*')
-    .eq('user_id', userId)
-    .order('assessment_date', { ascending: false });
+  try {
+    const { data, error } = await supabaseClient
+      .from('assessments')
+      .select('*')
+      .eq('user_id', userId)
+      .order('date_taken', { ascending: false });
 
-  if (error) {
-    console.error('Error fetching user assessments:', error);
+    if (error) {
+      console.error('Error fetching user assessments:', error);
+      return [];
+    }
+
+    return data as Assessment[];
+  } catch (err) {
+    console.error('Error in getUserAssessments:', err);
     return [];
   }
-
-  return data || [];
 };
 
-// Add an assessment
-export const addAssessment = async (userId: string, assessment: Omit<Assessment, 'id' | 'user_id' | 'created_at' | 'updated_at'>): Promise<Assessment | null> => {
-  const { data, error } = await supabase
-    .from('assessments')
-    .insert({ 
-      user_id: userId,
-      ...assessment
-    })
-    .select()
-    .single();
+export const addCertificate = async (certificate: Omit<Certificate, 'id' | 'created_at' | 'updated_at' >): Promise<Certificate | null> => {
+  try {
+    const { data, error } = await supabaseClient
+      .from('certificates')
+      .insert([certificate])
+      .select('*')
+      .single();
 
-  if (error) {
-    console.error('Error adding assessment:', error);
+    if (error) {
+      console.error('Error adding certificate:', error);
+      return null;
+    }
+
+    return data as Certificate;
+  } catch (err) {
+    console.error('Error in addCertificate:', err);
     return null;
   }
-
-  return data;
 };
 
-// Update an assessment
-export const updateAssessment = async (assessmentId: string, assessment: Partial<Assessment>): Promise<Assessment | null> => {
-  const { data, error } = await supabase
-    .from('assessments')
-    .update(assessment)
-    .eq('id', assessmentId)
-    .select()
-    .single();
+export const updateCertificate = async (id: string, updates: Partial<Certificate>): Promise<Certificate | null> => {
+  try {
+    const { data, error } = await supabaseClient
+      .from('certificates')
+      .update(updates)
+      .eq('id', id)
+      .select('*')
+      .single();
 
-  if (error) {
-    console.error('Error updating assessment:', error);
+    if (error) {
+      console.error('Error updating certificate:', error);
+      return null;
+    }
+
+    return data as Certificate;
+  } catch (err) {
+    console.error('Error in updateCertificate:', err);
     return null;
   }
-
-  return data;
 };
 
-// Delete an assessment
-export const deleteAssessment = async (assessmentId: string): Promise<boolean> => {
-  const { error } = await supabase
-    .from('assessments')
-    .delete()
-    .eq('id', assessmentId);
+export const deleteCertificate = async (id: string): Promise<boolean> => {
+  try {
+    const { error } = await supabaseClient
+      .from('certificates')
+      .delete()
+      .eq('id', id);
 
-  if (error) {
-    console.error('Error deleting assessment:', error);
+    if (error) {
+      console.error('Error deleting certificate:', error);
+      return false;
+    }
+
+    return true;
+  } catch (err) {
+    console.error('Error in deleteCertificate:', err);
     return false;
   }
+};
 
-  return true;
+export const addProject = async (project: Omit<Project, 'id' | 'created_at' | 'updated_at'>): Promise<Project | null> => {
+  try {
+    const { data, error } = await supabaseClient
+      .from('projects')
+      .insert([project])
+      .select('*')
+      .single();
+
+    if (error) {
+      console.error('Error adding project:', error);
+      return null;
+    }
+
+    return data as Project;
+  } catch (err) {
+    console.error('Error in addProject:', err);
+    return null;
+  }
+};
+
+export const updateProject = async (id: string, updates: Partial<Project>): Promise<Project | null> => {
+  try {
+    const { data, error } = await supabaseClient
+      .from('projects')
+      .update(updates)
+      .eq('id', id)
+      .select('*')
+      .single();
+
+    if (error) {
+      console.error('Error updating project:', error);
+      return null;
+    }
+
+    return data as Project;
+  } catch (err) {
+    console.error('Error in updateProject:', err);
+    return null;
+  }
+};
+
+export const deleteProject = async (id: string): Promise<boolean> => {
+  try {
+    const { error } = await supabaseClient
+      .from('projects')
+      .delete()
+      .eq('id', id);
+
+    if (error) {
+      console.error('Error deleting project:', error);
+      return false;
+    }
+
+    return true;
+  } catch (err) {
+    console.error('Error in deleteProject:', err);
+    return false;
+  }
+};
+
+export const addWorkExperience = async (workExperience: Omit<WorkExperience, 'id' | 'created_at' | 'updated_at'>): Promise<WorkExperience | null> => {
+  try {
+    const { data, error } = await supabaseClient
+      .from('work_experience')
+      .insert([workExperience])
+      .select('*')
+      .single();
+
+    if (error) {
+      console.error('Error adding work experience:', error);
+      return null;
+    }
+
+    return data as WorkExperience;
+  } catch (err) {
+    console.error('Error in addWorkExperience:', err);
+    return null;
+  }
+};
+
+export const updateWorkExperience = async (id: string, updates: Partial<WorkExperience>): Promise<WorkExperience | null> => {
+  try {
+    const { data, error } = await supabaseClient
+      .from('work_experience')
+      .update(updates)
+      .eq('id', id)
+      .select('*')
+      .single();
+
+    if (error) {
+      console.error('Error updating work experience:', error);
+      return null;
+    }
+
+    return data as WorkExperience;
+  } catch (err) {
+    console.error('Error in updateWorkExperience:', err);
+    return null;
+  }
+};
+
+export const deleteWorkExperience = async (id: string): Promise<boolean> => {
+  try {
+    const { error } = await supabaseClient
+      .from('work_experience')
+      .delete()
+      .eq('id', id);
+
+    if (error) {
+      console.error('Error deleting work experience:', error);
+      return false;
+    }
+
+    return true;
+  } catch (err) {
+    console.error('Error in deleteWorkExperience:', err);
+    return false;
+  }
+};
+
+export const getUserPublications = async (userId: string): Promise<Publication[]> => {
+  try {
+    const { data, error } = await supabaseClient
+      .from('publications')
+      .select('*')
+      .eq('user_id', userId)
+      .order('publication_date', { ascending: false });
+
+    if (error) {
+      console.error('Error fetching user publications:', error);
+      return [];
+    }
+
+    return data || [];
+  } catch (err) {
+    console.error('Error in getUserPublications:', err);
+    return [];
+  }
+};
+
+export {
+  getProfileById,
+  getProfileByPRN,
+  updateProfile,
+  getUserBadges,
+  getUserSkills,
+  getUserCertificates,
+  getUserProjects,
+  getUserWorkExperiences,
+  getUserTrainings,
+  getUserAssessments,
+  addCertificate,
+  updateCertificate,
+  deleteCertificate,
+  addProject,
+  updateProject,
+  deleteProject,
+  addWorkExperience,
+  updateWorkExperience,
+  deleteWorkExperience,
+  getUserPublications,
 };
