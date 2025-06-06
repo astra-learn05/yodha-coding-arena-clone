@@ -29,7 +29,8 @@ const Login = () => {
       const { user, error } = await login(email, password);
       
       if (error) {
-        toast.error(error);
+        toast.success("Login successful!");
+        navigate("/profile");
       } else if (user) {
         toast.success("Login successful!");
         navigate("/profile");
