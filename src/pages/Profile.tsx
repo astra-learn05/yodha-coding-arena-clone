@@ -32,9 +32,9 @@ import { SkillsSection } from "@/components/ProfileSections";
 const ProfilePage = () => {
   const user = getCurrentUser();
   
-  if (!user) {
-    return null; // This should be handled by ProtectedRoute
-  }
+  // if (!user) {
+  //   return null; // This should be handled by ProtectedRoute
+  // }
 
   const { data: profile, isLoading: profileLoading } = useQuery({
     queryKey: ['profile', user.id],
