@@ -6,6 +6,7 @@ import { Badge as UiBadge } from "@/components/ui/badge";
 import UserStats from "@/components/UserStats";
 import { Award, Code, Brain, Zap, Trophy, Linkedin, Github, MapPin, Calendar, School, Sparkles, Mail } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import PlatformButtons from "@/components/PlatformButtons";
 import { toast } from "sonner";
 import { format, parseISO } from "date-fns";
 
@@ -219,6 +220,7 @@ const ProfilePage = () => {
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-gray-50 to-gray-100">
       <main className="flex-1 py-8">
         <div className="container mx-auto px-4">
+          <PlatformButtons /> 
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
             <div className="lg:col-span-1 space-y-6">
               <Card className="overflow-hidden border-none shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-white to-gray-50">
