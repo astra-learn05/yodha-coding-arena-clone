@@ -162,7 +162,7 @@ const UserStats = ({
             </div>
             <div className="text-right bg-gradient-to-br from-green-50 to-emerald-50 py-3 px-6 rounded-lg border border-green-100 shadow-sm">
               <p className={`text-2xl font-medium text-green-700 transition-opacity duration-500 ${animateStats ? 'opacity-100' : 'opacity-0'}`}>
-                {safePercentage(solved, totalProblems)}%
+                {Math.round((solved/totalProblems) * 100)}%
               </p>
               <p className="text-sm text-green-600">Completion</p>
             </div>
