@@ -74,6 +74,78 @@ const UserStats = ({
   
   return (
     <div className="grid grid-cols-1 gap-6">
+    {/* Quick Access Section */}
+    <Card className="overflow-hidden border-none shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-white to-gray-50">
+      <CardHeader className="pb-2 bg-gradient-to-r from-green-50 to-red-50 border-b">
+        <CardTitle className="text-lg font-bold flex items-center gap-2 text-green-800">
+          <ExternalLink size={20} className="text-green-600" />
+          Quick Access
+        </CardTitle>
+      </CardHeader>
+      <CardContent className="p-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {/* Drona */}
+          <a href="https://drona.ikshvaku-innovations.in" target="_blank" rel="noopener noreferrer">
+            <div className="p-5 rounded-lg border border-green-200 bg-gradient-to-br from-green-50 to-white transition-all duration-300 shadow-sm hover:shadow-md transform hover:translate-y-[-2px]">
+              <div className="flex justify-between items-center mb-2">
+                <h4 className="font-semibold text-gray-800">Drona</h4>
+                <span className="text-xs font-semibold px-2 py-1 rounded-full bg-green-100 text-green-700">Visualize</span>
+              </div>
+              <p className="text-sm text-gray-600 mb-3 line-clamp-2">
+                Explore DSA and OS visualizations to enhance your conceptual clarity.
+              </p>
+              <div className="h-2 w-full bg-gray-100 rounded-full overflow-hidden shadow-inner">
+                <div 
+                  className="h-full rounded-full bg-gradient-to-r from-green-300 to-green-500"
+                  style={{ width: animateStats ? `100%` : '0%', transition: 'width 1.5s ease-in-out' }}
+                ></div>
+              </div>
+            </div>
+          </a>
+
+          {/* Astra */}
+          <a href="https://astra.ikshvaku-innovations.in" target="_blank" rel="noopener noreferrer">
+            <div className="p-5 rounded-lg border border-red-200 bg-gradient-to-br from-red-50 to-white transition-all duration-300 shadow-sm hover:shadow-md transform hover:translate-y-[-2px]">
+              <div className="flex justify-between items-center mb-2">
+                <h4 className="font-semibold text-gray-800">Astra</h4>
+                <span className="text-xs font-semibold px-2 py-1 rounded-full bg-red-100 text-red-700">Practice</span>
+              </div>
+              <p className="text-sm text-gray-600 mb-3 line-clamp-2">
+                Solve curated problems in structured learning paths to build mastery.
+              </p>
+              <div className="h-2 w-full bg-gray-100 rounded-full overflow-hidden shadow-inner">
+                <div 
+                  className="h-full rounded-full bg-gradient-to-r from-red-300 to-red-500"
+                  style={{ width: animateStats ? `100%` : '0%', transition: 'width 1.5s ease-in-out' }}
+                ></div>
+              </div>
+            </div>
+          </a>
+
+          {/* Yudha */}
+          <a href="https://yudha.ikshvaku-innovations.in" target="_blank" rel="noopener noreferrer">
+            <div className="p-5 rounded-lg border border-red-200 bg-gradient-to-br from-red-50 to-white transition-all duration-300 shadow-sm hover:shadow-md transform hover:translate-y-[-2px]">
+              <div className="flex justify-between items-center mb-2">
+                <h4 className="font-semibold text-gray-800">Yudha</h4>
+                <span className="text-xs font-semibold px-2 py-1 rounded-full bg-red-100 text-red-700">Assess</span>
+              </div>
+              <p className="text-sm text-gray-600 mb-3 line-clamp-2">
+                Take coding and MCQ assessments to evaluate your preparation.
+              </p>
+              <div className="h-2 w-full bg-gray-100 rounded-full overflow-hidden shadow-inner">
+                <div 
+                  className="h-full rounded-full bg-gradient-to-r from-red-300 to-red-500"
+                  style={{ width: animateStats ? `100%` : '0%', transition: 'width 1.5s ease-in-out' }}
+                ></div>
+              </div>
+            </div>
+          </a>
+        </div>
+      </CardContent>
+    </Card>
+
+    
+    <div className="grid grid-cols-1 gap-6">
       <Card className="overflow-hidden border-none shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-white to-gray-50">
         <CardHeader className="pb-2 bg-gradient-to-r from-blue-50 to-indigo-50 border-b">
           <CardTitle className="text-lg font-bold flex items-center gap-2 text-blue-800">
