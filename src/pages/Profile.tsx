@@ -1,13 +1,13 @@
+
 import { useState, useEffect } from "react";
 import { useSearchParams, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge as UiBadge } from "@/components/ui/badge";
 import UserStats from "@/components/UserStats";
-import { Award, Code, Brain, Zap, Trophy, Linkedin, Github, MapPin, Calendar, School, Sparkles, Mail } from "lucide-react";
+import { Award, Code, Brain, Zap, Trophy, MapPin, School, Sparkles } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { toast } from "sonner";
-import { format, parseISO } from "date-fns";
 
 import {
   LinkedinIcon,
@@ -22,27 +22,7 @@ import {
   getProfileByPRN, 
   updateProfile,
   getUserBadges,
-  getUserSkills,
-  getUserCertificates,
-  getUserProjects,
-  getUserWorkExperiences,
-  getUserTrainings,
-  getUserAssessments,
-  Certificate,
-  Project,
-  WorkExperience,
-  Training,
-  Assessment,
-  addCertificate,
-  updateCertificate,
-  deleteCertificate,
-  addProject,
-  updateProject,
-  deleteProject,
-  addWorkExperience,
-  updateWorkExperience,
-  deleteWorkExperience,
-  Badge
+  getUserSkills
 } from "@/services/profileService";
 
 import {
@@ -55,15 +35,7 @@ import {
   checkAndAwardPathBadges
 } from "@/services/badgeService";
 
-import { cn } from "@/lib/utils";
-import { 
-  SkillsSection, 
-  CertificatesSection, 
-  ProjectsSection, 
-  WorkExperienceSection,
-  TrainingsSection,
-  AssessmentsSection 
-} from "@/components/ProfileSections";
+import { SkillsSection } from "@/components/ProfileSections";
 
 const ProfilePage = () => {
   const [searchParams] = useSearchParams();
@@ -113,36 +85,6 @@ const ProfilePage = () => {
   const { data: skills = [] } = useQuery({
     queryKey: ['skills', profile?.id],
     queryFn: () => getUserSkills(profile?.id || ''),
-    enabled: !!profile?.id
-  });
-
-  const { data: certificates = [], refetch: refetchCertificates } = useQuery({
-    queryKey: ['certificates', profile?.id],
-    queryFn: () => getUserCertificates(profile?.id || ''),
-    enabled: !!profile?.id
-  });
-
-  const { data: projects = [], refetch: refetchProjects } = useQuery({
-    queryKey: ['projects', profile?.id],
-    queryFn: () => getUserProjects(profile?.id || ''),
-    enabled: !!profile?.id
-  });
-
-  const { data: workExperience = [], refetch: refetchWorkExperience } = useQuery({
-    queryKey: ['workExperience', profile?.id],
-    queryFn: () => getUserWorkExperiences(profile?.id || ''),
-    enabled: !!profile?.id
-  });
-
-  const { data: trainings = [], refetch: refetchTrainings } = useQuery({
-    queryKey: ['trainings', profile?.id],
-    queryFn: () => getUserTrainings(profile?.id || ''),
-    enabled: !!profile?.id
-  });
-
-  const { data: assessments = [], refetch: refetchAssessments } = useQuery({
-    queryKey: ['assessments', profile?.id],
-    queryFn: () => getUserAssessments(profile?.id || ''),
     enabled: !!profile?.id
   });
 
@@ -390,16 +332,6 @@ const ProfilePage = () => {
             
             <div className="lg:col-span-3 space-y-6">
               <UserStats {...statsData} />
-
-              <ProjectsSection projects={projects} />
-
-              <WorkExperienceSection experiences={workExperience} />
-
-              <TrainingsSection trainings={trainings} />
-
-              <AssessmentsSection assessments={assessments} />
-
-              <CertificatesSection certificates={certificates} />
             </div>
           </div>
         </div>

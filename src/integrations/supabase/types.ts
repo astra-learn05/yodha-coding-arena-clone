@@ -746,7 +746,7 @@ export type Database = {
       profiles: {
         Row: {
           bio: string | null
-          cgpa: string | null
+          cgpa: number | null
           college_name: string | null
           created_at: string | null
           gfg_url: string | null
@@ -762,7 +762,7 @@ export type Database = {
         }
         Insert: {
           bio?: string | null
-          cgpa?: string | null
+          cgpa?: number | null
           college_name?: string | null
           created_at?: string | null
           gfg_url?: string | null
@@ -778,7 +778,7 @@ export type Database = {
         }
         Update: {
           bio?: string | null
-          cgpa?: string | null
+          cgpa?: number | null
           college_name?: string | null
           created_at?: string | null
           gfg_url?: string | null
