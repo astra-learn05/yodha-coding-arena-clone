@@ -22,7 +22,8 @@ import {
   getProfileByPRN, 
   updateProfile,
   getUserBadges,
-  getUserSkills
+  getUserSkills,
+  getUserAssessmentResults
 } from "@/services/profileService";
 
 import {
@@ -35,7 +36,7 @@ import {
   checkAndAwardPathBadges
 } from "@/services/badgeService";
 
-import { SkillsSection } from "@/components/ProfileSections";
+import { SkillsSection, AssessmentsSection } from "@/components/ProfileSections";
 
 const ProfilePage = () => {
   const [searchParams] = useSearchParams();
@@ -85,6 +86,12 @@ const ProfilePage = () => {
   const { data: skills = [] } = useQuery({
     queryKey: ['skills', profile?.id],
     queryFn: () => getUserSkills(profile?.id || ''),
+    enabled: !!profile?.id
+  });
+
+  const { data: assessmentResults = [] } = useQuery({
+    queryKey: ['assessmentResults', profile?.id],
+    queryFn: () => getUserAssessmentResults(profile?.id || ''),
     enabled: !!profile?.id
   });
 
@@ -328,6 +335,8 @@ const ProfilePage = () => {
               </Card>
 
               <SkillsSection skills={skills} />
+              
+              <AssessmentsSection assessmentResults={assessmentResults} />
             </div>
             
             <div className="lg:col-span-3 space-y-6">

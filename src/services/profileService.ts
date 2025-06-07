@@ -42,6 +42,30 @@ export interface UserBadge {
   badge?: Badge;
 }
 
+export interface Assessment {
+  id: string;
+  name: string;
+  code: string;
+  status: string;
+  start_time: string;
+  end_time: string | null;
+  duration_minutes: number;
+}
+
+export interface UserAssessmentResult {
+  id: string;
+  user_id: string;
+  assessment_id: string;
+  submission_id: string;
+  total_score: number;
+  total_marks: number;
+  percentage: number;
+  is_cheated: boolean;
+  completed_at: string;
+  created_at: string;
+  assessment?: Assessment;
+}
+
 export const getProfileById = async (id: string): Promise<Profile | null> => {
   try {
     const { data, error } = await supabase
@@ -93,7 +117,7 @@ export const updateProfile = async (id: string, profileData: Partial<Profile>): 
   try {
     const updateData = {
       ...profileData,
-      cgpa: profileData.cgpa ? String(profileData.cgpa) : undefined,
+      cgpa: profileData.cgpa ? Number(profileData.cgpa) : undefined,
       updated_at: new Date().toISOString()
     };
 
@@ -198,5 +222,28 @@ export const deleteUserSkill = async (skillId: string): Promise<void> => {
   } catch (error) {
     console.error('Error in deleteUserSkill:', error);
     throw error;
+  }
+};
+
+export const getUserAssessmentResults = async (userId: string): Promise<UserAssessmentResult[]> => {
+  try {
+    const { data, error } = await supabase
+      .from('results')
+      .select(`
+        *,
+        assessment:assessments(*)
+      `)
+      .eq('user_id', userId)
+      .order('completed_at', { ascending: false });
+
+    if (error) {
+      console.error('Error fetching user assessment results:', error);
+      throw error;
+    }
+
+    return data || [];
+  } catch (error) {
+    console.error('Error in getUserAssessmentResults:', error);
+    return [];
   }
 };
