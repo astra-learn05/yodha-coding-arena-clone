@@ -13,8 +13,9 @@ export const autoLoginToAstra = async (userId: string): Promise<string> => {
       throw new Error(`Auto-login failed: ${response.statusText}`);
     }
 
-    const data = await response.text();
-    return data;
+    const data = await response.json();
+    // Extract the URL from the JSON response
+    return data.loginUrl;
   } catch (error) {
     console.error('Error during auto-login:', error);
     throw error;
