@@ -4,6 +4,7 @@ import { Check, Star, BookOpen, ExternalLink, Award } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { calculateProgressByDifficulty } from "@/services/learningPathService";
 import { autoLoginToAstra } from "@/services/autoLoginService";
+import { autoLoginToYudha } from "@/services/autoLoginService";
 import { useParams, useSearchParams } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { useState, useEffect } from "react";
@@ -92,6 +93,26 @@ const UserStats = ({
       console.error('Auto-login error:', error);
     }
   };
+
+  const handleYudhaClick = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    
+    if (!profileId) {
+      toast.error("User ID not found");
+      return;
+    }
+
+    try {
+      toast.loading("Redirecting to Yudha...");
+      const redirectUrl = await autoLoginToYudha(profileId);
+      window.open(redirectUrl, '_blank');
+      toast.dismiss();
+    } catch (error) {
+      toast.dismiss();
+      toast.error("Failed to redirect to Yudha. Please try again.");
+      console.error('Auto-login error:', error);
+    }
+  };
   
   return (
     <div className="grid grid-cols-1 gap-6">
@@ -144,7 +165,7 @@ const UserStats = ({
             </div>
 
             {/* Yudha */}
-            <a href="https://yudha.ikshvaku-innovations.in" target="_blank" rel="noopener noreferrer">
+            <div onClick={handleYudhaClick} className="cursor-pointer">
               <div className="p-5 rounded-lg border border-red-200 bg-gradient-to-br from-red-50 to-white transition-all duration-300 shadow-sm hover:shadow-md transform hover:translate-y-[-2px]">
                 <div className="flex justify-between items-center mb-2">
                   <h4 className="font-semibold text-gray-800">Yudha</h4>
@@ -160,7 +181,7 @@ const UserStats = ({
                   ></div>
                 </div>
               </div>
-            </a>
+            </div>
           </div>
         </CardContent>
       </Card>
