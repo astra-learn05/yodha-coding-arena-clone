@@ -41,8 +41,7 @@ import { SkillsSection, AssessmentsSection } from "@/components/ProfileSections"
 const ProfilePage = () => {
   const [searchParams] = useSearchParams();
   const params = useParams();
-  // Use a valid UUID format instead of "1"
-  const profileId = params.id || "550e8400-e29b-41d4-a716-446655440000"; // Default UUID if no ID is provided
+  const profileId = params.id || "1"; // Default to ID "1" if no ID is provided
   const prn = searchParams.get("prn") || params.prn;
   
   const [open, setOpen] = useState(false);
