@@ -5,6 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { calculateProgressByDifficulty } from "@/services/learningPathService";
 import { autoLoginToAstra } from "@/services/autoLoginService";
 import { autoLoginToYudha } from "@/services/autoLoginService";
+import { autoLoginToDrona } from "@/services/autoLoginService";
 import { useParams, useSearchParams } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { useState, useEffect } from "react";
@@ -113,6 +114,26 @@ const UserStats = ({
       console.error('Auto-login error:', error);
     }
   };
+
+    const handleDronaClick = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    
+    if (!profileId) {
+      toast.error("User ID not found");
+      return;
+    }
+
+    try {
+      toast.loading("Redirecting to Drona...");
+      const redirectUrl = await autoLoginToDrona(profileId);
+      window.open(redirectUrl, '_blank');
+      toast.dismiss();
+    } catch (error) {
+      toast.dismiss();
+      toast.error("Failed to redirect to Drona. Please try again.");
+      console.error('Auto-login error:', error);
+    }
+  };
   
   return (
     <div className="grid grid-cols-1 gap-6">
@@ -127,7 +148,7 @@ const UserStats = ({
         <CardContent className="p-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* Drona */}
-            <a href="https://drona.ikshvaku-innovations.in" target="_blank" rel="noopener noreferrer">
+            <div onClick={handleDronaClick} className="cursor-pointer">
               <div className="p-5 rounded-lg border border-green-200 bg-gradient-to-br from-green-50 to-white transition-all duration-300 shadow-sm hover:shadow-md transform hover:translate-y-[-2px]">
                 <div className="flex justify-between items-center mb-2">
                   <h4 className="font-semibold text-gray-800">Drona</h4>
@@ -143,7 +164,7 @@ const UserStats = ({
                   ></div>
                 </div>
               </div>
-            </a>
+            </div>
 
             {/* Astra */}
             <div onClick={handleAstraClick} className="cursor-pointer">
