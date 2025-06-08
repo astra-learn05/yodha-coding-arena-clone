@@ -492,6 +492,36 @@ export type Database = {
           },
         ]
       }
+      contact_submissions: {
+        Row: {
+          created_at: string | null
+          email: string | null
+          id: string
+          message: string | null
+          name: string
+          status: string | null
+          subject: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          email?: string | null
+          id?: string
+          message?: string | null
+          name: string
+          status?: string | null
+          subject?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          email?: string | null
+          id?: string
+          message?: string | null
+          name?: string
+          status?: string | null
+          subject?: string | null
+        }
+        Relationships: []
+      }
       learning_paths: {
         Row: {
           created_at: string | null
@@ -752,7 +782,7 @@ export type Database = {
           gfg_url: string | null
           github_url: string | null
           hackerrank_url: string | null
-          id: string | null
+          id: string
           leetcode_url: string | null
           linkedin_url: string | null
           location: string | null
@@ -768,7 +798,7 @@ export type Database = {
           gfg_url?: string | null
           github_url?: string | null
           hackerrank_url?: string | null
-          id?: string | null
+          id: string
           leetcode_url?: string | null
           linkedin_url?: string | null
           location?: string | null
@@ -784,7 +814,7 @@ export type Database = {
           gfg_url?: string | null
           github_url?: string | null
           hackerrank_url?: string | null
-          id?: string | null
+          id?: string
           leetcode_url?: string | null
           linkedin_url?: string | null
           location?: string | null
@@ -796,7 +826,7 @@ export type Database = {
           {
             foreignKeyName: "profiles_id_fkey"
             columns: ["id"]
-            isOneToOne: false
+            isOneToOne: true
             referencedRelation: "auth"
             referencedColumns: ["id"]
           },
@@ -858,7 +888,7 @@ export type Database = {
           difficulty: string | null
           id: string
           practice_link: string | null
-          questionid: string | null
+          question_id: string | null
           solution_link: string | null
           title: string | null
           topic_id: string | null
@@ -869,7 +899,7 @@ export type Database = {
           difficulty?: string | null
           id: string
           practice_link?: string | null
-          questionid?: string | null
+          question_id?: string | null
           solution_link?: string | null
           title?: string | null
           topic_id?: string | null
@@ -880,7 +910,7 @@ export type Database = {
           difficulty?: string | null
           id?: string
           practice_link?: string | null
-          questionid?: string | null
+          question_id?: string | null
           solution_link?: string | null
           title?: string | null
           topic_id?: string | null
@@ -1168,6 +1198,7 @@ export type Database = {
           created_at: string | null
           id: string
           language: string
+          last_submitted_at: string | null
           question_id: string
           updated_at: string | null
           user_id: string
@@ -1178,6 +1209,7 @@ export type Database = {
           created_at?: string | null
           id?: string
           language: string
+          last_submitted_at?: string | null
           question_id: string
           updated_at?: string | null
           user_id: string
@@ -1188,6 +1220,7 @@ export type Database = {
           created_at?: string | null
           id?: string
           language?: string
+          last_submitted_at?: string | null
           question_id?: string
           updated_at?: string | null
           user_id?: string
@@ -1373,6 +1406,20 @@ export type Database = {
           p_examples: Json[]
           p_test_cases: Json[]
         }
+        Returns: undefined
+      }
+      save_user_code: {
+        Args: {
+          p_user_id: string
+          p_assessment_id: string
+          p_question_id: string
+          p_language: string
+          p_code: string
+        }
+        Returns: undefined
+      }
+      update_user_progress_on_success: {
+        Args: { p_user_id: string; p_question_id: string }
         Returns: undefined
       }
     }

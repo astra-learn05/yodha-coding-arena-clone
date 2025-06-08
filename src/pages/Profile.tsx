@@ -1,13 +1,15 @@
-
 import { useState, useEffect } from "react";
 import { useSearchParams, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge as UiBadge } from "@/components/ui/badge";
+import { Dialog } from "@/components/ui/dialog";
 import UserStats from "@/components/UserStats";
-import { Award, Code, Brain, Zap, Trophy, MapPin, School, Sparkles } from "lucide-react";
+import { Award, Code, Brain, Zap, Trophy, MapPin, School, Sparkles, Settings } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import ProfileEditDialog from "@/components/ProfileEditDialog";
 
 import {
   LinkedinIcon,
@@ -119,7 +121,28 @@ const ProfilePage = () => {
     hackerrankUrl: string | null;
     geeksforgeeksUrl: string | null;
   }) => {
-    toast.error("Profile editing is currently disabled");
+    try {
+      await updateProfile(profile?.id || '', {
+        real_name: data.realName,
+        cgpa: data.cgpa,
+        bio: data.bio,
+        college_name: data.collegeName,
+        location: data.location,
+        profile_picture_url: data.profilePictureUrl,
+        linkedin_url: data.linkedinUrl,
+        github_url: data.githubUrl,
+        leetcode_url: data.leetcodeUrl,
+        hackerrank_url: data.hackerrankUrl,
+        gfg_url: data.geeksforgeeksUrl
+      });
+      
+      await refetchProfile();
+      setOpen(false);
+      toast.success("Profile updated successfully!");
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      toast.error("Failed to update profile");
+    }
   };
 
   // This block is for debugging purposes
@@ -164,6 +187,23 @@ const ProfilePage = () => {
     completedTopics
   };
 
+  const userData = {
+    realName: profile?.real_name || '',
+    cgpa: profile?.cgpa || 0,
+    bio: profile?.bio,
+    collegeName: profile?.college_name,
+    location: profile?.location,
+    profilePictureUrl: profile?.profile_picture_url,
+    linkedinUrl: profile?.linkedin_url,
+    githubUrl: profile?.github_url,
+    leetcodeUrl: profile?.leetcode_url,
+    hackerrankUrl: profile?.hackerrank_url,
+    geeksforgeeksUrl: profile?.gfg_url,
+    certificates: [],
+    projects: [],
+    workExperience: []
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-gradient-to-br from-gray-50 to-gray-100">
       <main className="flex-1 py-8">
@@ -172,7 +212,19 @@ const ProfilePage = () => {
             <div className="lg:col-span-1 space-y-6">
               <Card className="overflow-hidden border-none shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-white to-gray-50">
                 <CardHeader className="pb-2 bg-gradient-to-r from-blue-50 to-indigo-50 border-b">
-                  <CardTitle className="text-lg font-bold text-blue-800">Profile</CardTitle>
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="text-lg font-bold text-blue-800">Profile</CardTitle>
+                    {isEditable && (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setOpen(true)}
+                        className="h-8 w-8 p-0 hover:bg-blue-100"
+                      >
+                        <Settings size={16} className="text-blue-600" />
+                      </Button>
+                    )}
+                  </div>
                 </CardHeader>
                 <CardContent className="p-6">
                   <div className="flex flex-col items-center space-y-5">
@@ -345,6 +397,14 @@ const ProfilePage = () => {
           </div>
         </div>
       </main>
+
+      <Dialog open={open} onOpenChange={setOpen}>
+        <ProfileEditDialog
+          userData={userData}
+          onSave={handleSaveProfile}
+          onClose={() => setOpen(false)}
+        />
+      </Dialog>
     </div>
   );
 };
