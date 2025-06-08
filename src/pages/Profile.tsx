@@ -114,12 +114,6 @@ const ProfilePage = () => {
     bio: string | null;
     collegeName: string | null;
     location: string | null;
-    profilePictureUrl: string | null;
-    linkedinUrl: string | null;
-    githubUrl: string | null;
-    leetcodeUrl: string | null;
-    hackerrankUrl: string | null;
-    geeksforgeeksUrl: string | null;
   }) => {
     try {
       await updateProfile(profile?.id || '', {
@@ -127,13 +121,7 @@ const ProfilePage = () => {
         cgpa: data.cgpa,
         bio: data.bio,
         college_name: data.collegeName,
-        location: data.location,
-        profile_picture_url: data.profilePictureUrl,
-        linkedin_url: data.linkedinUrl,
-        github_url: data.githubUrl,
-        leetcode_url: data.leetcodeUrl,
-        hackerrank_url: data.hackerrankUrl,
-        gfg_url: data.geeksforgeeksUrl
+        location: data.location
       });
       
       await refetchProfile();
@@ -143,6 +131,11 @@ const ProfilePage = () => {
       console.error("Error updating profile:", error);
       toast.error("Failed to update profile");
     }
+  };
+
+  const handleYuktiRedirect = () => {
+    const yuktiUrl = `https://yukti.ikshvaku-innovations.in/${profile?.id}`;
+    window.open(yuktiUrl, '_blank');
   };
 
   // This block is for debugging purposes
@@ -192,16 +185,7 @@ const ProfilePage = () => {
     cgpa: profile?.cgpa || 0,
     bio: profile?.bio,
     collegeName: profile?.college_name,
-    location: profile?.location,
-    profilePictureUrl: profile?.profile_picture_url,
-    linkedinUrl: profile?.linkedin_url,
-    githubUrl: profile?.github_url,
-    leetcodeUrl: profile?.leetcode_url,
-    hackerrankUrl: profile?.hackerrank_url,
-    geeksforgeeksUrl: profile?.gfg_url,
-    certificates: [],
-    projects: [],
-    workExperience: []
+    location: profile?.location
   };
 
   return (
@@ -274,66 +258,15 @@ const ProfilePage = () => {
                       </div>
                     </div>
 
-                    {(profile.linkedin_url || profile.github_url || profile.leetcode_url || 
-                      profile.hackerrank_url || profile.gfg_url) && (
-                      <div className="flex justify-center gap-3 mt-4 pt-4 border-t border-gray-100 w-full">
-                        {profile.linkedin_url && (
-                          <a 
-                            href={profile.linkedin_url.startsWith('http') ? profile.linkedin_url : `https://${profile.linkedin_url}`}
-                            target="_blank" 
-                            rel="noopener noreferrer"
-                            className="p-2 bg-blue-50 rounded-full text-blue-600 hover:bg-blue-100 hover:text-blue-700 transition-colors transform hover:scale-110 duration-200"
-                            aria-label="LinkedIn Profile"
-                          >
-                            <LinkedinIcon className="w-5 h-5" />
-                          </a>
-                        )}
-                        {profile.github_url && (
-                          <a 
-                            href={profile.github_url.startsWith('http') ? profile.github_url : `https://${profile.github_url}`}
-                            target="_blank" 
-                            rel="noopener noreferrer"
-                            className="p-2 bg-gray-100 rounded-full text-gray-800 hover:bg-gray-200 hover:text-gray-900 transition-colors transform hover:scale-110 duration-200"
-                            aria-label="GitHub Profile"
-                          >
-                            <GithubIcon className="w-5 h-5" />
-                          </a>
-                        )}
-                        {profile.leetcode_url && (
-                          <a 
-                            href={profile.leetcode_url.startsWith('http') ? profile.leetcode_url : `https://${profile.leetcode_url}`}
-                            target="_blank" 
-                            rel="noopener noreferrer"
-                            className="p-2 bg-orange-50 rounded-full text-orange-600 hover:bg-orange-100 hover:text-orange-700 transition-colors transform hover:scale-110 duration-200"
-                            aria-label="LeetCode Profile"
-                          >
-                            <LeetcodeIcon className="w-5 h-5" />
-                          </a>
-                        )}
-                        {profile.hackerrank_url && (
-                          <a 
-                            href={profile.hackerrank_url.startsWith('http') ? profile.hackerrank_url : `https://${profile.hackerrank_url}`}
-                            target="_blank" 
-                            rel="noopener noreferrer"
-                            className="p-2 bg-green-50 rounded-full text-green-600 hover:bg-green-100 hover:text-green-700 transition-colors transform hover:scale-110 duration-200"
-                            aria-label="HackerRank Profile"
-                          >
-                            <HackerrankIcon className="w-5 h-5" />
-                          </a>
-                        )}
-                        {profile.gfg_url && (
-                          <a 
-                            href={profile.gfg_url.startsWith('http') ? profile.gfg_url : `https://${profile.gfg_url}`}
-                            target="_blank" 
-                            rel="noopener noreferrer"
-                            className="p-2 bg-emerald-50 rounded-full text-emerald-600 hover:bg-emerald-100 hover:text-emerald-700 transition-colors transform hover:scale-110 duration-200"
-                            aria-label="GeeksforGeeks Profile"
-                          >
-                            <GeeksforGeeksIcon className="w-5 h-5" />
-                          </a>
-                        )}
-                      </div>
-                    )}
+                    <div className="w-full pt-4 border-t border-gray-100">
+                      <Button
+                        onClick={handleYuktiRedirect}
+                        className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-medium py-2 px-4 rounded-lg transition-all duration-200 transform hover:scale-105 shadow-lg"
+                      >
+                        <Sparkles size={16} className="mr-2" />
+                        Yukti
+                      </Button>
+                    </div>
                   </div>
                 </CardContent>
               </Card>
