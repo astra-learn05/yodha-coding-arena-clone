@@ -251,7 +251,7 @@ const ProfilePage = () => {
                       
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2 text-gray-700">
-                          <Sparkles size={16} className="text-indigo-500" />
+{/*                           <Sparkles size={16} className="text-indigo-500" /> */}
                           <span className="text-sm font-medium">CGPA</span>
                         </div>
                         <span className="font-semibold text-gray-800 bg-blue-50 px-2 py-0.5 rounded-md">{profile.cgpa?.toFixed(1) || "N/A"}</span>
