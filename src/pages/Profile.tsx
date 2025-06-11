@@ -180,7 +180,13 @@ const ProfilePage = () => {
     cgpa: profile?.cgpa || 0,
     bio: profile?.bio,
     collegeName: profile?.college_name,
-    location: profile?.location
+    location: profile?.location,
+    profilePictureUrl: profile?.profile_picture_url || '',
+    linkedinUrl: profile?.linkedin_url || '',
+    githubUrl: profile?.github_url || '',
+    leetcodeUrl: profile?.leetcode_url || '',
+    hackerrankUrl: profile?.hackerrank_url || '',
+    geeksforgeeksUrl: profile?.gfg_url || ''
   };
 
   return (
