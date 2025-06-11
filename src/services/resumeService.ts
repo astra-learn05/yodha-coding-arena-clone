@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 
 export interface PersonalInfo {
@@ -96,6 +95,21 @@ export interface HobbyActivity {
   created_at: string;
 }
 
+export interface InterviewResult {
+  id: string;
+  interview_id: string;
+  user_id: string;
+  overall_score: number;
+  performance_level: string;
+  overall_recommendation: string;
+  total_questions: number;
+  questions_answered: number;
+  average_score: number;
+  duration_minutes: number | null;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface ResumeData {
   personalInfo: PersonalInfo | null;
   education: Education[];
@@ -105,6 +119,7 @@ export interface ResumeData {
   positions: PositionOfResponsibility[];
   achievements: Achievement[];
   hobbies: HobbyActivity[];
+  interviewResults: InterviewResult[];
 }
 
 export const getResumeData = async (userId: string): Promise<ResumeData> => {
@@ -165,6 +180,13 @@ export const getResumeData = async (userId: string): Promise<ResumeData> => {
       .eq('user_id', userId)
       .order('created_at', { ascending: false });
 
+    // Fetch interview results
+    const { data: interviewResults } = await supabase
+      .from('interview_results')
+      .select('*')
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false });
+
     return {
       personalInfo: personalInfo || null,
       education: education || [],
@@ -173,7 +195,8 @@ export const getResumeData = async (userId: string): Promise<ResumeData> => {
       projects: projects || [],
       positions: positions || [],
       achievements: achievements || [],
-      hobbies: hobbies || []
+      hobbies: hobbies || [],
+      interviewResults: interviewResults || []
     };
   } catch (error) {
     console.error('Error fetching resume data:', error);

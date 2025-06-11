@@ -19,7 +19,9 @@ import {
   Calendar,
   Globe,
   Github,
-  Linkedin
+  Linkedin,
+  MessageSquare,
+  ExternalLink
 } from "lucide-react";
 import { getResumeData } from "@/services/resumeService";
 
@@ -76,7 +78,7 @@ const ResumeDialog = ({ userId, onClose }: ResumeDialogProps) => {
     );
   }
 
-  const { personalInfo, education, workExperience, skills, projects, positions, achievements, hobbies } = resumeData;
+  const { personalInfo, education, workExperience, skills, projects, positions, achievements, hobbies, interviewResults } = resumeData;
 
   return (
     <DialogContent className="max-w-5xl max-h-[90vh] bg-gradient-to-br from-gray-50 to-white">
@@ -93,28 +95,28 @@ const ResumeDialog = ({ userId, onClose }: ResumeDialogProps) => {
           {personalInfo && (
             <Card className="overflow-hidden border-none shadow-lg bg-gradient-to-br from-blue-50 to-indigo-50">
               <CardContent className="p-8">
-                <div className="text-center space-y-4">
+                <div className="text-center space-y-6">
                   {personalInfo.full_name && (
                     <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-800 to-indigo-800 bg-clip-text text-transparent">
                       {personalInfo.full_name}
                     </h1>
                   )}
                   
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
                     {personalInfo.email && (
-                      <div className="flex items-center justify-center gap-2 bg-white/50 rounded-lg p-3 backdrop-blur-sm">
+                      <div className="flex items-center justify-center gap-2 bg-white/70 rounded-lg p-4 backdrop-blur-sm border border-blue-100 hover:bg-white/90 transition-all duration-200">
                         <Mail size={18} className="text-blue-600" />
                         <span className="font-medium text-gray-700">{personalInfo.email}</span>
                       </div>
                     )}
                     {personalInfo.phone && (
-                      <div className="flex items-center justify-center gap-2 bg-white/50 rounded-lg p-3 backdrop-blur-sm">
+                      <div className="flex items-center justify-center gap-2 bg-white/70 rounded-lg p-4 backdrop-blur-sm border border-green-100 hover:bg-white/90 transition-all duration-200">
                         <Phone size={18} className="text-green-600" />
                         <span className="font-medium text-gray-700">{personalInfo.phone}</span>
                       </div>
                     )}
                     {personalInfo.address && (
-                      <div className="flex items-center justify-center gap-2 bg-white/50 rounded-lg p-3 backdrop-blur-sm">
+                      <div className="flex items-center justify-center gap-2 bg-white/70 rounded-lg p-4 backdrop-blur-sm border border-red-100 hover:bg-white/90 transition-all duration-200">
                         <MapPin size={18} className="text-red-500" />
                         <span className="font-medium text-gray-700">{personalInfo.address}</span>
                       </div>
@@ -122,24 +124,48 @@ const ResumeDialog = ({ userId, onClose }: ResumeDialogProps) => {
                   </div>
 
                   {(personalInfo.linkedin_url || personalInfo.github_url || personalInfo.portfolio_url) && (
-                    <div className="flex justify-center gap-3 mt-4">
+                    <div className="flex justify-center gap-4 mt-6">
                       {personalInfo.linkedin_url && (
-                        <Badge variant="outline" className="bg-blue-100 text-blue-700 border-blue-200 px-3 py-1">
-                          <Linkedin size={14} className="mr-1" />
-                          LinkedIn
-                        </Badge>
+                        <a
+                          href={personalInfo.linkedin_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="group"
+                        >
+                          <Badge variant="outline" className="bg-blue-100 text-blue-700 border-blue-200 px-4 py-2 hover:bg-blue-200 hover:border-blue-300 transition-all duration-200 cursor-pointer group-hover:scale-105">
+                            <Linkedin size={16} className="mr-2" />
+                            LinkedIn
+                            <ExternalLink size={12} className="ml-1 opacity-60" />
+                          </Badge>
+                        </a>
                       )}
                       {personalInfo.github_url && (
-                        <Badge variant="outline" className="bg-gray-100 text-gray-700 border-gray-200 px-3 py-1">
-                          <Github size={14} className="mr-1" />
-                          GitHub
-                        </Badge>
+                        <a
+                          href={personalInfo.github_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="group"
+                        >
+                          <Badge variant="outline" className="bg-gray-100 text-gray-700 border-gray-200 px-4 py-2 hover:bg-gray-200 hover:border-gray-300 transition-all duration-200 cursor-pointer group-hover:scale-105">
+                            <Github size={16} className="mr-2" />
+                            GitHub
+                            <ExternalLink size={12} className="ml-1 opacity-60" />
+                          </Badge>
+                        </a>
                       )}
                       {personalInfo.portfolio_url && (
-                        <Badge variant="outline" className="bg-purple-100 text-purple-700 border-purple-200 px-3 py-1">
-                          <Globe size={14} className="mr-1" />
-                          Portfolio
-                        </Badge>
+                        <a
+                          href={personalInfo.portfolio_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="group"
+                        >
+                          <Badge variant="outline" className="bg-purple-100 text-purple-700 border-purple-200 px-4 py-2 hover:bg-purple-200 hover:border-purple-300 transition-all duration-200 cursor-pointer group-hover:scale-105">
+                            <Globe size={16} className="mr-2" />
+                            Portfolio
+                            <ExternalLink size={12} className="ml-1 opacity-60" />
+                          </Badge>
+                        </a>
                       )}
                     </div>
                   )}
@@ -320,16 +346,32 @@ const ResumeDialog = ({ userId, onClose }: ResumeDialogProps) => {
                       {(project.project_url || project.github_url) && (
                         <div className="flex gap-2 mt-3">
                           {project.project_url && (
-                            <Badge className="bg-green-100 text-green-700 border-green-200">
-                              <Globe size={12} className="mr-1" />
-                              Live Demo
-                            </Badge>
+                            <a
+                              href={project.project_url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="group"
+                            >
+                              <Badge className="bg-green-100 text-green-700 border-green-200 hover:bg-green-200 transition-all duration-200 cursor-pointer group-hover:scale-105">
+                                <Globe size={12} className="mr-1" />
+                                Live Demo
+                                <ExternalLink size={10} className="ml-1 opacity-60" />
+                              </Badge>
+                            </a>
                           )}
                           {project.github_url && (
-                            <Badge className="bg-gray-100 text-gray-700 border-gray-200">
-                              <Github size={12} className="mr-1" />
-                              Source Code
-                            </Badge>
+                            <a
+                              href={project.github_url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="group"
+                            >
+                              <Badge className="bg-gray-100 text-gray-700 border-gray-200 hover:bg-gray-200 transition-all duration-200 cursor-pointer group-hover:scale-105">
+                                <Github size={12} className="mr-1" />
+                                Source Code
+                                <ExternalLink size={10} className="ml-1 opacity-60" />
+                              </Badge>
+                            </a>
                           )}
                         </div>
                       )}
@@ -409,6 +451,80 @@ const ResumeDialog = ({ userId, onClose }: ResumeDialogProps) => {
                           <p className="text-gray-700 leading-relaxed">{achievement.description}</p>
                         </div>
                       )}
+                    </div>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Interview Results Section */}
+          {interviewResults && interviewResults.length > 0 && (
+            <Card className="overflow-hidden border-none shadow-lg hover:shadow-xl transition-all duration-300">
+              <CardHeader className="bg-gradient-to-r from-teal-50 to-cyan-50 border-b border-teal-100">
+                <CardTitle className="flex items-center gap-3 text-xl font-bold text-teal-800">
+                  <div className="p-2 bg-teal-100 rounded-lg">
+                    <MessageSquare size={20} className="text-teal-600" />
+                  </div>
+                  Interview Performance
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-6 space-y-6">
+                {interviewResults.map((interview, index) => (
+                  <div key={interview.id} className={`border-l-4 border-teal-200 pl-6 ${index !== interviewResults.length - 1 ? 'pb-6 border-b border-gray-100' : ''}`}>
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <h3 className="text-xl font-bold text-gray-800">Interview Assessment</h3>
+                        <Badge 
+                          className={`${
+                            interview.performance_level === 'Excellent' ? 'bg-green-100 text-green-700 border-green-200' :
+                            interview.performance_level === 'Strong' ? 'bg-blue-100 text-blue-700 border-blue-200' :
+                            interview.performance_level === 'Good' ? 'bg-yellow-100 text-yellow-700 border-yellow-200' :
+                            interview.performance_level === 'Satisfactory' ? 'bg-orange-100 text-orange-700 border-orange-200' :
+                            'bg-red-100 text-red-700 border-red-200'
+                          }`}
+                        >
+                          {interview.performance_level}
+                        </Badge>
+                      </div>
+                      
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
+                        <div className="bg-teal-50 rounded-lg p-3 text-center border border-teal-100">
+                          <div className="text-2xl font-bold text-teal-700">{interview.overall_score}%</div>
+                          <div className="text-xs text-teal-600 font-medium">Overall Score</div>
+                        </div>
+                        <div className="bg-blue-50 rounded-lg p-3 text-center border border-blue-100">
+                          <div className="text-2xl font-bold text-blue-700">{interview.questions_answered}/{interview.total_questions}</div>
+                          <div className="text-xs text-blue-600 font-medium">Questions Answered</div>
+                        </div>
+                        <div className="bg-purple-50 rounded-lg p-3 text-center border border-purple-100">
+                          <div className="text-2xl font-bold text-purple-700">{interview.average_score.toFixed(1)}</div>
+                          <div className="text-xs text-purple-600 font-medium">Average Score</div>
+                        </div>
+                        <div className="bg-indigo-50 rounded-lg p-3 text-center border border-indigo-100">
+                          <div className="text-2xl font-bold text-indigo-700">{interview.duration_minutes || 'N/A'}</div>
+                          <div className="text-xs text-indigo-600 font-medium">Duration (min)</div>
+                        </div>
+                      </div>
+
+                      <div className="mt-4">
+                        <Badge 
+                          variant="outline"
+                          className={`${
+                            interview.overall_recommendation === 'Strong Hire' ? 'bg-green-50 text-green-700 border-green-200' :
+                            interview.overall_recommendation === 'Hire' ? 'bg-blue-50 text-blue-700 border-blue-200' :
+                            interview.overall_recommendation === 'Maybe' ? 'bg-yellow-50 text-yellow-700 border-yellow-200' :
+                            'bg-red-50 text-red-700 border-red-200'
+                          } px-3 py-1`}
+                        >
+                          Recommendation: {interview.overall_recommendation}
+                        </Badge>
+                      </div>
+
+                      <div className="mt-3 text-sm text-gray-500 flex items-center gap-2">
+                        <Calendar size={14} className="text-teal-500" />
+                        <span>Completed on {new Date(interview.created_at).toLocaleDateString()}</span>
+                      </div>
                     </div>
                   </div>
                 ))}
