@@ -6,12 +6,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge as UiBadge } from "@/components/ui/badge";
 import { Dialog } from "@/components/ui/dialog";
 import UserStats from "@/components/UserStats";
-import { Award, Code, Brain, Zap, Trophy, MapPin, School, Settings, FileText } from "lucide-react";
+import { Award, Code, Brain, Zap, Trophy, MapPin, School, Settings } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import ProfileEditDialog from "@/components/ProfileEditDialog";
-import ResumeDialog from "@/components/ResumeDialog";
 
 import {
   getProfileById, 
@@ -32,6 +31,8 @@ import {
   checkAndAwardPathBadges
 } from "@/services/badgeService";
 
+import { getResumeData } from "@/services/resumeService";
+
 import { SkillsSection, AssessmentsSection } from "@/components/ProfileSections";
 
 const ProfilePage = () => {
@@ -41,7 +42,6 @@ const ProfilePage = () => {
   const prn = searchParams.get("prn") || params.prn;
   
   const [open, setOpen] = useState(false);
-  const [resumeOpen, setResumeOpen] = useState(false);
   const isEditable = !!profileId && !prn;
 
   const { data: profile, isLoading: profileLoading, refetch: refetchProfile } = useQuery({
@@ -92,6 +92,12 @@ const ProfilePage = () => {
     enabled: !!profile?.id
   });
 
+  const { data: resumeData } = useQuery({
+    queryKey: ['resumeData', profile?.id],
+    queryFn: () => getResumeData(profile?.id || ''),
+    enabled: !!profile?.id
+  });
+
   useEffect(() => {
     if (profile?.id && learningPathProgressData?.length > 0) {
       const awardBadges = async () => {
@@ -126,11 +132,6 @@ const ProfilePage = () => {
       console.error("Error updating profile:", error);
       toast.error("Failed to update profile");
     }
-  };
-
-  const handleYuktiRedirect = () => {
-    const yuktiUrl = `https://yukti.ikshvaku-innovations.in/${profile?.id}`;
-    window.open(yuktiUrl, '_blank');
   };
 
   // This block is for debugging purposes
@@ -172,7 +173,8 @@ const ProfilePage = () => {
     hardProblems: difficultyProgress?.hard.completed || 0,
     theoryProblems: difficultyProgress?.theory.completed || 0,
     learningPathProgress: learningPathProgressData,
-    completedTopics
+    completedTopics,
+    interviewResults: resumeData?.interviewResults || []
   };
 
   const userData = {
@@ -257,16 +259,6 @@ const ProfilePage = () => {
                         <span className="font-semibold text-gray-800 bg-blue-50 px-2 py-0.5 rounded-md">{profile.cgpa?.toFixed(1) || "N/A"}</span>
                       </div>
                     </div>
-
-                    <div className="w-full pt-4 border-t border-gray-100">
-                      <Button
-                        onClick={() => setResumeOpen(true)}
-                        className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-medium py-2 px-4 rounded-lg transition-all duration-200 transform hover:scale-105 shadow-lg"
-                      >
-                        <FileText size={16} className="mr-2" />
-                        Resume
-                      </Button>
-                    </div>
                   </div>
                 </CardContent>
               </Card>
@@ -336,13 +328,6 @@ const ProfilePage = () => {
           userData={userData}
           onSave={handleSaveProfile}
           onClose={() => setOpen(false)}
-        />
-      </Dialog>
-
-      <Dialog open={resumeOpen} onOpenChange={setResumeOpen}>
-        <ResumeDialog
-          userId={profile?.id || ''}
-          onClose={() => setResumeOpen(false)}
         />
       </Dialog>
     </div>
