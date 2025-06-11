@@ -1,6 +1,7 @@
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { Check, Star, BookOpen, ExternalLink, Award, Clock, Target, TrendingUp, Calendar } from "lucide-react";
+import { Check, Star, BookOpen, ExternalLink, Award } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { calculateProgressByDifficulty } from "@/services/learningPathService";
 import { autoLoginToAstra } from "@/services/autoLoginService";
@@ -11,21 +12,6 @@ import { useParams, useSearchParams } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
-
-interface InterviewResult {
-  id: string;
-  interview_id: string;
-  user_id: string;
-  overall_score: number;
-  performance_level: string;
-  overall_recommendation: string;
-  total_questions: number;
-  questions_answered: number;
-  average_score: number;
-  duration_minutes: number | null;
-  created_at: string;
-  updated_at: string;
-}
 
 interface UserStatsProps {
   learningPathProgress?: Array<{
@@ -38,13 +24,11 @@ interface UserStatsProps {
     progress: number;
   }>;
   completedTopics?: string[];
-  interviewResults?: InterviewResult[];
 }
 
 const UserStats = ({ 
   learningPathProgress = [],
-  completedTopics = [],
-  interviewResults = []
+  completedTopics = []
 }: UserStatsProps) => {
   const [searchParams] = useSearchParams();
   const params = useParams();
@@ -170,25 +154,6 @@ const UserStats = ({
       toast.dismiss();
       toast.error("Failed to redirect to Shaurya. Please try again.");
       console.error('Auto-login error:', error);
-    }
-  };
-
-  const getPerformanceColor = (level: string) => {
-    switch (level.toLowerCase()) {
-      case 'excellent': return 'text-green-700 bg-green-100 border-green-200';
-      case 'strong': return 'text-blue-700 bg-blue-100 border-blue-200';
-      case 'good': return 'text-yellow-700 bg-yellow-100 border-yellow-200';
-      case 'satisfactory': return 'text-orange-700 bg-orange-100 border-orange-200';
-      default: return 'text-red-700 bg-red-100 border-red-200';
-    }
-  };
-
-  const getRecommendationColor = (recommendation: string) => {
-    switch (recommendation.toLowerCase()) {
-      case 'strong hire': return 'text-green-700 bg-green-100 border-green-200';
-      case 'hire': return 'text-blue-700 bg-blue-100 border-blue-200';
-      case 'maybe': return 'text-yellow-700 bg-yellow-100 border-yellow-200';
-      default: return 'text-red-700 bg-red-100 border-red-200';
     }
   };
   
@@ -518,129 +483,8 @@ const UserStats = ({
           )}
         </CardContent>
       </Card>
-
-      {/* Interview Performance Section */}
-      <Card className="overflow-hidden border-none shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-white to-gray-50">
-        <CardHeader className="pb-2 bg-gradient-to-r from-purple-50 to-pink-50 border-b">
-          <CardTitle className="text-lg font-bold flex items-center gap-2 text-purple-800">
-            <Target size={20} className="text-purple-600" />
-            Interview Performance
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="p-6">
-          {interviewResults.length > 0 ? (
-            <div className="space-y-6">
-              {interviewResults.map((result, index) => (
-                <div 
-                  key={result.id} 
-                  className="p-5 rounded-lg border border-purple-200 bg-gradient-to-br from-purple-50 to-white transition-all duration-300 shadow-sm hover:shadow-md transform hover:translate-y-[-2px]"
-                >
-                  <div className="flex justify-between items-start mb-4">
-                    <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-100 to-purple-200 flex items-center justify-center">
-                        <span className="text-lg font-bold text-purple-700">#{index + 1}</span>
-                      </div>
-                      <div>
-                        <h4 className="font-semibold text-gray-800">Interview Session</h4>
-                        <div className="flex items-center gap-2 text-sm text-gray-500">
-                          <Calendar size={14} />
-                          <span>{new Date(result.created_at).toLocaleDateString()}</span>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <div className="text-2xl font-bold text-purple-700">{result.overall_score}%</div>
-                      <div className="text-sm text-gray-500">Overall Score</div>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
-                    <div className="bg-white/60 p-3 rounded-lg border">
-                      <div className="flex items-center gap-2 mb-1">
-                        <Star size={16} className="text-blue-600" />
-                        <span className="text-sm font-medium text-gray-700">Questions</span>
-                      </div>
-                      <div className="text-lg font-semibold text-gray-800">
-                        {result.questions_answered}/{result.total_questions}
-                      </div>
-                    </div>
-
-                    <div className="bg-white/60 p-3 rounded-lg border">
-                      <div className="flex items-center gap-2 mb-1">
-                        <TrendingUp size={16} className="text-green-600" />
-                        <span className="text-sm font-medium text-gray-700">Average</span>
-                      </div>
-                      <div className="text-lg font-semibold text-gray-800">
-                        {result.average_score.toFixed(1)}%
-                      </div>
-                    </div>
-
-                    <div className="bg-white/60 p-3 rounded-lg border">
-                      <div className="flex items-center gap-2 mb-1">
-                        <Clock size={16} className="text-orange-600" />
-                        <span className="text-sm font-medium text-gray-700">Duration</span>
-                      </div>
-                      <div className="text-lg font-semibold text-gray-800">
-                        {result.duration_minutes ? `${result.duration_minutes}m` : 'N/A'}
-                      </div>
-                    </div>
-
-                    <div className="bg-white/60 p-3 rounded-lg border">
-                      <div className="flex items-center gap-2 mb-1">
-                        <Award size={16} className="text-purple-600" />
-                        <span className="text-sm font-medium text-gray-700">Level</span>
-                      </div>
-                      <div className="text-sm font-semibold">
-                        <span className={cn("px-2 py-1 rounded-full border text-xs", getPerformanceColor(result.performance_level))}>
-                          {result.performance_level}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="flex justify-between items-center">
-                    <div className="text-sm text-gray-600">
-                      <span className="font-medium">Recommendation:</span>
-                    </div>
-                    <span className={cn("px-3 py-1 rounded-full border text-sm font-medium", getRecommendationColor(result.overall_recommendation))}>
-                      {result.overall_recommendation}
-                    </span>
-                  </div>
-
-                  <div className="mt-3">
-                    <div className="h-2 w-full bg-gray-100 rounded-full overflow-hidden shadow-inner">
-                      <div 
-                        className="h-full bg-gradient-to-r from-purple-300 to-purple-500 rounded-full"
-                        style={{ 
-                          width: animateStats ? `${result.overall_score}%` : '0%', 
-                          transition: 'width 1.5s ease-in-out',
-                          transitionDelay: `${index * 0.2}s`
-                        }}
-                      ></div>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="flex flex-col items-center justify-center py-10 text-center bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl border border-purple-100">
-              <div className="w-16 h-16 rounded-full bg-white/80 shadow-sm flex items-center justify-center mb-4 animate-pulse">
-                <Target size={30} className="text-purple-300" />
-              </div>
-              <p className="text-gray-700 mb-2 font-medium">
-                No interview sessions yet
-              </p>
-              <p className="text-sm text-gray-500 max-w-xs">
-                Complete mock interviews to see your performance metrics and improvement areas here.
-              </p>
-            </div>
-          )}
-        </CardContent>
-      </Card>
     </div>
   );
 };
 
 export default UserStats;
-
-</edits_to_apply>
