@@ -1,3 +1,4 @@
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Check, Star, BookOpen, ExternalLink, Award } from "lucide-react";
@@ -6,6 +7,7 @@ import { calculateProgressByDifficulty } from "@/services/learningPathService";
 import { autoLoginToAstra } from "@/services/autoLoginService";
 import { autoLoginToYudha } from "@/services/autoLoginService";
 import { autoLoginToDrona } from "@/services/autoLoginService";
+import { autoLoginToShaurya } from "@/services/autoLoginService";
 import { useParams, useSearchParams } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { useState, useEffect } from "react";
@@ -115,7 +117,7 @@ const UserStats = ({
     }
   };
 
-    const handleDronaClick = async (e: React.MouseEvent) => {
+  const handleDronaClick = async (e: React.MouseEvent) => {
     e.preventDefault();
     
     if (!profileId) {
@@ -134,6 +136,26 @@ const UserStats = ({
       console.error('Auto-login error:', error);
     }
   };
+
+  const handleShauryaClick = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    
+    if (!profileId) {
+      toast.error("User ID not found");
+      return;
+    }
+
+    try {
+      toast.loading("Redirecting to Shaurya...");
+      const redirectUrl = await autoLoginToShaurya(profileId);
+      window.open(redirectUrl, '_blank');
+      toast.dismiss();
+    } catch (error) {
+      toast.dismiss();
+      toast.error("Failed to redirect to Shaurya. Please try again.");
+      console.error('Auto-login error:', error);
+    }
+  };
   
   return (
     <div className="grid grid-cols-1 gap-6">
@@ -146,7 +168,7 @@ const UserStats = ({
           </CardTitle>
         </CardHeader>
         <CardContent className="p-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {/* Drona */}
             <div onClick={handleDronaClick} className="cursor-pointer">
               <div className="p-5 rounded-lg border border-green-200 bg-gradient-to-br from-green-50 to-white transition-all duration-300 shadow-sm hover:shadow-md transform hover:translate-y-[-2px]">
@@ -198,6 +220,25 @@ const UserStats = ({
                 <div className="h-2 w-full bg-gray-100 rounded-full overflow-hidden shadow-inner">
                   <div 
                     className="h-full rounded-full bg-gradient-to-r from-red-300 to-red-500"
+                    style={{ width: animateStats ? '100%' : '0%', transition: 'width 1.5s ease-in-out' }}
+                  ></div>
+                </div>
+              </div>
+            </div>
+
+            {/* Shaurya */}
+            <div onClick={handleShauryaClick} className="cursor-pointer">
+              <div className="p-5 rounded-lg border border-blue-200 bg-gradient-to-br from-blue-50 to-white transition-all duration-300 shadow-sm hover:shadow-md transform hover:translate-y-[-2px]">
+                <div className="flex justify-between items-center mb-2">
+                  <h4 className="font-semibold text-gray-800">Shaurya</h4>
+                  <span className="text-xs font-semibold px-2 py-1 rounded-full bg-blue-100 text-blue-700">Interview</span>
+                </div>
+                <p className="text-sm text-gray-600 mb-3 line-clamp-2">
+                  AI-based mock interview platform to prepare for your dream job.
+                </p>
+                <div className="h-2 w-full bg-gray-100 rounded-full overflow-hidden shadow-inner">
+                  <div 
+                    className="h-full rounded-full bg-gradient-to-r from-blue-300 to-blue-500"
                     style={{ width: animateStats ? '100%' : '0%', transition: 'width 1.5s ease-in-out' }}
                   ></div>
                 </div>
