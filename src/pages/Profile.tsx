@@ -257,7 +257,7 @@ const ProfilePage = () => {
                         <span className="font-semibold text-gray-800 bg-blue-50 px-2 py-0.5 rounded-md">{profile.cgpa?.toFixed(1) || "N/A"}</span>
                       </div>
                     </div>
-
+{/* 
                     <div className="w-full pt-4 border-t border-gray-100">
                       <Button
                         onClick={() => setResumeOpen(true)}
@@ -266,7 +266,7 @@ const ProfilePage = () => {
                         <FileText size={16} className="mr-2" />
                         Resume
                       </Button>
-                    </div>
+                    </div> */}
                   </div>
                 </CardContent>
               </Card>
