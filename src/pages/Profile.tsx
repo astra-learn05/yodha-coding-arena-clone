@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useSearchParams, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -5,19 +6,12 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge as UiBadge } from "@/components/ui/badge";
 import { Dialog } from "@/components/ui/dialog";
 import UserStats from "@/components/UserStats";
-import { Award, Code, Brain, Zap, Trophy, MapPin, School, Sparkles, Settings } from "lucide-react";
+import { Award, Code, Brain, Zap, Trophy, MapPin, School, Settings, FileText } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import ProfileEditDialog from "@/components/ProfileEditDialog";
-
-import {
-  LinkedinIcon,
-  GithubIcon,
-  LeetcodeIcon,
-  HackerrankIcon,
-  GeeksforGeeksIcon
-} from "@/components/SocialIcons";
+import ResumeDialog from "@/components/ResumeDialog";
 
 import {
   getProfileById, 
@@ -47,6 +41,7 @@ const ProfilePage = () => {
   const prn = searchParams.get("prn") || params.prn;
   
   const [open, setOpen] = useState(false);
+  const [resumeOpen, setResumeOpen] = useState(false);
   const isEditable = !!profileId && !prn;
 
   const { data: profile, isLoading: profileLoading, refetch: refetchProfile } = useQuery({
@@ -251,7 +246,6 @@ const ProfilePage = () => {
                       
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2 text-gray-700">
-{/*                           <Sparkles size={16} className="text-indigo-500" /> */}
                           <span className="text-sm font-medium">CGPA</span>
                         </div>
                         <span className="font-semibold text-gray-800 bg-blue-50 px-2 py-0.5 rounded-md">{profile.cgpa?.toFixed(1) || "N/A"}</span>
@@ -260,11 +254,11 @@ const ProfilePage = () => {
 
                     <div className="w-full pt-4 border-t border-gray-100">
                       <Button
-                        onClick={handleYuktiRedirect}
+                        onClick={() => setResumeOpen(true)}
                         className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-medium py-2 px-4 rounded-lg transition-all duration-200 transform hover:scale-105 shadow-lg"
                       >
-                        <Sparkles size={16} className="mr-2" />
-                        Yukti
+                        <FileText size={16} className="mr-2" />
+                        Resume
                       </Button>
                     </div>
                   </div>
@@ -336,6 +330,13 @@ const ProfilePage = () => {
           userData={userData}
           onSave={handleSaveProfile}
           onClose={() => setOpen(false)}
+        />
+      </Dialog>
+
+      <Dialog open={resumeOpen} onOpenChange={setResumeOpen}>
+        <ResumeDialog
+          userId={profile?.id || ''}
+          onClose={() => setResumeOpen(false)}
         />
       </Dialog>
     </div>
