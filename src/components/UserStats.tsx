@@ -77,28 +77,28 @@ const UserStats = ({
   const getPerformanceLevelColor = (level: string) => {
     switch (level.toLowerCase()) {
       case 'excellent':
-        return 'from-green-500 to-emerald-600 text-white border-green-600';
+        return 'text-green-700 font-semibold';
       case 'strong':
-        return 'from-blue-500 to-blue-600 text-white border-blue-600';
+        return 'text-blue-700 font-semibold';
       case 'good':
-        return 'from-yellow-500 to-yellow-600 text-white border-yellow-600';
+        return 'text-yellow-700 font-semibold';
       case 'satisfactory':
-        return 'from-orange-500 to-orange-600 text-white border-orange-600';
+        return 'text-orange-700 font-semibold';
       default:
-        return 'from-red-500 to-red-600 text-white border-red-600';
+        return 'text-red-700 font-semibold';
     }
   };
 
   const getRecommendationColor = (recommendation: string) => {
     switch (recommendation.toLowerCase()) {
       case 'strong hire':
-        return 'bg-green-600 text-white border-green-700';
+        return 'text-green-700 font-semibold';
       case 'hire':
-        return 'bg-blue-600 text-white border-blue-700';
+        return 'text-blue-700 font-semibold';
       case 'maybe':
-        return 'bg-yellow-600 text-white border-yellow-700';
+        return 'text-yellow-700 font-semibold';
       default:
-        return 'bg-red-600 text-white border-red-700';
+        return 'text-red-700 font-semibold';
     }
   };
 
@@ -549,10 +549,10 @@ const UserStats = ({
                       </div>
                     </div>
                     <div className="text-right space-y-2">
-                      <div className={`inline-flex items-center justify-center px-4 py-2 rounded-full text-sm font-semibold bg-gradient-to-r ${getPerformanceLevelColor(result.performance_level)} border shadow-sm`}>
+                      <div className={`${getPerformanceLevelColor(result.performance_level)}`}>
                         {result.performance_level}
                       </div>
-                      <div className={`block px-4 py-2 rounded-full text-xs font-semibold border shadow-sm text-center ${getRecommendationColor(result.overall_recommendation)}`}>
+                      <div className={`text-sm ${getRecommendationColor(result.overall_recommendation)}`}>
                         {result.overall_recommendation}
                       </div>
                     </div>

@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useSearchParams, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
@@ -134,7 +133,7 @@ const ProfilePage = () => {
   };
 
   const handleLogout = () => {
-    window.open('https://ikshvaku-innovations.in', '_blank');
+    window.location.href = 'https://ikshvaku-innovations.in';
   };
 
   // This block is for debugging purposes
