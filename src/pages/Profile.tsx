@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge as UiBadge } from "@/components/ui/badge";
 import { Dialog } from "@/components/ui/dialog";
 import UserStats from "@/components/UserStats";
-import { Award, Code, Brain, Zap, Trophy, MapPin, School, Settings, FileText } from "lucide-react";
+import { Award, Code, Brain, Zap, Trophy, MapPin, School, Settings, FileText, LogOut } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
@@ -133,6 +133,10 @@ const ProfilePage = () => {
     window.open(yuktiUrl, '_blank');
   };
 
+  const handleLogout = () => {
+    window.open('https://ikshvaku-innovations.in', '_blank');
+  };
+
   // This block is for debugging purposes
   console.log("Profile ID:", profileId, "PRN:", prn, "Is Editable:", isEditable);
   console.log("Profile data:", profile);
@@ -199,16 +203,26 @@ const ProfilePage = () => {
                 <CardHeader className="pb-2 bg-gradient-to-r from-blue-50 to-indigo-50 border-b">
                   <div className="flex items-center justify-between">
                     <CardTitle className="text-lg font-bold text-blue-800">Profile</CardTitle>
-                    {isEditable && (
+                    <div className="flex items-center gap-2">
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={() => setOpen(true)}
+                        onClick={handleLogout}
                         className="h-8 w-8 p-0 hover:bg-blue-100"
                       >
-                        <Settings size={16} className="text-blue-600" />
+                        <LogOut size={16} className="text-blue-600" />
                       </Button>
-                    )}
+                      {isEditable && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => setOpen(true)}
+                          className="h-8 w-8 p-0 hover:bg-blue-100"
+                        >
+                          <Settings size={16} className="text-blue-600" />
+                        </Button>
+                      )}
+                    </div>
                   </div>
                 </CardHeader>
                 <CardContent className="p-6">

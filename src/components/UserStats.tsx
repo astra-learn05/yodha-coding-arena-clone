@@ -77,28 +77,28 @@ const UserStats = ({
   const getPerformanceLevelColor = (level: string) => {
     switch (level.toLowerCase()) {
       case 'excellent':
-        return 'from-green-400 to-emerald-500 text-green-800';
+        return 'from-green-500 to-emerald-600 text-white border-green-600';
       case 'strong':
-        return 'from-blue-400 to-blue-500 text-blue-800';
+        return 'from-blue-500 to-blue-600 text-white border-blue-600';
       case 'good':
-        return 'from-yellow-400 to-yellow-500 text-yellow-800';
+        return 'from-yellow-500 to-yellow-600 text-white border-yellow-600';
       case 'satisfactory':
-        return 'from-orange-400 to-orange-500 text-orange-800';
+        return 'from-orange-500 to-orange-600 text-white border-orange-600';
       default:
-        return 'from-red-400 to-red-500 text-red-800';
+        return 'from-red-500 to-red-600 text-white border-red-600';
     }
   };
 
   const getRecommendationColor = (recommendation: string) => {
     switch (recommendation.toLowerCase()) {
       case 'strong hire':
-        return 'bg-green-100 text-green-800 border-green-200';
+        return 'bg-green-600 text-white border-green-700';
       case 'hire':
-        return 'bg-blue-100 text-blue-800 border-blue-200';
+        return 'bg-blue-600 text-white border-blue-700';
       case 'maybe':
-        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+        return 'bg-yellow-600 text-white border-yellow-700';
       default:
-        return 'bg-red-100 text-red-800 border-red-200';
+        return 'bg-red-600 text-white border-red-700';
     }
   };
 
@@ -532,71 +532,71 @@ const UserStats = ({
               {interviewResults.map((result) => (
                 <div 
                   key={result.id} 
-                  className="p-6 rounded-xl border border-purple-100 bg-gradient-to-br from-purple-50 to-pink-50 shadow-sm hover:shadow-md transition-all duration-300 transform hover:translate-y-[-2px]"
+                  className="p-6 rounded-xl border border-purple-200 bg-gradient-to-br from-purple-50 to-pink-50 shadow-md hover:shadow-lg transition-all duration-300 transform hover:translate-y-[-2px]"
                 >
                   <div className="flex justify-between items-start mb-4">
                     <div className="space-y-2">
-                      <h4 className="font-semibold text-gray-800 text-lg">{result.interviews?.job_role || 'Interview'}</h4>
-                      <div className="flex items-center gap-4 text-sm text-gray-600">
+                      <h4 className="font-semibold text-gray-900 text-lg">{result.interviews?.job_role || 'Interview'}</h4>
+                      <div className="flex items-center gap-4 text-sm text-gray-700">
                         <span className="flex items-center gap-1">
-                          <Target size={14} className="text-purple-500" />
+                          <Target size={14} className="text-purple-600" />
                           {result.interviews?.domain || 'General'}
                         </span>
                         <span className="flex items-center gap-1">
-                          <Clock size={14} className="text-purple-500" />
+                          <Clock size={14} className="text-purple-600" />
                           {result.duration_minutes ? `${result.duration_minutes} min` : 'N/A'}
                         </span>
                       </div>
                     </div>
                     <div className="text-right space-y-2">
-                      <div className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gradient-to-r ${getPerformanceLevelColor(result.performance_level)} border`}>
+                      <div className={`inline-flex items-center justify-center px-4 py-2 rounded-full text-sm font-semibold bg-gradient-to-r ${getPerformanceLevelColor(result.performance_level)} border shadow-sm`}>
                         {result.performance_level}
                       </div>
-                      <div className={`block px-3 py-1 rounded-full text-xs font-medium border ${getRecommendationColor(result.overall_recommendation)}`}>
+                      <div className={`block px-4 py-2 rounded-full text-xs font-semibold border shadow-sm text-center ${getRecommendationColor(result.overall_recommendation)}`}>
                         {result.overall_recommendation}
                       </div>
                     </div>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                    <div className="bg-white/70 rounded-lg p-4 border border-purple-100">
+                    <div className="bg-white/80 rounded-lg p-4 border border-purple-200 shadow-sm">
                       <div className="flex items-center justify-between mb-2">
-                        <span className="text-sm font-medium text-gray-600">Overall Score</span>
-                        <TrendingUp size={16} className="text-purple-500" />
+                        <span className="text-sm font-medium text-gray-700">Overall Score</span>
+                        <TrendingUp size={16} className="text-purple-600" />
                       </div>
-                      <div className="text-2xl font-bold text-purple-700">{result.overall_score}/100</div>
+                      <div className="text-2xl font-bold text-purple-800">{result.overall_score}/100</div>
                       <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
                         <div 
-                          className="bg-gradient-to-r from-purple-400 to-pink-500 h-2 rounded-full transition-all duration-500"
+                          className="bg-gradient-to-r from-purple-500 to-pink-600 h-2 rounded-full transition-all duration-500"
                           style={{ width: `${result.overall_score}%` }}
                         ></div>
                       </div>
                     </div>
 
-                    <div className="bg-white/70 rounded-lg p-4 border border-purple-100">
+                    <div className="bg-white/80 rounded-lg p-4 border border-purple-200 shadow-sm">
                       <div className="flex items-center justify-between mb-2">
-                        <span className="text-sm font-medium text-gray-600">Questions Answered</span>
-                        <MessageCircle size={16} className="text-purple-500" />
+                        <span className="text-sm font-medium text-gray-700">Questions Answered</span>
+                        <MessageCircle size={16} className="text-purple-600" />
                       </div>
-                      <div className="text-2xl font-bold text-purple-700">
+                      <div className="text-2xl font-bold text-purple-800">
                         {result.questions_answered}/{result.total_questions}
                       </div>
-                      <div className="text-sm text-gray-500 mt-1">
+                      <div className="text-sm text-gray-600 mt-1">
                         {Math.round((result.questions_answered / result.total_questions) * 100)}% completed
                       </div>
                     </div>
 
-                    <div className="bg-white/70 rounded-lg p-4 border border-purple-100">
+                    <div className="bg-white/80 rounded-lg p-4 border border-purple-200 shadow-sm">
                       <div className="flex items-center justify-between mb-2">
-                        <span className="text-sm font-medium text-gray-600">Average Score</span>
-                        <Star size={16} className="text-purple-500" />
+                        <span className="text-sm font-medium text-gray-700">Average Score</span>
+                        <Star size={16} className="text-purple-600" />
                       </div>
-                      <div className="text-2xl font-bold text-purple-700">{result.average_score?.toFixed(1) || '0.0'}</div>
-                      <div className="text-sm text-gray-500 mt-1">Per question</div>
+                      <div className="text-2xl font-bold text-purple-800">{result.average_score?.toFixed(1) || '0.0'}</div>
+                      <div className="text-sm text-gray-600 mt-1">Per question</div>
                     </div>
                   </div>
 
-                  <div className="flex justify-between items-center text-xs text-gray-500">
+                  <div className="flex justify-between items-center text-xs text-gray-600">
                     <span>Experience Level: {result.interviews?.experience || 'Not specified'}</span>
                     <span>Completed: {new Date(result.interviews?.completed_at || result.created_at).toLocaleDateString()}</span>
                   </div>
