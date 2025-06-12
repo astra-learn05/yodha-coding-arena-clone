@@ -1,9 +1,9 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { Check, Star, BookOpen, ExternalLink, Award } from "lucide-react";
+import { Check, Star, BookOpen, ExternalLink, Award, MessageCircle, Target, Clock, TrendingUp } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { calculateProgressByDifficulty } from "@/services/learningPathService";
+import { getUserInterviewResults } from "@/services/interviewService";
 import { autoLoginToAstra } from "@/services/autoLoginService";
 import { autoLoginToYudha } from "@/services/autoLoginService";
 import { autoLoginToDrona } from "@/services/autoLoginService";
@@ -41,6 +41,12 @@ const UserStats = ({
     queryFn: () => calculateProgressByDifficulty(profileId || ''),
     enabled: !!profileId
   });
+
+  const { data: interviewResults = [] } = useQuery({
+    queryKey: ['interviewResults', profileId],
+    queryFn: () => getUserInterviewResults(profileId || ''),
+    enabled: !!profileId
+  });
   
   const easyStats = progressByDifficulty?.easy || { total: 0, completed: 0 };
   const mediumStats = progressByDifficulty?.medium || { total: 0, completed: 0 };
@@ -66,6 +72,34 @@ const UserStats = ({
     hard: "from-red-300 to-red-500",
     theory: "from-purple-300 to-purple-500",
     total: "from-blue-300 to-blue-500"
+  };
+
+  const getPerformanceLevelColor = (level: string) => {
+    switch (level.toLowerCase()) {
+      case 'excellent':
+        return 'from-green-400 to-emerald-500 text-green-800';
+      case 'strong':
+        return 'from-blue-400 to-blue-500 text-blue-800';
+      case 'good':
+        return 'from-yellow-400 to-yellow-500 text-yellow-800';
+      case 'satisfactory':
+        return 'from-orange-400 to-orange-500 text-orange-800';
+      default:
+        return 'from-red-400 to-red-500 text-red-800';
+    }
+  };
+
+  const getRecommendationColor = (recommendation: string) => {
+    switch (recommendation.toLowerCase()) {
+      case 'strong hire':
+        return 'bg-green-100 text-green-800 border-green-200';
+      case 'hire':
+        return 'bg-blue-100 text-blue-800 border-blue-200';
+      case 'maybe':
+        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+      default:
+        return 'bg-red-100 text-red-800 border-red-200';
+    }
   };
 
   useEffect(() => {
@@ -478,6 +512,107 @@ const UserStats = ({
               </p>
               <p className="text-sm text-gray-500 max-w-xs">
                 Complete all questions in a topic to see it here. Topics help track your learning progress.
+              </p>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Interview Performance Section */}
+      <Card className="overflow-hidden border-none shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-white to-gray-50">
+        <CardHeader className="pb-2 bg-gradient-to-r from-purple-50 to-pink-50 border-b">
+          <CardTitle className="text-lg font-bold flex items-center gap-2 text-purple-800">
+            <MessageCircle size={20} className="text-purple-600" />
+            Interview Performance
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="p-6">
+          {interviewResults.length > 0 ? (
+            <div className="space-y-6">
+              {interviewResults.map((result) => (
+                <div 
+                  key={result.id} 
+                  className="p-6 rounded-xl border border-purple-100 bg-gradient-to-br from-purple-50 to-pink-50 shadow-sm hover:shadow-md transition-all duration-300 transform hover:translate-y-[-2px]"
+                >
+                  <div className="flex justify-between items-start mb-4">
+                    <div className="space-y-2">
+                      <h4 className="font-semibold text-gray-800 text-lg">{result.interviews?.job_role || 'Interview'}</h4>
+                      <div className="flex items-center gap-4 text-sm text-gray-600">
+                        <span className="flex items-center gap-1">
+                          <Target size={14} className="text-purple-500" />
+                          {result.interviews?.domain || 'General'}
+                        </span>
+                        <span className="flex items-center gap-1">
+                          <Clock size={14} className="text-purple-500" />
+                          {result.duration_minutes ? `${result.duration_minutes} min` : 'N/A'}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="text-right space-y-2">
+                      <div className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gradient-to-r ${getPerformanceLevelColor(result.performance_level)} border`}>
+                        {result.performance_level}
+                      </div>
+                      <div className={`block px-3 py-1 rounded-full text-xs font-medium border ${getRecommendationColor(result.overall_recommendation)}`}>
+                        {result.overall_recommendation}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                    <div className="bg-white/70 rounded-lg p-4 border border-purple-100">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-sm font-medium text-gray-600">Overall Score</span>
+                        <TrendingUp size={16} className="text-purple-500" />
+                      </div>
+                      <div className="text-2xl font-bold text-purple-700">{result.overall_score}/100</div>
+                      <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
+                        <div 
+                          className="bg-gradient-to-r from-purple-400 to-pink-500 h-2 rounded-full transition-all duration-500"
+                          style={{ width: `${result.overall_score}%` }}
+                        ></div>
+                      </div>
+                    </div>
+
+                    <div className="bg-white/70 rounded-lg p-4 border border-purple-100">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-sm font-medium text-gray-600">Questions Answered</span>
+                        <MessageCircle size={16} className="text-purple-500" />
+                      </div>
+                      <div className="text-2xl font-bold text-purple-700">
+                        {result.questions_answered}/{result.total_questions}
+                      </div>
+                      <div className="text-sm text-gray-500 mt-1">
+                        {Math.round((result.questions_answered / result.total_questions) * 100)}% completed
+                      </div>
+                    </div>
+
+                    <div className="bg-white/70 rounded-lg p-4 border border-purple-100">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-sm font-medium text-gray-600">Average Score</span>
+                        <Star size={16} className="text-purple-500" />
+                      </div>
+                      <div className="text-2xl font-bold text-purple-700">{result.average_score?.toFixed(1) || '0.0'}</div>
+                      <div className="text-sm text-gray-500 mt-1">Per question</div>
+                    </div>
+                  </div>
+
+                  <div className="flex justify-between items-center text-xs text-gray-500">
+                    <span>Experience Level: {result.interviews?.experience || 'Not specified'}</span>
+                    <span>Completed: {new Date(result.interviews?.completed_at || result.created_at).toLocaleDateString()}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="flex flex-col items-center justify-center py-10 text-center bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl border border-purple-100 mt-3">
+              <div className="w-16 h-16 rounded-full bg-white/80 shadow-sm flex items-center justify-center mb-4 animate-pulse">
+                <MessageCircle size={30} className="text-purple-300" />
+              </div>
+              <p className="text-gray-700 mb-2 font-medium">
+                No interviews completed yet
+              </p>
+              <p className="text-sm text-gray-500 max-w-xs">
+                Complete an AI interview to see your performance metrics and feedback here.
               </p>
             </div>
           )}
