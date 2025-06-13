@@ -209,7 +209,7 @@ const Index = () => {
             </div>
           </div>
           <div className="mt-6 text-center text-sm opacity-70">
-            <p>© 2025 Yodha Coding Arena. All rights reserved.</p>
+            <p>© 2025 Ikshvaku Innovations. All rights reserved.</p>
           </div>
         </div>
       </footer>
