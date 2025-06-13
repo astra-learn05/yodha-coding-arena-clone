@@ -277,8 +277,8 @@ const UserStats = ({
                   ></div>
                 </div>
               </div>
-            </div>
-          </div> */}
+            </div> */}
+          </div>
         </CardContent>
       </Card>
 
