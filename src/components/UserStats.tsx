@@ -261,7 +261,7 @@ const UserStats = ({
             </div>
 
             {/* Shaurya */}
-            <div onClick={handleShauryaClick} className="cursor-pointer">
+{/*             <div onClick={handleShauryaClick} className="cursor-pointer">
               <div className="p-5 rounded-lg border border-blue-200 bg-gradient-to-br from-blue-50 to-white transition-all duration-300 shadow-sm hover:shadow-md transform hover:translate-y-[-2px]">
                 <div className="flex justify-between items-center mb-2">
                   <h4 className="font-semibold text-gray-800">Shaurya</h4>
@@ -278,7 +278,7 @@ const UserStats = ({
                 </div>
               </div>
             </div>
-          </div>
+          </div> */}
         </CardContent>
       </Card>
 
@@ -519,7 +519,7 @@ const UserStats = ({
       </Card>
 
       {/* Interview Performance Section */}
-      <Card className="overflow-hidden border-none shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-white to-gray-50">
+{/*       <Card className="overflow-hidden border-none shadow-lg hover:shadow-xl transition-all duration-300 bg-gradient-to-br from-white to-gray-50">
         <CardHeader className="pb-2 bg-gradient-to-r from-purple-50 to-pink-50 border-b">
           <CardTitle className="text-lg font-bold flex items-center gap-2 text-purple-800">
             <MessageCircle size={20} className="text-purple-600" />
@@ -617,7 +617,7 @@ const UserStats = ({
             </div>
           )}
         </CardContent>
-      </Card>
+      </Card> */}
     </div>
   );
 };
